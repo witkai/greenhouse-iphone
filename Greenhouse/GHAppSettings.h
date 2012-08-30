@@ -23,9 +23,9 @@
 #import <Foundation/Foundation.h>
 
 
-@interface GHAppSettings : NSObject { }
+@interface GHAppSettings : NSObject
 
-+ (NSString *)documentsDirectory;
++ (NSURL *)documentsDirectory;
 + (NSString *)appVersion;
 
 @end

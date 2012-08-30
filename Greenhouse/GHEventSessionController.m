@@ -174,8 +174,7 @@ static BOOL sharedShouldRefreshFavorites;
 
 - (void)fetchSessionsDidFinishWithData:(NSData *)data
 {
-	NSString *responseBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-	DLog(@"%@", responseBody);
+	DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
 
 	NSMutableArray *arraySessions = [[NSMutableArray alloc] init];
 	NSMutableArray *arrayTimes = [[NSMutableArray alloc] init];
