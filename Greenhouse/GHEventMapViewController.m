@@ -21,21 +21,21 @@
 //
 
 #import "GHEventMapViewController.h"
-#import "GHEvent.h"
-#import "GHVenue.h"
+#import "GHEventController.h"
+#import "Event.h"
+#import "Venue.h"
 #import "GHVenueAnnotation.h"
 #import "GHVenueDetailsViewController.h"
 
-
 @interface GHEventMapViewController()
 
+@property (nonatomic, strong) Event *event;
+@property (nonatomic, strong) Event *currentEvent;
 @property (nonatomic, strong) NSMutableArray *venueAnnotations;
-@property (nonatomic, strong) GHEvent *currentEvent;
 
 - (void)reloadMapData;
 
 @end
-
 
 @implementation GHEventMapViewController
 
@@ -62,14 +62,14 @@
 	CLLocationDegrees maxLng = 0.0f;
 	CLLocationDegrees minLng = 0.0f;	
 	
-	for (GHVenue *venue in currentEvent.venues)
+	for (Venue *venue in currentEvent.venues)
 	{
 		GHVenueAnnotation *annotation = [[GHVenueAnnotation alloc] initWithVenue:venue];
 		[self.venueAnnotations addObject:annotation];
 		
 		// find the max and min lat,lng values to determine the bounds of the map
-		CLLocationDegrees lat = venue.location.coordinate.latitude;
-		CLLocationDegrees lng = venue.location.coordinate.longitude;
+		CLLocationDegrees lat = [venue.latitude doubleValue];
+		CLLocationDegrees lng = [venue.longitude doubleValue];
 		
 		if (lat != 0 && lat > maxLat)
 		{
@@ -171,19 +171,6 @@
 
 
 #pragma mark -
-#pragma mark DataViewController methods
-
-- (void)refreshView
-{
-	if (currentEvent == nil || ![currentEvent.eventId isEqualToString:event.eventId])
-	{
-		self.currentEvent = event;
-		[self reloadMapData];
-	}
-}
-
-
-#pragma mark -
 #pragma mark UIViewController methods
 
 - (void)viewDidLoad 
@@ -191,9 +178,21 @@
     [super viewDidLoad];
 	
 	self.title = @"Map";
-	
 	self.venueAnnotations = [[NSMutableArray alloc] init];
 	self.venueDetailsViewController = [[GHVenueDetailsViewController alloc] initWithNibName:nil bundle:nil];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    DLog(@"");
+    
+    self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
+    if (currentEvent == nil || ![currentEvent.eventId isEqualToString:event.eventId])
+	{
+		self.currentEvent = event;
+		[self reloadMapData];
+	}
 }
 
 - (void)didReceiveMemoryWarning 

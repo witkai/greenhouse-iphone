@@ -21,18 +21,19 @@
 //
 
 #import "GHEventDetailsViewController.h"
+#import "Event.h"
+#import "GHEventController.h"
 #import "GHEventDescriptionViewController.h"
 #import "GHEventSessionsMenuViewController.h"
 #import "GHEventTweetsViewController.h"
 #import "GHEventMapViewController.h"
 
-
 @interface GHEventDetailsViewController()
 
+@property (nonatomic, strong) Event *event;
 @property (nonatomic, strong) NSArray *arrayMenuItems;
 
 @end
-
 
 @implementation GHEventDetailsViewController
 
@@ -114,12 +115,7 @@
 #pragma mark DataViewController methods
 
 - (void)refreshView
-{
-	eventDescriptionViewController.event = event;
-	eventSessionsMenuViewController.event = event;
-	eventTweetsViewController.event = event;
-	eventMapViewController.event = event;
-		
+{		
 	labelTitle.text = event.title;
 	
 	NSDate *date = [event.startTime dateByAddingTimeInterval:86400];
@@ -168,18 +164,33 @@
 - (void)viewDidLoad 
 {
     [super viewDidLoad];
+    DLog(@"");
 	
 	self.title = @"Event";
-	
 	self.arrayMenuItems = [[NSArray alloc] initWithObjects:@"Description", @"Sessions", @"Tweets", @"Map", nil];
-	
 	self.eventDescriptionViewController = [[GHEventDescriptionViewController alloc] initWithNibName:nil bundle:nil];
 	self.eventSessionsMenuViewController = [[GHEventSessionsMenuViewController alloc] initWithNibName:nil bundle:nil];
 	self.eventTweetsViewController = [[GHEventTweetsViewController alloc] initWithNibName:@"GHTweetsViewController" bundle:nil];
 	self.eventMapViewController = [[GHEventMapViewController alloc] initWithNibName:nil bundle:nil];
 }
 
-- (void)didReceiveMemoryWarning 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    DLog(@"");
+
+    self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
+    if (self.event)
+    {
+        [self refreshView];
+    }
+    else
+    {
+        [self.navigationController popToRootViewControllerAnimated:NO];
+    }
+}
+
+- (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
 }

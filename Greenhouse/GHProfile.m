@@ -22,39 +22,29 @@
 
 #import "GHProfile.h"
 
+@interface GHProfile ()
+
+@property (nonatomic, assign) NSUInteger accountId;
+@property (nonatomic, copy) NSString *displayName;
+@property (nonatomic, strong) NSURL *imageUrl;
+
+@end
 
 @implementation GHProfile
 
-@synthesize accountId;
-@synthesize displayName;
-@synthesize imageUrl;
+@synthesize accountId =_accountId;
+@synthesize displayName = _displayName;
+@synthesize imageUrl = _imageUrl;
 
-
-#pragma mark -
-#pragma mark Static methods
-
-+ (GHProfile *)profileWithDictionary:(NSDictionary *)dictionary
+- (id)initWithAccountId:(NSUInteger)accountId displayName:(NSString *)displayName imageUrl:(NSURL *)imageUrl
 {
-	return [[GHProfile alloc] initWithDictionary:dictionary];
-}
-
-
-#pragma mark -
-#pragma mark WebDataModel methods
-
-- (id)initWithDictionary:(NSDictionary *)dictionary
-{
-	if ((self = [super init]))
-	{
-		if (dictionary)
-		{
-			self.accountId = [dictionary integerForKey:@"accountId"];
-			self.displayName = [dictionary stringByReplacingPercentEscapesForKey:@"displayName" usingEncoding:NSUTF8StringEncoding];
-			self.imageUrl = [dictionary urlForKey:@"pictureUrl"];
-		}
-	}
-	
-	return self;
+    if (self = [super init])
+    {
+        self.accountId = accountId;
+        self.displayName = displayName;
+        self.imageUrl = imageUrl;
+    }
+    return self;
 }
 
 

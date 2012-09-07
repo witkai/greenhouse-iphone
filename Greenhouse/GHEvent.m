@@ -23,75 +23,40 @@
 #import "GHEvent.h"
 #import "GHVenue.h"
 
-
-@interface GHEvent()
-
-- (NSArray *)processVenueData:(NSArray *)venuesJson;
-
-@end
-
-
 @implementation GHEvent
 
-@synthesize eventId;
-@synthesize title;
-@synthesize startTime;
-@synthesize endTime;
-@synthesize location;
-@synthesize description;
-@synthesize name;
-@synthesize hashtag;
-@synthesize groupName;
-@synthesize venues;
+@synthesize eventId = _eventId;
+@synthesize title = _title;
+@synthesize startTime = _startTime;
+@synthesize endTime = _endTime;
+@synthesize location = _location;
+@synthesize description = _description;
+@synthesize name = _name;
+@synthesize hashtag = _hashtag;
+@synthesize groupName = _groupName;
+@synthesize venues = _venues;
 
 
 #pragma mark -
 #pragma mark Private methods
 
-- (NSArray *)processVenueData:(NSArray *)venuesJson
+- (id)initWithEventId:(NSString *)eventId title:(NSString *)title startTime:(NSDate *)startTime entTime:(NSDate *)endTime location:(NSString *)location description:(NSString *)description name:(NSString *)name hashtag:(NSString *)hashtag groupName:(NSString *)groupName venues:(NSArray *)venues
 {
-	if (venuesJson)
-	{
-		NSMutableArray *tmpVenues = [[NSMutableArray alloc] initWithCapacity:[venuesJson count]];
-		
-		for (NSDictionary *d in venuesJson)
-		{
-			GHVenue *venue = [[GHVenue alloc] initWithDictionary:d];
-			[tmpVenues addObject:venue];
-		}
-		
-		NSArray *venuesArray = [NSArray arrayWithArray:tmpVenues];
-		
-		return venuesArray;
-	}
-	
-	return @[];
-}
-
-
-#pragma mark -
-#pragma mark WebDataModel methods
-
-- (id)initWithDictionary:(NSDictionary *)dictionary
-{
-	if ((self = [super init]))
-	{
-		if (dictionary)
-		{
-			self.eventId = [dictionary stringForKey:@"id"];
-			self.title = [dictionary stringByReplacingPercentEscapesForKey:@"title" usingEncoding:NSUTF8StringEncoding];
-			self.startTime = [dictionary dateWithMillisecondsSince1970ForKey:@"startTime"];
-			self.endTime = [dictionary dateWithMillisecondsSince1970ForKey:@"endTime"];
-			self.location = [dictionary stringByReplacingPercentEscapesForKey:@"location" usingEncoding:NSUTF8StringEncoding];
-			self.description = [[dictionary stringForKey:@"description"] stringByXMLDecoding];
-			self.name = [dictionary stringByReplacingPercentEscapesForKey:@"name" usingEncoding:NSUTF8StringEncoding];
-			self.hashtag = [dictionary stringByReplacingPercentEscapesForKey:@"hashtag" usingEncoding:NSUTF8StringEncoding];
-			self.groupName = [dictionary stringByReplacingPercentEscapesForKey:@"groupName" usingEncoding:NSUTF8StringEncoding];
-			self.venues = [self processVenueData:[dictionary objectForKey:@"venues"]];
-		}
-	}
-	
-	return self;
+    if (self = [super init])
+    {
+        self.eventId = eventId;
+        self.title = title;
+        self.startTime = startTime;
+        self.endTime = endTime;
+        self.location = location;
+        self.description = description;
+        self.name = name;
+        self.hashtag = hashtag;
+        self.groupName = groupName;
+        self.venues = venues;
+    }
+    
+    return self;
 }
 
 @end

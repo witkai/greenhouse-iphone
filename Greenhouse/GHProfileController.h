@@ -22,14 +22,15 @@
 
 #import "GHBaseController.h"
 #import "GHProfileControllerDelegate.h"
+#import "Profile.h"
 
 
 @interface GHProfileController : GHBaseController 
 
-@property (nonatomic, unsafe_unretained) id<GHProfileControllerDelegate> delegate;
-
-- (void)fetchProfile;
-- (void)fetchProfileDidFinishWithData:(NSData *)data;
-- (void)fetchProfileDidFailWithError:(NSError *)error;
+- (void)fetchProfileWithDelegate:(id<GHProfileControllerDelegate>)delegate;
+- (Profile *)fetchProfileFromDataStore;
+- (void)sendRequestForProfileWithDelegate:(id<GHProfileControllerDelegate>)delegate;
+- (void)storeProfileWithJson:(NSDictionary *)dictionary;
+- (void)deleteProfile;
 
 @end

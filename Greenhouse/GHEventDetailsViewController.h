@@ -21,18 +21,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "GHEvent.h"
-
 
 @class GHEventDescriptionViewController;
 @class GHEventSessionsMenuViewController;
 @class GHEventTweetsViewController;
 @class GHEventMapViewController;
 
+@interface GHEventDetailsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
-@interface GHEventDetailsViewController : GHDataViewController <UITableViewDataSource, UITableViewDelegate>
-
-@property (nonatomic, strong) GHEvent *event;
 @property (nonatomic, strong) IBOutlet UILabel *labelTitle;
 @property (nonatomic, strong) IBOutlet UILabel *labelDescription;
 @property (nonatomic, strong) IBOutlet UILabel *labelTime;

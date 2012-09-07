@@ -21,10 +21,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "GHInitializingModel.h"
 
-
-@interface GHEvent : NSObject <GHInitializingModel>
+@interface GHEvent : NSObject
 
 @property (nonatomic, copy) NSString *eventId;
 @property (nonatomic, copy) NSString *title;
@@ -36,5 +34,7 @@
 @property (nonatomic, copy) NSString *hashtag;
 @property (nonatomic, copy) NSString *groupName;
 @property (nonatomic, strong) NSArray *venues;
+
+- (id)initWithEventId:(NSString *)eventId title:(NSString *)title startTime:(NSDate *)startTime entTime:(NSDate *)endTime location:(NSString *)location description:(NSString *)description name:(NSString *)name hashtag:(NSString *)hashtag groupName:(NSString *)groupName venues:(NSArray *)venues;
 
 @end

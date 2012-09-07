@@ -131,12 +131,60 @@
 }
 
 
-#pragma mark -
-#pragma mark PullRefreshTableViewController methods
+//#pragma mark -
+//#pragma mark PullRefreshTableViewController methods
+//
+//- (void)refreshView
+//{
+//	// set the title of the view to the schedule day
+//	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//	[dateFormatter setDateFormat:@"EEEE"];
+//	NSString *dateString = [dateFormatter stringFromDate:eventDate];
+//	self.title = dateString;
+//	
+//	if (![self.currentEvent.eventId isEqualToString:self.event.eventId] ||
+//		[currentEventDate compare:eventDate] != NSOrderedSame)
+//	{
+//		self.arraySessions = nil;
+//		self.arrayTimes = nil;
+//		[self.tableView reloadData];
+//	}
+//	
+//	self.currentEvent = self.event;
+//	self.currentEventDate = eventDate;
+//}
+//
+//- (BOOL)shouldReloadData
+//{
+//	return (self.arraySessions == nil || arrayTimes == nil || self.lastRefreshExpired);
+//}
+//
+//- (void)reloadTableViewDataSource
+//{
+//	self.eventSessionController = [[GHEventSessionController alloc] init];
+//	eventSessionController.delegate = self;
+//	
+//	[eventSessionController fetchSessionsWithEventId:self.event.eventId date:eventDate];
+//}
 
-- (void)refreshView
+
+#pragma mark -
+#pragma mark UIViewController methods
+
+- (void)viewDidLoad 
 {
-	// set the title of the view to the schedule day
+	self.lastRefreshKey = @"EventSessionsByDayViewController_LastRefresh";
+	
+    [super viewDidLoad];
+	
+	self.title = @"Schedule";
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    DLog(@"");
+    // set the title of the view to the schedule day
 	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 	[dateFormatter setDateFormat:@"EEEE"];
 	NSString *dateString = [dateFormatter stringFromDate:eventDate];
@@ -154,30 +202,13 @@
 	self.currentEventDate = eventDate;
 }
 
-- (BOOL)shouldReloadData
+- (void)viewDidAppear:(BOOL)animated
 {
-	return (self.arraySessions == nil || arrayTimes == nil || self.lastRefreshExpired);
-}
-
-- (void)reloadTableViewDataSource
-{
-	self.eventSessionController = [[GHEventSessionController alloc] init];
+    [super viewDidAppear:animated];
+    DLog(@"");
+    self.eventSessionController = [[GHEventSessionController alloc] init];
 	eventSessionController.delegate = self;
-	
-	[eventSessionController fetchSessionsByEventId:self.event.eventId withDate:eventDate];
-}
-
-
-#pragma mark -
-#pragma mark UIViewController methods
-
-- (void)viewDidLoad 
-{
-	self.lastRefreshKey = @"EventSessionsByDayViewController_LastRefresh";
-	
-    [super viewDidLoad];
-	
-	self.title = @"Schedule";
+	[eventSessionController fetchSessionsWithEventId:self.event.eventId date:eventDate];
 }
 
 - (void)didReceiveMemoryWarning 

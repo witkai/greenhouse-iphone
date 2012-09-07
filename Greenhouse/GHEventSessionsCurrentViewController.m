@@ -22,9 +22,9 @@
 //
 
 #import "GHEventSessionsCurrentViewController.h"
+#import "GHEventController.h"
 
-
-@interface GHEventSessionsCurrentViewController()
+@interface GHEventSessionsCurrentViewController ()
 
 @property (nonatomic, strong) GHEventSessionController *eventSessionController;
 @property (nonatomic, strong) NSArray *arrayCurrentSessions;
@@ -33,7 +33,6 @@
 - (void)completeFetchCurrentSessions:(NSArray *)currentSessions upcomingSessions:(NSArray *)upcomingSessions;
 
 @end
-
 
 @implementation GHEventSessionsCurrentViewController
 
@@ -179,6 +178,13 @@
     [super viewDidLoad];
 	
 	self.title = @"Current";
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
 }
 
 - (void)didReceiveMemoryWarning 

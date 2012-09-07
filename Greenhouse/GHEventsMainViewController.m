@@ -21,7 +21,7 @@
 //
 
 #import "GHEventsMainViewController.h"
-#import "GHEvent.h"
+#import "Event.h"
 
 @interface GHEventsMainViewController()
 
@@ -39,9 +39,12 @@
 @synthesize barButtonRefresh;
 @synthesize eventDetailsViewController;
 
+
+#pragma mark -
+#pragma mark Private methods
+
 - (void)completeFetchEvents:(NSArray *)events
 {
-	self.eventController = nil;
 	self.arrayEvents = events;
 	[self.tableView reloadData];
 	[self dataSourceDidFinishLoadingNewData];
@@ -70,8 +73,8 @@
 {
 	if (arrayEvents)
 	{
-		GHEvent *event = (GHEvent *)[arrayEvents objectAtIndex:indexPath.row];
-		eventDetailsViewController.event = event;
+		Event *event = [arrayEvents objectAtIndex:indexPath.row];
+        [eventController setSelectedEvent:event];
 		[self.navigationController pushViewController:eventDetailsViewController animated:YES];
 	}
 }
@@ -113,7 +116,7 @@
 		cell.selectionStyle = UITableViewCellSelectionStyleGray;
 	}
 	
-	GHEvent *event = (GHEvent *)[arrayEvents objectAtIndex:indexPath.row];
+	Event *event = (Event *)[arrayEvents objectAtIndex:indexPath.row];
 	
 	[cell.textLabel setText:event.title];
 	[cell.detailTextLabel setText:event.groupName];
@@ -137,26 +140,15 @@
 #pragma mark -
 #pragma mark PullRefreshTableViewController methods
 
-- (void)reloadData
-{
-	if ([self shouldReloadData])
-	{
-		[self reloadTableViewDataSource];
-	}
-}
-
 - (void)reloadTableViewDataSource
 {
-	self.eventController = [[GHEventController alloc] init];
-	eventController.delegate = self;
-	
-	[eventController fetchEvents];	
+    [eventController sendRequestForEventsWithDelegate:self];
 }
 
-- (BOOL)shouldReloadData
-{
-	return (!arrayEvents || self.lastRefreshExpired || [arrayEvents count] == 0);
-}
+//- (BOOL)shouldReloadData
+//{
+//	return (!arrayEvents || self.lastRefreshExpired || [arrayEvents count] == 0);
+//}
 
 
 #pragma mark -
@@ -165,12 +157,38 @@
 - (void)viewDidLoad 
 {
 	self.lastRefreshKey = @"EventsMainViewController_LastRefresh";
-	
+    DLog(@"");
 	[super viewDidLoad];
 	
 	self.title = @"Upcoming Events";
-	
+
+    self.eventController = [[GHEventController alloc] init];
 	self.eventDetailsViewController = [[GHEventDetailsViewController alloc] initWithNibName:nil bundle:nil];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    DLog(@"");
+	[eventController fetchEventsWithDelegate:self];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+	[super viewDidAppear:animated];
+    DLog(@"");
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    DLog(@"");
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    DLog(@"");
 }
 
 - (void)didReceiveMemoryWarning 

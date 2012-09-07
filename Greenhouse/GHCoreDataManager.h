@@ -1,5 +1,5 @@
 //
-//  Copyright 2010-2012 the original author or authors.
+//  Copyright 2012 the original author or authors.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,20 +14,24 @@
 //  limitations under the License.
 //
 //
-//  GHProfile.h
+//  GHCoreDataManager.h
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 6/11/10.
+//  Created by Roy Clarkson on 8/31/12.
 //
 
 #import <Foundation/Foundation.h>
 
-@interface GHProfile : NSObject
+@interface GHCoreDataManager : NSObject
 
-@property (nonatomic, assign, readonly) NSUInteger accountId;
-@property (nonatomic, copy, readonly) NSString *displayName;
-@property (nonatomic, strong, readonly) NSURL *imageUrl;
+@property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
+@property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
-- (id)initWithAccountId:(NSUInteger)accountId displayName:(NSString *)displayName imageUrl:(NSURL *)imageUrl;
++ (GHCoreDataManager *)sharedInstance;
+
+//- (void)createPersistentStore;
+- (void)deletePersistentStore;
+- (NSURL *)storeURL;
 
 @end

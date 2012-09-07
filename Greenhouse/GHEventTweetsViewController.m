@@ -21,14 +21,15 @@
 //
 
 #import "GHEventTweetsViewController.h"
-
+#import "GHEventController.h"
+#import "Event.h"
 
 @interface GHEventTweetsViewController()
 
-@property (nonatomic, strong) GHEvent *currentEvent;
+@property (nonatomic, strong) Event *event;
+@property (nonatomic, strong) Event *currentEvent;
 
 @end
-
 
 @implementation GHEventTweetsViewController
 
@@ -69,6 +70,21 @@
 	self.lastRefreshKey = @"EventTweetsViewController_LastRefresh";
 	
 	[super viewDidLoad];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    DLog(@"");
+    self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
+    [self refreshView];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    DLog(@"");
+    [self reloadData];
 }
 
 - (void)viewDidUnload

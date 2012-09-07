@@ -1,5 +1,5 @@
 //
-//  Copyright 2010-2012 the original author or authors.
+//  Copyright 2012 the original author or authors.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,20 +14,30 @@
 //  limitations under the License.
 //
 //
-//  GHProfile.h
+//  Event.m
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 6/11/10.
+//  Created by Roy Clarkson on 9/6/12.
 //
 
-#import <Foundation/Foundation.h>
+#import "Event.h"
+#import "EventSession.h"
+#import "Venue.h"
 
-@interface GHProfile : NSObject
 
-@property (nonatomic, assign, readonly) NSUInteger accountId;
-@property (nonatomic, copy, readonly) NSString *displayName;
-@property (nonatomic, strong, readonly) NSURL *imageUrl;
+@implementation Event
 
-- (id)initWithAccountId:(NSUInteger)accountId displayName:(NSString *)displayName imageUrl:(NSURL *)imageUrl;
+@dynamic endTime;
+@dynamic eventId;
+@dynamic groupName;
+@dynamic hashtag;
+@dynamic information;
+@dynamic location;
+@dynamic name;
+@dynamic startTime;
+@dynamic title;
+@dynamic selected;
+@dynamic venues;
+@dynamic sessions;
 
 @end

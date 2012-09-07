@@ -25,6 +25,6 @@
 #import "GHEventSessionController.h"
 
 
-@interface GHEventSessionsCurrentViewController : GHEventSessionsViewController <GHEventSessionControllerDelegate> { }
+@interface GHEventSessionsCurrentViewController : GHEventSessionsViewController <GHEventSessionControllerDelegate>
 
 @end

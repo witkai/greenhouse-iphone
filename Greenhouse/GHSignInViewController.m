@@ -88,7 +88,7 @@
              OA2AccessGrant *accessGrant = [[OA2AccessGrant alloc] initWithData:data error:&errorInternal];
              if (!errorInternal)
              {
-                 [[GHOAuth2Controller sharedInstance] storeAccessGrant:accessGrant];
+                 [GHOAuth2Controller storeAccessGrant:accessGrant];
                  [appDelegate showTabBarController];
              }
              else

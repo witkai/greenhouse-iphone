@@ -1,4 +1,65 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="Greenhouse" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1487" systemVersion="12B19" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
-    <elements/>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1487" systemVersion="12B19" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Event" representedClassName="Event" syncable="YES">
+        <attribute name="endTime" attributeType="Date" syncable="YES"/>
+        <attribute name="eventId" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="groupName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hashtag" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="information" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="location" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <attribute name="selected" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="startTime" attributeType="Date" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="sessions" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="EventSession" inverseName="event" inverseEntity="EventSession" syncable="YES"/>
+        <relationship name="venues" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Venue" inverseName="events" inverseEntity="Venue" syncable="YES"/>
+    </entity>
+    <entity name="EventSession" representedClassName="EventSession" syncable="YES">
+        <attribute name="endTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="hashtag" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="information" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isFavorite" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="leaderCount" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="leaderDisplay" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="number" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rating" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="startTime" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="event" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Event" inverseName="sessions" inverseEntity="Event" syncable="YES"/>
+        <relationship name="leaders" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="EventSessionLeader" inverseName="sessions" inverseEntity="EventSessionLeader" syncable="YES"/>
+    </entity>
+    <entity name="EventSessionLeader" representedClassName="EventSessionLeader" syncable="YES">
+        <attribute name="firstName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastName" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="sessions" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="EventSession" inverseName="leaders" inverseEntity="EventSession" syncable="YES"/>
+    </entity>
+    <entity name="Profile" representedClassName="Profile" syncable="YES">
+        <attribute name="accountId" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="displayName" attributeType="String" syncable="YES"/>
+        <attribute name="imageUrl" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Venue" representedClassName="Venue" syncable="YES">
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="locationHint" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="postalAddress" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="venueId" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="events" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Event" inverseName="venues" inverseEntity="Event" syncable="YES"/>
+        <relationship name="rooms" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="VenueRoom" inverseName="venue" inverseEntity="VenueRoom" syncable="YES"/>
+    </entity>
+    <entity name="VenueRoom" representedClassName="VenueRoom" syncable="YES">
+        <attribute name="label" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="roomId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="venueId" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="venue" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Venue" inverseName="rooms" inverseEntity="Venue" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Event" positionX="-2502" positionY="-1035" width="128" height="193"/>
+        <element name="Profile" positionX="-1874" positionY="-846" width="128" height="90"/>
+        <element name="Venue" positionX="-2520" positionY="-738" width="128" height="163"/>
+        <element name="VenueRoom" positionX="-2286" positionY="-738" width="128" height="103"/>
+        <element name="EventSession" positionX="-2250" positionY="-1035" width="128" height="223"/>
+        <element name="EventSessionLeader" positionX="-2007" positionY="-1026" width="128" height="88"/>
+    </elements>
 </model>

@@ -21,6 +21,7 @@
 //
 
 #import "GHEventSessionsViewController.h"
+#import "GHEventController.h"
 
 
 @implementation GHEventSessionsViewController
@@ -30,13 +31,13 @@
 @synthesize currentEvent;
 @synthesize sessionDetailsViewController;
 
-- (GHEventSession *)eventSessionForIndexPath:(NSIndexPath *)indexPath
+- (EventSession *)eventSessionForIndexPath:(NSIndexPath *)indexPath
 {
-	GHEventSession *session = nil;
+    EventSession *session = nil;
 	
 	@try 
 	{
-		session = (GHEventSession *)[self.arraySessions objectAtIndex:indexPath.row];
+		session = [self.arraySessions objectAtIndex:indexPath.row];
 	}
 	@catch (NSException * e) 
 	{
@@ -61,8 +62,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	self.sessionDetailsViewController.event = self.event;
-	self.sessionDetailsViewController.session = [self eventSessionForIndexPath:indexPath];
+//	self.sessionDetailsViewController.session = [self eventSessionForIndexPath:indexPath];
 	[self.navigationController pushViewController:self.sessionDetailsViewController animated:YES];
 }
 
@@ -70,7 +70,7 @@
 {
 	CGFloat height = 44.0f;
 	
-	GHEventSession *session = [self eventSessionForIndexPath:indexPath];
+	EventSession *session = [self eventSessionForIndexPath:indexPath];
 		
 	if (session)
 	{
@@ -120,7 +120,7 @@
 		[cell.textLabel setNumberOfLines:0];		
 	}
 	
-	GHEventSession *session = [self eventSessionForIndexPath:indexPath];
+	EventSession *session = [self eventSessionForIndexPath:indexPath];
 	
 	if (session)
 	{
@@ -144,33 +144,21 @@
 }
 
 
-#pragma mark -
-#pragma mark PullRefreshTableViewController methods
-
-- (void)refreshView
-{
-	if (![self.currentEvent.eventId isEqualToString:self.event.eventId])
-	{
-		self.arraySessions = nil;
-		
-		[self.tableView reloadData];
-	}
-	
-	self.currentEvent = event;
-}
-
-- (void)reloadData
-{
-	if (self.shouldReloadData)
-	{
-		[self reloadTableViewDataSource];
-	}
-}
-
-- (BOOL)shouldReloadData
-{
-	return (!arraySessions || self.lastRefreshExpired);
-}
+//#pragma mark -
+//#pragma mark PullRefreshTableViewController methods
+//
+//- (void)reloadData
+//{
+//	if (self.shouldReloadData)
+//	{
+//		[self reloadTableViewDataSource];
+//	}
+//}
+//
+//- (BOOL)shouldReloadData
+//{
+//	return (!arraySessions || self.lastRefreshExpired);
+//}
 
 
 #pragma mark -
@@ -183,9 +171,23 @@
 	self.sessionDetailsViewController = [[GHEventSessionDetailsViewController alloc] initWithNibName:nil bundle:nil];
 }
 
-- (void)didReceiveMemoryWarning 
+- (void)viewWillAppear:(BOOL)animated
 {
-    [super didReceiveMemoryWarning];
+    [super viewWillAppear:animated];
+    DLog(@"");
+    self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
+    if (![self.currentEvent.eventId isEqualToString:self.event.eventId])
+	{
+		self.arraySessions = nil;
+		[self.tableView reloadData];
+	}
+	self.currentEvent = event;
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    DLog(@"");
 }
 
 - (void)viewDidUnload 

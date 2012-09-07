@@ -33,18 +33,23 @@
 - (void)fetchCurrentSessionsByEventId:(NSString *)eventId;
 - (void)fetchCurrentSessionsDidFinishWithData:(NSData *)data;
 - (void)fetchCurrentSessionsDidFailWithError:(NSError *)error;
-- (void)fetchSessionsByEventId:(NSString *)eventId withDate:(NSDate *)eventDate;
-- (void)fetchSessionsDidFinishWithData:(NSData *)data;
+
+- (void)fetchSessionsWithEventId:(NSString *)eventId date:(NSDate *)eventDate;
+- (void)fetchSessionsDidFinishWithResults:(NSArray *)sessions;
 - (void)fetchSessionsDidFailWithError:(NSError *)error;
+
 - (void)fetchFavoriteSessionsByEventId:(NSString *)eventId;
 - (void)fetchFavoriteSessionsDidFinishWithData:(NSData *)data;
 - (void)fetchFavoriteSessionsDidFailWithError:(NSError *)error;
+
 - (void)fetchConferenceFavoriteSessionsByEventId:(NSString *)eventId;
 - (void)fetchConferenceFavoriteSessionsDidFinishWithData:(NSData *)data;
 - (void)fetchConferenceFavoriteSessionsDidFailWithError:(NSError *)error;
+
 - (void)updateFavoriteSession:(NSString *)sessionNumber withEventId:(NSString *)eventId;
 - (void)updateFavoriteSessionDidFinishWithData:(NSData *)data;
 - (void)updateFavoriteSessionDidFailWithError:(NSError *)error;
+
 - (void)rateSession:(NSString *)sessionNumber withEventId:(NSString *)eventId rating:(NSInteger)rating comment:(NSString *)comment;
 - (void)rateSessionDidFinishWithData:(NSData *)data;
 - (void)rateSessionDidFailWithError:(NSError *)error;
