@@ -27,8 +27,6 @@
 
 @property (nonatomic, strong) GHEventSessionController *eventSessionController;
 
-- (void)completeFetchConferenceFavoriteSessions:(NSArray *)sessions;
-
 @end
 
 
@@ -36,38 +34,33 @@
 
 @synthesize eventSessionController;
 
-- (void)completeFetchConferenceFavoriteSessions:(NSArray *)sessions
-{
-	self.eventSessionController = nil;
-	self.arraySessions = sessions;
-	[self.tableView reloadData];
-	[self dataSourceDidFinishLoadingNewData];
-}
 
 #pragma mark -
 #pragma mark EventSessionControllerDelegate methods
 
 - (void)fetchConferenceFavoriteSessionsDidFinishWithResults:(NSArray *)sessions
 {
-	[self completeFetchConferenceFavoriteSessions:sessions];
+	self.arraySessions = sessions;
+	[self.tableView reloadData];
+	[self dataSourceDidFinishLoadingNewData];
 }
 
 - (void)fetchConferenceFavoriteSessionsDidFailWithError:(NSError *)error
 {
-	NSArray *array = [[NSArray alloc] init];
-	[self completeFetchConferenceFavoriteSessions:array];
+	NSArray *emptyarray = [[NSArray alloc] init];
+	self.arraySessions = emptyarray;
+	[self.tableView reloadData];
+	[self dataSourceDidFinishLoadingNewData];
 }
 
 
 #pragma mark -
 #pragma mark DataViewController methods
 
-- (void)reloadTableViewDataSource
-{
-	self.eventSessionController = [[GHEventSessionController alloc] init];
-	eventSessionController.delegate = self;	
-	[eventSessionController fetchConferenceFavoriteSessionsByEventId:self.event.eventId];
-}
+//- (void)reloadTableViewDataSource
+//{
+//	[eventSessionController fetchConferenceFavoriteSessionsByEventId:self.event.eventId delegate self];
+//}
 
 
 #pragma mark -
@@ -80,6 +73,14 @@
     [super viewDidLoad];
 	
 	self.title = @"Conference Favorites";
+	self.eventSessionController = [[GHEventSessionController alloc] init];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+	[eventSessionController fetchConferenceFavoriteSessionsByEventId:self.event.eventId delegate:self];
 }
 
 - (void)didReceiveMemoryWarning 

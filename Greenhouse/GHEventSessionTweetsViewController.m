@@ -21,11 +21,13 @@
 //
 
 #import "GHEventSessionTweetsViewController.h"
+#import "GHEventController.h"
+#import "GHEventSessionController.h"
 
 
 @interface GHEventSessionTweetsViewController()
 
-@property (nonatomic, strong) GHEventSession *currentSession;
+@property (nonatomic, strong) EventSession *currentSession;
 
 @end
 
@@ -39,9 +41,49 @@
 #pragma mark -
 #pragma mark PullRefreshTableViewController methods
 
-- (void)refreshView
+//- (void)refreshView
+//{
+//	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSION_TWEETS_URL, event.eventId, session.number];
+//	NSURL *url = [[NSURL alloc] initWithString:urlString];
+//	self.tweetUrl = url;
+//	self.tweetViewController.tweetUrl = url;
+//	
+//	NSString *tweetText = [[NSString alloc] initWithFormat:@"%@ %@", event.hashtag, session.hashtag];
+//	self.tweetViewController.tweetText = tweetText;
+//	
+//	urlString = [[NSString alloc] initWithFormat:EVENT_SESSION_RETWEET_URL, event.eventId, session.number];
+//	url = [[NSURL alloc] initWithString:urlString];
+//	self.retweetUrl = url;
+//	
+//	if (![currentSession.number isEqualToString:session.number])
+//	{
+//		self.isLoading = YES;
+//		[self.arrayTweets removeAllObjects];
+//		[self.tableView reloadData];
+//	}
+//	
+//	self.currentSession = session;
+//}
+
+
+#pragma mark -
+#pragma mark UIViewController methods
+
+- (void)viewDidLoad
 {
-	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSION_TWEETS_URL, event.eventId, session.number];
+	self.lastRefreshKey = @"EventSessionTweetsViewController_LastRefresh";
+	
+	[super viewDidLoad];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
+    self.session = [[GHEventSessionController sharedInstance] fetchSelectedSession];
+    
+    NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSION_TWEETS_URL, event.eventId, session.number];
 	NSURL *url = [[NSURL alloc] initWithString:urlString];
 	self.tweetUrl = url;
 	self.tweetViewController.tweetUrl = url;
@@ -61,17 +103,6 @@
 	}
 	
 	self.currentSession = session;
-}
-
-
-#pragma mark -
-#pragma mark UIViewController methods
-
-- (void)viewDidLoad
-{
-	self.lastRefreshKey = @"EventSessionTweetsViewController_LastRefresh";
-	
-	[super viewDidLoad];
 }
 
 - (void)viewDidUnload

@@ -21,8 +21,10 @@
 //
 
 #import "GHEventSessionRateViewController.h"
-#import "GHEvent.h"
-#import "GHEventSession.h"
+#import "Event.h"
+#import "EventSession.h"
+#import "GHEventController.h"
+#import "GHEventSessionController.h"
 #import "GHEventSessionDetailsViewController.h"
 
 #define MAX_MESSAGE_SIZE	140
@@ -30,7 +32,6 @@
 
 @interface GHEventSessionRateViewController()
 
-@property (nonatomic, strong) GHEventSessionController *eventSessionController;
 @property (nonatomic, assign) NSUInteger rating;
 
 - (void)updateRatingButtons:(NSInteger)count;
@@ -41,7 +42,6 @@
 
 @implementation GHEventSessionRateViewController
 
-@synthesize eventSessionController;
 @synthesize rating;
 @synthesize event;
 @synthesize session;
@@ -73,10 +73,7 @@
 
 - (IBAction)actionSubmit:(id)sender
 {
-	self.eventSessionController = [[GHEventSessionController alloc] init];
-	eventSessionController.delegate = self;
-	
-	[eventSessionController rateSession:session.number withEventId:event.eventId rating:rating comment:textViewComments.text];
+	[[GHEventSessionController sharedInstance] rateSession:session.number withEventId:event.eventId rating:rating comment:textViewComments.text delegate:self];
 }
 
 
@@ -173,17 +170,14 @@
 
 - (void)rateSessionDidFinishWithResults:(double)newRating
 {
-	self.eventSessionController = nil;
-	
-	session.rating = newRating;
+	session.rating = [NSNumber numberWithDouble:newRating];
 	[sessionDetailsViewController updateRating:newRating];
-	
 	[self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)rateSessionDidFailWithError:(NSError *)error
 {
-	self.eventSessionController = nil;
+
 }
 
 
@@ -192,12 +186,15 @@
 
 - (void)viewDidLoad 
 {
-    [super viewDidLoad];	
+    [super viewDidLoad];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
+    
+    self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
+    self.session = [[GHEventSessionController sharedInstance] fetchSelectedSession];
 	
 	textViewComments.text = @"";
 	[self updateCharacterCount:0];
@@ -212,16 +209,10 @@
 	[super viewDidAppear:animated];	
 }
 
-- (void)didReceiveMemoryWarning 
-{
-    [super didReceiveMemoryWarning];
-}
-
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
 	
-	self.eventSessionController = nil;
 	self.event = nil;
 	self.sessionDetailsViewController = nil;
 	self.session = nil;

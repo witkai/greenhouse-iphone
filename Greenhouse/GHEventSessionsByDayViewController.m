@@ -25,35 +25,30 @@
 
 @interface GHEventSessionsByDayViewController()
 
-@property (nonatomic, strong) GHEventSessionController *eventSessionController;
 @property (nonatomic, strong) NSArray *arrayTimes;
 @property (nonatomic, strong) NSDate *currentEventDate;
-
-- (void)completeFetchSessions:(NSArray *)sessions andTimes:(NSArray *)times;
 
 @end
 
 
 @implementation GHEventSessionsByDayViewController
 
-@synthesize eventSessionController;
 @synthesize arrayTimes;
 @synthesize currentEventDate;
 @synthesize eventDate;
 
-- (GHEventSession *)eventSessionForIndexPath:(NSIndexPath *)indexPath
+- (EventSession *)eventSessionForIndexPath:(NSIndexPath *)indexPath
 {
-	GHEventSession *session = nil;
+	EventSession *session = nil;
 	
 	@try 
 	{
 		NSArray *array = (NSArray *)[self.arraySessions objectAtIndex:indexPath.section];
-		session = (GHEventSession *)[array objectAtIndex:indexPath.row];
+		session = (EventSession *)[array objectAtIndex:indexPath.row];
 	}
 	@catch (NSException * e) 
 	{
 		DLog(@"%@", [e reason]);
-		session = nil;
 	}
 	@finally 
 	{
@@ -61,28 +56,50 @@
 	}
 }
 
-- (void)completeFetchSessions:(NSArray *)sessions andTimes:(NSArray *)times
-{
-	self.eventSessionController = nil;
-	self.arraySessions = sessions;
+
+#pragma mark -
+#pragma mark EventSessionsByDateDelegate methods
+
+- (void)fetchSessionsByDateDidFinishWithResults:(NSArray *)sessions
+{    
+    NSMutableArray *timeBlocks = [[NSMutableArray alloc] init];
+	NSMutableArray *times = [[NSMutableArray alloc] init];
+    NSMutableArray *timeBlock = nil;
+    NSDate *sessionTime = [NSDate distantPast];
+    
+    for (EventSession *session in sessions)
+    {
+        // for each time block create an array to hold the sessions for that block
+        if ([sessionTime compare:session.startTime] == NSOrderedAscending)
+        {
+            timeBlock = [[NSMutableArray alloc] init];
+            [timeBlocks addObject:timeBlock];
+            [timeBlock addObject:session];
+            
+            NSDate *date = [session.startTime copy];
+            [times addObject:date];
+        }
+        else if ([sessionTime compare:session.startTime] == NSOrderedSame)
+        {
+            [timeBlock addObject:session];
+        }
+        
+        sessionTime = session.startTime;
+    }
+    
+	self.arraySessions = timeBlocks;
 	self.arrayTimes = times;
 	[self.tableView reloadData];
 	[self dataSourceDidFinishLoadingNewData];
 }
 
-
-#pragma mark -
-#pragma mark EventSessionControllerDelegate methods
-
-- (void)fetchSessionsByDateDidFinishWithResults:(NSArray *)sessions andTimes:(NSArray *)times
-{
-	[self completeFetchSessions:sessions andTimes:times];
-}
-
 - (void)fetchSessionsByDateDidFailWithError:(NSError *)error
 {
-	NSArray *array = [[NSArray alloc] init];
-	[self completeFetchSessions:array andTimes:array];
+	NSArray *emptyArray = [[NSArray alloc] init];
+	self.arraySessions = emptyArray;
+	self.arrayTimes = emptyArray;
+	[self.tableView reloadData];
+	[self dataSourceDidFinishLoadingNewData];
 }
 
 
@@ -116,18 +133,17 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-	NSString *s = nil;
-	
+	NSString *sectionTitle = nil;
 	if (arrayTimes)
 	{
 		NSDate *sessionTime = (NSDate *)[arrayTimes objectAtIndex:section];
 		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 		[dateFormatter setDateFormat:@"h:mm a"];
 		NSString *dateString = [dateFormatter stringFromDate:sessionTime];
-		s = dateString;
+		sectionTitle = dateString;
 	}
 	
-	return s;
+	return sectionTitle;
 }
 
 
@@ -158,14 +174,11 @@
 //{
 //	return (self.arraySessions == nil || arrayTimes == nil || self.lastRefreshExpired);
 //}
-//
-//- (void)reloadTableViewDataSource
-//{
-//	self.eventSessionController = [[GHEventSessionController alloc] init];
-//	eventSessionController.delegate = self;
-//	
-//	[eventSessionController fetchSessionsWithEventId:self.event.eventId date:eventDate];
-//}
+
+- (void)reloadTableViewDataSource
+{
+    [[GHEventSessionController sharedInstance] sendRequestForSessionsWithEventId:self.event.eventId date:eventDate delegate:self];
+}
 
 
 #pragma mark -
@@ -182,45 +195,31 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    self.arrayTimes = nil;
+    
     [super viewWillAppear:animated];
     DLog(@"");
+    
     // set the title of the view to the schedule day
 	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 	[dateFormatter setDateFormat:@"EEEE"];
 	NSString *dateString = [dateFormatter stringFromDate:eventDate];
 	self.title = dateString;
-	
-	if (![self.currentEvent.eventId isEqualToString:self.event.eventId] ||
-		[currentEventDate compare:eventDate] != NSOrderedSame)
-	{
-		self.arraySessions = nil;
-		self.arrayTimes = nil;
-		[self.tableView reloadData];
-	}
-	
-	self.currentEvent = self.event;
-	self.currentEventDate = eventDate;
+
+    // fetch fresh data
+    [[GHEventSessionController sharedInstance] fetchSessionsWithEventId:self.event.eventId date:eventDate delegate:self];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     DLog(@"");
-    self.eventSessionController = [[GHEventSessionController alloc] init];
-	eventSessionController.delegate = self;
-	[eventSessionController fetchSessionsWithEventId:self.event.eventId date:eventDate];
-}
-
-- (void)didReceiveMemoryWarning 
-{
-    [super didReceiveMemoryWarning];
 }
 
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
 	
-	self.eventSessionController = nil;
 	self.arrayTimes = nil;
 	self.currentEventDate = nil;
 	self.eventDate = nil;

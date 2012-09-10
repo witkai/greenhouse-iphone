@@ -21,21 +21,13 @@
 //
 
 #import "GHEventSessionDescriptionViewController.h"
+#import "GHEventSessionController.h"
 
 
 @implementation GHEventSessionDescriptionViewController
 
 @synthesize session;
 @synthesize textViewDescription;
-
-
-#pragma mark -
-#pragma mark DataViewController methods
-
-- (void)refreshView
-{
-	textViewDescription.text = session.description;
-}
 
 
 #pragma mark -
@@ -50,9 +42,12 @@
 	textViewDescription.editable = NO;
 }
 
-- (void)didReceiveMemoryWarning 
+- (void)viewWillAppear:(BOOL)animated
 {
-    [super didReceiveMemoryWarning];
+    [super viewWillAppear:animated];
+    
+    self.session = [[GHEventSessionController sharedInstance] fetchSelectedSession];
+    textViewDescription.text = session.information;
 }
 
 - (void)viewDidUnload 

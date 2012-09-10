@@ -21,13 +21,12 @@
 //
 
 #import "GHEventSessionsFavoritesViewController.h"
+#import "GHEventSessionController.h"
 
 
-@interface GHEventSessionsFavoritesViewController()
+@interface GHEventSessionsFavoritesViewController ()
 
 @property (nonatomic, strong) GHEventSessionController *eventSessionController;
-
-- (void)completeFetchFavoriteSessions:(NSArray *)sessions;
 
 @end
 
@@ -36,43 +35,37 @@
 
 @synthesize eventSessionController;
 
-- (void)completeFetchFavoriteSessions:(NSArray *)sessions
-{
-	self.eventSessionController = nil;
-	self.arraySessions = sessions;
-	[self.tableView reloadData];
-	[self dataSourceDidFinishLoadingNewData];
-}
 
 #pragma mark -
 #pragma mark EventSessionControllerDelegate methods
 
 - (void)fetchFavoriteSessionsDidFinishWithResults:(NSArray *)sessions
 {
-	[self completeFetchFavoriteSessions:sessions];
+    self.arraySessions = sessions;
+	[self.tableView reloadData];
+	[self dataSourceDidFinishLoadingNewData];
 }
 
 - (void)fetchFavoriteSessionsDidFailWithError:(NSError *)error
 {
-	NSArray *array = [[NSArray alloc] init];
-	[self completeFetchFavoriteSessions:array];
+	NSArray *emptyarray = [[NSArray alloc] init];
+    self.arraySessions = emptyarray;
+	[self.tableView reloadData];
+	[self dataSourceDidFinishLoadingNewData];
 }
 
 #pragma mark -
 #pragma mark PullRefreshTableViewController methods
 
-- (BOOL)shouldReloadData
-{
-	return (!self.arraySessions || self.lastRefreshExpired || [GHEventSessionController shouldRefreshFavorites]);
-}
+//- (BOOL)shouldReloadData
+//{
+//	return (!self.arraySessions || self.lastRefreshExpired || [GHEventSessionController shouldRefreshFavorites]);
+//}
 
-- (void)reloadTableViewDataSource
-{
-	self.eventSessionController = [[GHEventSessionController alloc] init];
-	eventSessionController.delegate = self;
-	
-	[eventSessionController fetchFavoriteSessionsByEventId:self.event.eventId];
-}
+//- (void)reloadTableViewDataSource
+//{
+//	[eventSessionController fetchFavoriteSessionsWithEventId:self.event.eventId delegate:self];
+//}
 
 
 #pragma mark -
@@ -85,6 +78,14 @@
     [super viewDidLoad];
 	
 	self.title = @"My Favorites";
+    self.eventSessionController = [[GHEventSessionController alloc] init];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+   	[eventSessionController fetchFavoriteSessionsWithEventId:self.event.eventId delegate:self];
 }
 
 - (void)didReceiveMemoryWarning 

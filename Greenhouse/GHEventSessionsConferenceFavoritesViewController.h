@@ -25,6 +25,6 @@
 #import "GHEventSessionController.h"
 
 
-@interface GHEventSessionsConferenceFavoritesViewController : GHEventSessionsViewController <GHEventSessionControllerDelegate>
+@interface GHEventSessionsConferenceFavoritesViewController : GHEventSessionsViewController <GHEventSessionsConferenceFavoritesDelegate>
 
 @end

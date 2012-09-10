@@ -18,6 +18,8 @@
 		818BD9D415DCBF0C00BD7842 /* GHURLRequestParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 818BD9D315DCBF0C00BD7842 /* GHURLRequestParameters.m */; };
 		818C666115D95A1700594B97 /* NSDictionary_HelpersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 818C666015D95A1700594B97 /* NSDictionary_HelpersTests.m */; };
 		818C666215D95C6600594B97 /* NSDictionary+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42DE015ADE82F001FA72D /* NSDictionary+Helpers.m */; };
+		818F217415FDA7330003B72C /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 818F217315FDA7320003B72C /* Event.m */; };
+		818F217715FDA74E0003B72C /* EventSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 818F217615FDA74D0003B72C /* EventSession.m */; };
 		81963AE015E2B88B002C1BC6 /* GHKeychainManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 81963ADF15E2B88B002C1BC6 /* GHKeychainManager.m */; };
 		81963AE515E3E59E002C1BC6 /* GHServiceValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 81963AE315E3D95F002C1BC6 /* GHServiceValidator.m */; };
 		81963AE615E3EBF4002C1BC6 /* OA2AccessGrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 8196752515DD7B820056A806 /* OA2AccessGrant.m */; };
@@ -62,8 +64,6 @@
 		81CFAA5415F7F26000661D68 /* VenueRoom.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CFAA5315F7F25F00661D68 /* VenueRoom.m */; };
 		81CFAA5715F7F31700661D68 /* Profile.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CFAA5615F7F31600661D68 /* Profile.m */; };
 		81CFAA6015F9077C00661D68 /* EventSessionLeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CFAA5F15F9077800661D68 /* EventSessionLeader.m */; };
-		81CFAA6615F9247D00661D68 /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CFAA6515F9247A00661D68 /* Event.m */; };
-		81CFAA6915F9250500661D68 /* EventSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CFAA6815F9250100661D68 /* EventSession.m */; };
 		81E2BDE615EFB3DB00BFBDE0 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28860BE40F44EE6400985440 /* CoreData.framework */; };
 		81E2BDE715EFB3E000BFBDE0 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28860BE40F44EE6400985440 /* CoreData.framework */; };
 		81E2BDEA15EFB78000BFBDE0 /* Greenhouse.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 81E2BDE815EFB78000BFBDE0 /* Greenhouse.xcdatamodeld */; };
@@ -202,6 +202,14 @@
 		818BD9D315DCBF0C00BD7842 /* GHURLRequestParameters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHURLRequestParameters.m; sourceTree = "<group>"; };
 		818C665F15D95A1700594B97 /* NSDictionary_HelpersTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDictionary_HelpersTests.h; sourceTree = "<group>"; };
 		818C666015D95A1700594B97 /* NSDictionary_HelpersTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDictionary_HelpersTests.m; sourceTree = "<group>"; };
+		818F216D15FD960A0003B72C /* GHEventSessionUpdateFavoriteDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventSessionUpdateFavoriteDelegate.h; sourceTree = "<group>"; };
+		818F216F15FD98F90003B72C /* GHEventSessionRateDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventSessionRateDelegate.h; sourceTree = "<group>"; };
+		818F217015FD9A8F0003B72C /* GHEventSessionsFavoritesDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventSessionsFavoritesDelegate.h; sourceTree = "<group>"; };
+		818F217115FD9ADA0003B72C /* GHEventSessionsConferenceFavoritesDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventSessionsConferenceFavoritesDelegate.h; sourceTree = "<group>"; };
+		818F217215FDA7320003B72C /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
+		818F217315FDA7320003B72C /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Event.m; sourceTree = "<group>"; };
+		818F217515FDA74D0003B72C /* EventSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSession.h; sourceTree = "<group>"; };
+		818F217615FDA74D0003B72C /* EventSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventSession.m; sourceTree = "<group>"; };
 		81963ADE15E2B88B002C1BC6 /* GHKeychainManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHKeychainManager.h; sourceTree = "<group>"; };
 		81963ADF15E2B88B002C1BC6 /* GHKeychainManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHKeychainManager.m; sourceTree = "<group>"; };
 		81963AE215E3D95F002C1BC6 /* GHServiceValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GHServiceValidator.h; path = ../GreenhouseLogicTests/GHServiceValidator.h; sourceTree = "<group>"; };
@@ -252,10 +260,8 @@
 		81CFAA5615F7F31600661D68 /* Profile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Profile.m; sourceTree = "<group>"; };
 		81CFAA5E15F9077500661D68 /* EventSessionLeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSessionLeader.h; sourceTree = "<group>"; };
 		81CFAA5F15F9077800661D68 /* EventSessionLeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventSessionLeader.m; sourceTree = "<group>"; };
-		81CFAA6415F9247700661D68 /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
-		81CFAA6515F9247A00661D68 /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Event.m; sourceTree = "<group>"; };
-		81CFAA6715F924FE00661D68 /* EventSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSession.h; sourceTree = "<group>"; };
-		81CFAA6815F9250100661D68 /* EventSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventSession.m; sourceTree = "<group>"; };
+		81CFAA6D15FD783000661D68 /* GHEventSessionsByDateDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventSessionsByDateDelegate.h; sourceTree = "<group>"; };
+		81CFAA6E15FD884400661D68 /* GHEventSessionsCurrentDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventSessionsCurrentDelegate.h; sourceTree = "<group>"; };
 		81E2BDE915EFB78000BFBDE0 /* Greenhouse.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Greenhouse.xcdatamodel; sourceTree = "<group>"; };
 		81E42D5E15ADE82F001FA72D /* GHActivityAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHActivityAlertView.h; sourceTree = "<group>"; };
 		81E42D5F15ADE82F001FA72D /* GHActivityAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHActivityAlertView.m; sourceTree = "<group>"; };
@@ -318,7 +324,6 @@
 		81E42DAB15ADE82F001FA72D /* GHEventSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHEventSession.m; sourceTree = "<group>"; };
 		81E42DAC15ADE82F001FA72D /* GHEventSessionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventSessionController.h; sourceTree = "<group>"; };
 		81E42DAD15ADE82F001FA72D /* GHEventSessionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHEventSessionController.m; sourceTree = "<group>"; };
-		81E42DAE15ADE82F001FA72D /* GHEventSessionControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventSessionControllerDelegate.h; sourceTree = "<group>"; };
 		81E42DAF15ADE82F001FA72D /* GHEventSessionDescriptionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventSessionDescriptionViewController.h; sourceTree = "<group>"; };
 		81E42DB015ADE82F001FA72D /* GHEventSessionDescriptionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHEventSessionDescriptionViewController.m; sourceTree = "<group>"; };
 		81E42DB115ADE82F001FA72D /* GHEventSessionDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventSessionDetailsViewController.h; sourceTree = "<group>"; };
@@ -585,11 +590,11 @@
 			children = (
 				81E42DCD15ADE82F001FA72D /* GreenhouseAppDelegate.h */,
 				81E42DCE15ADE82F001FA72D /* GreenhouseAppDelegate.m */,
+				818F217215FDA7320003B72C /* Event.h */,
+				818F217315FDA7320003B72C /* Event.m */,
+				818F217515FDA74D0003B72C /* EventSession.h */,
+				818F217615FDA74D0003B72C /* EventSession.m */,
 				81E2BDE815EFB78000BFBDE0 /* Greenhouse.xcdatamodeld */,
-				81CFAA6715F924FE00661D68 /* EventSession.h */,
-				81CFAA6815F9250100661D68 /* EventSession.m */,
-				81CFAA6415F9247700661D68 /* Event.h */,
-				81CFAA6515F9247A00661D68 /* Event.m */,
 				81CFAA5E15F9077500661D68 /* EventSessionLeader.h */,
 				81CFAA5F15F9077800661D68 /* EventSessionLeader.m */,
 				81CFAA5515F7F31500661D68 /* Profile.h */,
@@ -824,7 +829,12 @@
 				81E42DA315ADE82F001FA72D /* GHEventControllerDelegate.h */,
 				81E42DAC15ADE82F001FA72D /* GHEventSessionController.h */,
 				81E42DAD15ADE82F001FA72D /* GHEventSessionController.m */,
-				81E42DAE15ADE82F001FA72D /* GHEventSessionControllerDelegate.h */,
+				81CFAA6D15FD783000661D68 /* GHEventSessionsByDateDelegate.h */,
+				81CFAA6E15FD884400661D68 /* GHEventSessionsCurrentDelegate.h */,
+				818F216D15FD960A0003B72C /* GHEventSessionUpdateFavoriteDelegate.h */,
+				818F216F15FD98F90003B72C /* GHEventSessionRateDelegate.h */,
+				818F217015FD9A8F0003B72C /* GHEventSessionsFavoritesDelegate.h */,
+				818F217115FD9ADA0003B72C /* GHEventSessionsConferenceFavoritesDelegate.h */,
 				81E42DDB15ADE82F001FA72D /* GHLocationManagerDelegate.h */,
 				81A2492615DA948600C84332 /* GHOAuth2Controller.h */,
 				81A2492715DA948600C84332 /* GHOAuth2Controller.m */,
@@ -1144,8 +1154,8 @@
 				81CFAA5415F7F26000661D68 /* VenueRoom.m in Sources */,
 				81CFAA5715F7F31700661D68 /* Profile.m in Sources */,
 				81CFAA6015F9077C00661D68 /* EventSessionLeader.m in Sources */,
-				81CFAA6615F9247D00661D68 /* Event.m in Sources */,
-				81CFAA6915F9250500661D68 /* EventSession.m in Sources */,
+				818F217415FDA7330003B72C /* Event.m in Sources */,
+				818F217715FDA74E0003B72C /* EventSession.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

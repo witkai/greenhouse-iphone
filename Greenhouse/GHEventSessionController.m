@@ -23,20 +23,26 @@
 #import "GHEventSessionController.h"
 #import "GHCoreDataManager.h"
 #import "GHEventController.h"
-#import "GHEventSession.h"
 #import "Event.h"
-#import "EventSession.h"
 #import "EventSessionLeader.h"
 
 static BOOL sharedShouldRefreshFavorites;
 
 @implementation GHEventSessionController
 
-@synthesize delegate;
-
 
 #pragma mark -
 #pragma mark Static methods
+
++ (GHEventSessionController *)sharedInstance
+{
+    static GHEventSessionController *_sharedInstance = nil;
+    static dispatch_once_t predicate;
+    dispatch_once(&predicate, ^{
+        _sharedInstance = [[GHEventSessionController alloc] init];
+    });
+    return _sharedInstance;
+}
 
 + (BOOL)shouldRefreshFavorites
 {	
@@ -45,14 +51,29 @@ static BOOL sharedShouldRefreshFavorites;
 
 
 #pragma mark -
-#pragma mark Instance methods
+#pragma mark Fetch Current Sessions With Id
 
-- (void)fetchCurrentSessionsByEventId:(NSString *)eventId;
+- (void)fetchCurrentSessionsWithEventId:(NSString *)eventId delegate:(id<GHEventSessionsCurrentDelegate>)delegate
+{
+    NSPredicate *predicate = [self predicateWithEventId:eventId date:[NSDate date]];
+    NSArray *sessions = [self fetchSessionsWithPredicate:predicate];
+    if (sessions.count > 0)
+    {
+        [delegate fetchCurrentSessionsDidFinishWithResults:sessions];
+    }
+    else
+    {
+        [self sendRequestForCurrentSessionsWithEventId:eventId delegate:delegate];
+    }
+}
+
+- (void)sendRequestForCurrentSessionsWithEventId:(NSString *)eventId delegate:(id<GHEventSessionsCurrentDelegate>)delegate
 {
 	// request the sessions for the current day
 	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 	[dateFormatter setDateFormat:@"YYYY-MM-d"];
-	NSString *dateString = [dateFormatter stringFromDate:[NSDate date]];
+    NSDate *now = [NSDate date];
+	NSString *dateString = [dateFormatter stringFromDate:now];
 	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSIONS_BY_DAY_URL, eventId, dateString];
 	NSURL *url = [[NSURL alloc] initWithString:urlString];
 	
@@ -68,11 +89,21 @@ static BOOL sharedShouldRefreshFavorites;
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
          if (statusCode == 200 && data.length > 0 && error == nil)
          {
-             [self fetchCurrentSessionsDidFinishWithData:data];
+             DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+             NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+             NSArray *sessions = nil;
+             if (!error)
+             {
+                 [self deleteSessionsWithEventId:eventId date:now];
+                 [self storeSessionsWithEventId:eventId json:jsonArray];
+                 NSPredicate *predicate = [self predicateWithEventId:eventId date:now];
+                 sessions = [self fetchSessionsWithPredicate:predicate];
+             }
+             [delegate fetchCurrentSessionsDidFinishWithResults:sessions];
          }
          else if (error)
          {
-             [self fetchCurrentSessionsDidFailWithError:error];
+             [delegate fetchCurrentSessionsDidFailWithError:error];
          }
          else if (statusCode != 200)
          {
@@ -81,118 +112,78 @@ static BOOL sharedShouldRefreshFavorites;
      }];
 }
 
-- (void)fetchCurrentSessionsDidFinishWithData:(NSData *)data
-{
-	DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-	
-	NSMutableArray *arrayCurrentSessions = [[NSMutableArray alloc] init];
-	NSMutableArray *arrayUpcomingSessions = [[NSMutableArray alloc] init];
-    
-    NSError *error;
-    NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-    
-    if (!error)
-    {
-        DLog(@"%@", jsonArray);
-        
-        NSDate *nextStartTime = nil;
-        NSDate *now = [NSDate date];
-        DLog(@"%@", now.description);
-        
-        for (NSDictionary *d in jsonArray)
-        {
-            GHEventSession *session = [[GHEventSession alloc] initWithDictionary:d];
-            DLog(@"%@ - %@", [session.startTime description], [session.endTime description]);
-            
-            if ([now compare:session.startTime] == NSOrderedDescending &&
-                [now compare:session.endTime] == NSOrderedAscending)
-            {
-                // find the sessions that are happening now
-                [arrayCurrentSessions addObject:session];
-            }
-            else if ([now compare:session.startTime] == NSOrderedAscending)
-            {
-                // determine the start time of the next block of sessions
-                if (nextStartTime == nil)
-                {
-                    nextStartTime = session.startTime;
-                }
-                
-                if ([nextStartTime compare:session.startTime] == NSOrderedSame)
-                {
-                    // only show the sessions occurring in the next block
-                    [arrayUpcomingSessions addObject:session];
-                }
-            }
-        }
-    }
+//- (void)fetchCurrentSessionsDidFinishWithResults:(NSArray *)sessions
+//{	
+//	NSMutableArray *currentSessions = [[NSMutableArray alloc] init];
+//	NSMutableArray *upcomingSessions = [[NSMutableArray alloc] init];
+//   
+//    NSDate *nextStartTime = nil;
+//    NSDate *now = [NSDate date];
+//    DLog(@"%@", now.description);
+//    
+//    for (EventSession *session in sessions)
+//    {
+//        DLog(@"%@ - %@", [session.startTime description], [session.endTime description]);
+//        
+//        if ([now compare:session.startTime] == NSOrderedDescending &&
+//            [now compare:session.endTime] == NSOrderedAscending)
+//        {
+//            // find the sessions that are happening now
+//            [currentSessions addObject:session];
+//        }
+//        else if ([now compare:session.startTime] == NSOrderedAscending)
+//        {
+//            // determine the start time of the next block of sessions
+//            if (nextStartTime == nil)
+//            {
+//                nextStartTime = session.startTime;
+//            }
+//            
+//            if ([nextStartTime compare:session.startTime] == NSOrderedSame)
+//            {
+//                // only show the sessions occurring in the next block
+//                [upcomingSessions addObject:session];
+//            }
+//        }
+//    }
+//
+//	if ([delegate respondsToSelector:@selector(fetchCurrentSessionsDidFinishWithResults:upcomingSessions:)])
+//	{
+//		DLog(@"arrayCurrentSessions: %@", currentSessions);
+//		DLog(@"arrayUpcomingSessions: %@", upcomingSessions);
+//		[delegate fetchCurrentSessionsDidFinishWithResults:currentSessions upcomingSessions:upcomingSessions];
+//	}
+//}
 
-	if ([delegate respondsToSelector:@selector(fetchCurrentSessionsDidFinishWithResults:upcomingSessions:)])
-	{
-		DLog(@"arrayCurrentSessions: %@", arrayCurrentSessions);
-		DLog(@"arrayUpcomingSessions: %@", arrayUpcomingSessions);
-
-		[delegate fetchCurrentSessionsDidFinishWithResults:arrayCurrentSessions upcomingSessions:arrayUpcomingSessions];
-	}
-}
-
-- (void)fetchCurrentSessionsDidFailWithError:(NSError *)error
-{
-	[self requestDidFailWithError:error];
-	
-	if ([delegate respondsToSelector:@selector(fetchCurrentSessionsDidFailWithError:)])
-	{
-		[delegate fetchCurrentSessionsDidFailWithError:error];
-	}	
-}
-
-
-
-
-
-
-
-
-
+//- (void)fetchCurrentSessionsDidFailWithError:(NSError *)error
+//{
+//	[self requestDidFailWithError:error];
+//	if ([delegate respondsToSelector:@selector(fetchCurrentSessionsDidFailWithError:)])
+//	{
+//		[delegate fetchCurrentSessionsDidFailWithError:error];
+//	}	
+//}
 
 
 
 #pragma mark -
 #pragma mark Fetch Sessions With Id
 
-- (void)fetchSessionsWithEventId:(NSString *)eventId date:(NSDate *)eventDate
+- (void)fetchSessionsWithEventId:(NSString *)eventId date:(NSDate *)eventDate delegate:(id<GHEventSessionsByDateDelegate>)delegate
 {
     NSPredicate *predicate = [self predicateWithEventId:eventId date:eventDate];
     NSArray *sessions = [self fetchSessionsWithPredicate:predicate];
     if (sessions.count > 0)
     {
-        [self fetchSessionsDidFinishWithResults:sessions];
+        [delegate fetchSessionsByDateDidFinishWithResults:sessions];
     }
     else
     {
-        [self sendRequestForSessionsWithEventId:eventId date:eventDate];
+        [self sendRequestForSessionsWithEventId:eventId date:eventDate delegate:delegate];
     }
 }
 
-- (NSArray *)fetchSessionsWithPredicate:(NSPredicate *)predicate
-{
-    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"EventSession" inManagedObjectContext:context];
-//    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"startTime" ascending:YES];
-    
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    [fetchRequest setEntity:entity];
-//    [fetchRequest setSortDescriptors:[NSArray arrayWithObject:sortDescriptor]];
-    if (predicate)
-    {
-        [fetchRequest setPredicate:predicate];
-    }
-    NSError *error;
-    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
-    return fetchedObjects;
-}
-
-- (void)sendRequestForSessionsWithEventId:(NSString *)eventId date:(NSDate *)eventDate
+- (void)sendRequestForSessionsWithEventId:(NSString *)eventId date:(NSDate *)eventDate delegate:(id<GHEventSessionsByDateDelegate>)delegate
 {
 	// request the sessions for the selected day
 	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -218,19 +209,39 @@ static BOOL sharedShouldRefreshFavorites;
              {
                  [self deleteSessionsWithEventId:eventId date:eventDate];
                  [self storeSessionsWithEventId:eventId json:jsonArray];
-                 sessions = [self fetchSessionsWithPredicate:nil];
+                 NSPredicate *predicate = [self predicateWithEventId:eventId date:eventDate];
+                 sessions = [self fetchSessionsWithPredicate:predicate];
              }
-             [self fetchSessionsDidFinishWithResults:sessions];
+             [delegate fetchSessionsByDateDidFinishWithResults:sessions];
          }
          else if (error)
          {
-             [self fetchSessionsDidFailWithError:error];
+             [self requestDidFailWithError:error];
+             [delegate fetchSessionsByDateDidFailWithError:error];
          }
          else if (statusCode != 200)
          {
              [self requestDidNotSucceedWithDefaultMessage:@"A problem occurred while retrieving the session data." response:response];
          }
      }];
+}
+
+- (NSArray *)fetchSessionsWithPredicate:(NSPredicate *)predicate
+{
+    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"EventSession" inManagedObjectContext:context];
+    NSSortDescriptor *sortByStartTime = [[NSSortDescriptor alloc] initWithKey:@"startTime" ascending:YES];
+    NSSortDescriptor *sortByTitle = [[NSSortDescriptor alloc] initWithKey:@"title" ascending:YES];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    [fetchRequest setEntity:entity];
+    [fetchRequest setSortDescriptors:[NSArray arrayWithObjects:sortByStartTime, sortByTitle, nil]];
+    if (predicate)
+    {
+        [fetchRequest setPredicate:predicate];
+    }
+    NSError *error;
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    return fetchedObjects;
 }
 
 - (void)storeSessionsWithEventId:(NSString *)eventId json:(NSArray *)sessions
@@ -272,18 +283,6 @@ static BOOL sharedShouldRefreshFavorites;
     }
 }
 
-- (NSPredicate *)predicateWithEventId:(NSString *)eventId date:(NSDate *)date
-{
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    NSUInteger units = (NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit);
-    NSDateComponents *components = [calendar components:units fromDate:date];
-    NSDate *startDate = [calendar dateFromComponents:components];
-    components = [[NSDateComponents alloc] init];
-    [components setDay:1];
-    NSDate *endDate = [calendar dateByAddingComponents:components toDate:startDate options:0];
-    return [NSPredicate predicateWithFormat:@"(event.eventId == %@) AND (startTime > %@) AND (startTime <= %@)", eventId, startDate, endDate];
-}
-
 - (void)deleteSessionsWithEventId:(NSString *)eventId date:(NSDate *)date
 {
     DLog(@"");
@@ -305,62 +304,83 @@ static BOOL sharedShouldRefreshFavorites;
     }
 }
 
-- (void)fetchSessionsDidFinishWithResults:(NSArray *)sessions
+- (NSPredicate *)predicateWithEventId:(NSString *)eventId date:(NSDate *)date
 {
-	NSMutableArray *arraySessions = [[NSMutableArray alloc] init];
-	NSMutableArray *arrayTimes = [[NSMutableArray alloc] init];
-    NSMutableArray *arrayBlock = nil;
-    NSDate *sessionTime = [NSDate distantPast];
-    
-    NSArray *sortedSessions = [sessions sortedArrayUsingComparator:
-                               ^NSComparisonResult(EventSession *session1, EventSession *session2) {
-        return [session1.startTime compare:session2.startTime];
-    }];
-    
-    for (EventSession *session in sortedSessions)
-    {
-        // for each time block create an array to hold the sessions for that block
-        if ([sessionTime compare:session.startTime] == NSOrderedAscending)
-        {
-            arrayBlock = [[NSMutableArray alloc] init];
-            [arraySessions addObject:arrayBlock];
-            [arrayBlock addObject:session];
-            
-            NSDate *date = [session.startTime copyWithZone:NULL];
-            [arrayTimes addObject:date];
-        }
-        else if ([sessionTime compare:session.startTime] == NSOrderedSame)
-        {
-            [arrayBlock addObject:session];
-        }
-        
-        sessionTime = session.startTime;
-    }
-	
-	if ([delegate respondsToSelector:@selector(fetchSessionsByDateDidFinishWithResults:andTimes:)])
-	{
-//		DLog(@"arraySessions: %@", arraySessions);
-//		DLog(@"arrayTimes: %@", arrayTimes);
-		[delegate fetchSessionsByDateDidFinishWithResults:arraySessions andTimes:arrayTimes];
-	}
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSUInteger units = (NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSTimeZoneCalendarUnit);
+    NSDateComponents *components = [calendar components:units fromDate:date];
+    NSDate *startDate = [calendar dateFromComponents:components];
+    components = [[NSDateComponents alloc] init];
+    [components setDay:1];
+    NSDate *endDate = [calendar dateByAddingComponents:components toDate:startDate options:0];
+    DLog(@"startDate: %@", startDate);
+    DLog(@"endDate: %@", endDate);
+    return [NSPredicate predicateWithFormat:@"(event.eventId == %@) AND (startTime > %@) AND (startTime <= %@)", eventId, startDate, endDate];
 }
 
-- (void)fetchSessionsDidFailWithError:(NSError *)error
-{
-	[self requestDidFailWithError:error];
-	
-	if ([delegate respondsToSelector:@selector(fetchSessionsByDateDidFailWithError:)])
-	{
-		[delegate fetchSessionsByDateDidFailWithError:error];
-	}
-}
+//- (void)fetchSessionsDidFinishWithResults:(NSArray *)sessions
+//{
+//	NSMutableArray *arraySessions = [[NSMutableArray alloc] init];
+//	NSMutableArray *arrayTimes = [[NSMutableArray alloc] init];
+//    NSMutableArray *arrayBlock = nil;
+//    NSDate *sessionTime = [NSDate distantPast];
+//    
+//    for (EventSession *session in sessions)
+//    {
+//        // for each time block create an array to hold the sessions for that block
+//        if ([sessionTime compare:session.startTime] == NSOrderedAscending)
+//        {
+//            arrayBlock = [[NSMutableArray alloc] init];
+//            [arraySessions addObject:arrayBlock];
+//            [arrayBlock addObject:session];
+//            
+//            NSDate *date = [session.startTime copy];
+//            [arrayTimes addObject:date];
+//        }
+//        else if ([sessionTime compare:session.startTime] == NSOrderedSame)
+//        {
+//            [arrayBlock addObject:session];
+//        }
+//        
+//        sessionTime = session.startTime;
+//    }
+//	
+//	if ([delegate respondsToSelector:@selector(fetchSessionsByDateDidFinishWithResults:andTimes:)])
+//	{
+//		[delegate fetchSessionsByDateDidFinishWithResults:arraySessions andTimes:arrayTimes];
+//	}
+//}
+
+//- (void)fetchSessionsDidFailWithError:(NSError *)error
+//{
+//	[self requestDidFailWithError:error];
+//	
+//	if ([delegate respondsToSelector:@selector(fetchSessionsByDateDidFailWithError:)])
+//	{
+//		[delegate fetchSessionsByDateDidFailWithError:error];
+//	}
+//}
 
 
 
 #pragma mark -
 #pragma mark Fetch Favorite Sessions
 
-- (void)fetchFavoriteSessionsByEventId:(NSString *)eventId
+- (void)fetchFavoriteSessionsWithEventId:(NSString *)eventId delegate:(id<GHEventSessionsFavoritesDelegate>)delegate
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
+    NSArray *sessions = [self fetchSessionsWithPredicate:predicate];
+    if (sessions.count > 0)
+    {
+        [delegate fetchFavoriteSessionsDidFinishWithResults:sessions];
+    }
+    else
+    {
+        [self sendRequestForFavoriteSessionsByEventId:eventId delegate:delegate];
+    }
+}
+
+- (void)sendRequestForFavoriteSessionsByEventId:(NSString *)eventId delegate:(id<GHEventSessionsFavoritesDelegate>)delegate
 {
 	sharedShouldRefreshFavorites = NO;
 	
@@ -378,11 +398,19 @@ static BOOL sharedShouldRefreshFavorites;
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
          if (statusCode == 200 && data.length > 0 && error == nil)
          {
-             [self fetchFavoriteSessionsDidFinishWithData:data];
+             DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+             NSError *error;
+//             NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+             NSMutableArray *sessions = [[NSMutableArray alloc] init];
+             if (!error)
+             {
+                 // TODO: something
+             }
+             [delegate fetchFavoriteSessionsDidFinishWithResults:sessions];
          }
          else if (error)
          {
-             [self fetchFavoriteSessionsDidFailWithError:error];
+             [delegate fetchFavoriteSessionsDidFailWithError:error];
          }
          else if (statusCode != 200)
          {
@@ -391,38 +419,29 @@ static BOOL sharedShouldRefreshFavorites;
      }];
 }
 
-- (void)fetchFavoriteSessionsDidFinishWithData:(NSData *)data
-{
-	DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-	
-    NSError *error;
-    NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-    NSMutableArray *arraySessions = [[NSMutableArray alloc] init];
-    if (!error)
-    {
-        DLog(@"%@", array);
-        [array enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            [arraySessions addObject:[[GHEventSession alloc] initWithDictionary:obj]];
-        }];
-    }
-    
-	if ([delegate respondsToSelector:@selector(fetchFavoriteSessionsDidFinishWithResults:)])
-	{
-		[delegate fetchFavoriteSessionsDidFinishWithResults:arraySessions];
-	}
-}
+//- (void)fetchFavoriteSessionsDidFinishWithResults:(NSArray *)sessions
+//{    
+//	if ([delegate respondsToSelector:@selector(fetchFavoriteSessionsDidFinishWithResults:)])
+//	{
+//		[delegate fetchFavoriteSessionsDidFinishWithResults:sessions];
+//	}
+//}
 
-- (void)fetchFavoriteSessionsDidFailWithError:(NSError *)error
-{
-	[self requestDidFailWithError:error];
-	
-	if ([delegate respondsToSelector:@selector(fetchFavoriteSessionsDidFailWithError:)])
-	{
-		[delegate fetchFavoriteSessionsDidFailWithError:error];
-	}
-}
+//- (void)fetchFavoriteSessionsDidFailWithError:(NSError *)error
+//{
+//	[self requestDidFailWithError:error];
+//	
+//	if ([delegate respondsToSelector:@selector(fetchFavoriteSessionsDidFailWithError:)])
+//	{
+//		[delegate fetchFavoriteSessionsDidFailWithError:error];
+//	}
+//}
 
-- (void)fetchConferenceFavoriteSessionsByEventId:(NSString *)eventId
+
+#pragma mark -
+#pragma mark Fetch Conference Favorite Sessions
+
+- (void)fetchConferenceFavoriteSessionsByEventId:(NSString *)eventId delegate:(id<GHEventSessionsConferenceFavoritesDelegate>)delegate
 {
 	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSIONS_CONFERENCE_FAVORITES_URL, eventId];
 	NSURL *url = [[NSURL alloc] initWithString:urlString];
@@ -438,11 +457,22 @@ static BOOL sharedShouldRefreshFavorites;
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
          if (statusCode == 200 && data.length > 0 && error == nil)
          {
-             [self fetchConferenceFavoriteSessionsDidFinishWithData:data];
+             DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+             
+             NSError *error;
+             NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+             NSMutableArray *arraySessions = [[NSMutableArray alloc] init];
+             if (!error)
+             {
+                 DLog(@"%@", array);
+                 // TODO: something
+             }
+             [delegate fetchConferenceFavoriteSessionsDidFinishWithResults:arraySessions];
          }
          else if (error)
          {
-             [self fetchConferenceFavoriteSessionsDidFailWithError:error];
+             [self requestDidFailWithError:error];
+             [delegate fetchConferenceFavoriteSessionsDidFailWithError:error];
          }
          else if (statusCode != 200)
          {
@@ -451,38 +481,43 @@ static BOOL sharedShouldRefreshFavorites;
      }];
 }
 
-- (void)fetchConferenceFavoriteSessionsDidFinishWithData:(NSData *)data
-{
-	DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+//- (void)fetchConferenceFavoriteSessionsDidFinishWithData:(NSData *)data
+//{
+//	DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+//
+//    NSError *error;
+//    NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+//    NSMutableArray *arraySessions = [[NSMutableArray alloc] init];
+//    if (!error)
+//    {
+//        DLog(@"%@", array);
+//        [array enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+//            [arraySessions addObject:[[GHEventSession alloc] initWithDictionary:obj]];
+//        }];
+//    }
+//    	
+//	if ([delegate respondsToSelector:@selector(fetchConferenceFavoriteSessionsDidFinishWithResults:)])
+//	{
+//		[delegate fetchConferenceFavoriteSessionsDidFinishWithResults:arraySessions];
+//	}
+//}
 
-    NSError *error;
-    NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-    NSMutableArray *arraySessions = [[NSMutableArray alloc] init];
-    if (!error)
-    {
-        DLog(@"%@", array);
-        [array enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            [arraySessions addObject:[[GHEventSession alloc] initWithDictionary:obj]];
-        }];
-    }
-    	
-	if ([delegate respondsToSelector:@selector(fetchConferenceFavoriteSessionsDidFinishWithResults:)])
-	{
-		[delegate fetchConferenceFavoriteSessionsDidFinishWithResults:arraySessions];
-	}
-}
+//- (void)fetchConferenceFavoriteSessionsDidFailWithError:(NSError *)error
+//{
+//	[self requestDidFailWithError:error];
+//	
+//	if ([delegate respondsToSelector:@selector(fetchConferenceFavoriteSessionsDidFailWithError:)])
+//	{
+//		[delegate fetchConferenceFavoriteSessionsDidFailWithError:error];
+//	}
+//}
 
-- (void)fetchConferenceFavoriteSessionsDidFailWithError:(NSError *)error
-{
-	[self requestDidFailWithError:error];
-	
-	if ([delegate respondsToSelector:@selector(fetchConferenceFavoriteSessionsDidFailWithError:)])
-	{
-		[delegate fetchConferenceFavoriteSessionsDidFailWithError:error];
-	}
-}
 
-- (void)updateFavoriteSession:(NSString *)sessionNumber withEventId:(NSString *)eventId;
+
+#pragma mark -
+#pragma mark Update Favorite Session
+
+- (void)updateFavoriteSessionWithEventId:(NSString *)eventId sessionNumber:(NSString *)sessionNumber delegate:(id<GHEventSessionUpdateFavoriteDelegate>)delegate
 {	
 	sharedShouldRefreshFavorites = YES;
 	
@@ -499,11 +534,14 @@ static BOOL sharedShouldRefreshFavorites;
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
          if (statusCode == 200 && data.length > 0 && error == nil)
          {
-             [self updateFavoriteSessionDidFinishWithData:data];
+             NSString *responseBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+             DLog(@"%@", responseBody);
+             [delegate updateFavoriteSessionDidFinishWithResults:[responseBody boolValue]];
          }
          else if (error)
          {
-             [self updateFavoriteSessionDidFailWithError:error];
+             [self requestDidFailWithError:error];
+             [delegate updateFavoriteSessionDidFailWithError:error];
          }
          else if (statusCode != 200)
          {
@@ -512,30 +550,34 @@ static BOOL sharedShouldRefreshFavorites;
      }];
 }
 
-- (void)updateFavoriteSessionDidFinishWithData:(NSData *)data
-{
-	NSString *responseBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-	DLog(@"%@", responseBody);
-	
-	BOOL isFavorite = [responseBody boolValue];
-	
-	if ([delegate respondsToSelector:@selector(updateFavoriteSessionDidFinishWithResults:)])
-	{
-		[delegate updateFavoriteSessionDidFinishWithResults:isFavorite];
-	}
-}
+//- (void)updateFavoriteSessionDidFinishWithData:(NSData *)data
+//{
+//	NSString *responseBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+//	DLog(@"%@", responseBody);
+//	
+//	BOOL isFavorite = [responseBody boolValue];
+//	
+//	if ([delegate respondsToSelector:@selector(updateFavoriteSessionDidFinishWithResults:)])
+//	{
+//		[delegate updateFavoriteSessionDidFinishWithResults:isFavorite];
+//	}
+//}
 
-- (void)updateFavoriteSessionDidFailWithError:(NSError *)error
-{
-	[self requestDidFailWithError:error];
-	
-	if ([delegate respondsToSelector:@selector(updateFavoriteSessionDidFailWithError:)])
-	{
-		[delegate updateFavoriteSessionDidFailWithError:error];
-	}
-}
+//- (void)updateFavoriteSessionDidFailWithError:(NSError *)error
+//{
+//	[self requestDidFailWithError:error];
+//	
+//	if ([delegate respondsToSelector:@selector(updateFavoriteSessionDidFailWithError:)])
+//	{
+//		[delegate updateFavoriteSessionDidFailWithError:error];
+//	}
+//}
 
-- (void)rateSession:(NSString *)sessionNumber withEventId:(NSString *)eventId rating:(NSInteger)rating comment:(NSString *)comment
+
+#pragma mark -
+#pragma mark Rate Session
+
+- (void)rateSession:(NSString *)sessionNumber withEventId:(NSString *)eventId rating:(NSInteger)rating comment:(NSString *)comment delegate:(id<GHEventSessionRateDelegate>)delegate
 {
 	self.activityAlertView = [[GHActivityAlertView alloc] initWithActivityMessage:@"Submitting rating..."];
 	[_activityAlertView startAnimating];
@@ -567,11 +609,15 @@ static BOOL sharedShouldRefreshFavorites;
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
          if (statusCode == 200 && data.length > 0 && error == nil)
          {
-             [self rateSessionDidFinishWithData:data];
+             NSString *responseBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+             DLog(@"%@", responseBody);
+             double rating = [responseBody doubleValue];
+             [delegate rateSessionDidFinishWithResults:rating];
          }
          else if (error)
          {
-             [self rateSessionDidFailWithError:error];
+             [self requestDidFailWithError:error];
+             [delegate rateSessionDidFailWithError:error];
          }
          else if (statusCode != 200)
          {
@@ -592,27 +638,70 @@ static BOOL sharedShouldRefreshFavorites;
      }];
 }
 
-- (void)rateSessionDidFinishWithData:(NSData *)data
+//- (void)rateSessionDidFinishWithData:(NSData *)data
+//{
+//	NSString *responseBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+//	DLog(@"%@", responseBody);
+//    
+//    double rating = [responseBody doubleValue];
+//    
+//    if ([delegate respondsToSelector:@selector(rateSessionDidFinishWithResults:)])
+//    {
+//        [delegate rateSessionDidFinishWithResults:rating];
+//    }
+//}
+
+//- (void)rateSessionDidFailWithError:(NSError *)error
+//{
+//	[self requestDidFailWithError:error];
+//	
+//	if ([delegate respondsToSelector:@selector(rateSessionDidFailWithError:)])
+//	{
+//		[delegate rateSessionDidFailWithError:error];
+//	}
+//}
+
+
+- (EventSession *)fetchSelectedSession
 {
-	NSString *responseBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-	DLog(@"%@", responseBody);
-    
-    double rating = [responseBody doubleValue];
-    
-    if ([delegate respondsToSelector:@selector(rateSessionDidFinishWithResults:)])
+    EventSession *session = nil;
+    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"EventSession" inManagedObjectContext:context];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isSelected == YES"];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    [fetchRequest setEntity:entity];
+    [fetchRequest setPredicate:predicate];
+    NSError *error;
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    if (fetchedObjects && fetchedObjects.count > 0)
     {
-        [delegate rateSessionDidFinishWithResults:rating];
+        session = [fetchedObjects objectAtIndex:0];
     }
+    return session;
 }
 
-- (void)rateSessionDidFailWithError:(NSError *)error
+- (void)setSelectedSession:(EventSession *)session
 {
-	[self requestDidFailWithError:error];
-	
-	if ([delegate respondsToSelector:@selector(rateSessionDidFailWithError:)])
-	{
-		[delegate rateSessionDidFailWithError:error];
-	}
+    if (session)
+    {
+        NSArray *sessions = [self fetchSessionsWithPredicate:nil];
+        [sessions enumerateObjectsUsingBlock:^(EventSession *s, NSUInteger idx, BOOL *stop) {
+            BOOL isSelected = NO;
+            if ([s.number isEqualToString:session.number])
+            {
+                isSelected = YES;
+            }
+            s.isSelected = [NSNumber numberWithBool:isSelected];
+        }];
+    }
+    
+    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
+    NSError *error;
+    [context save:&error];
+    if (error)
+    {
+        DLog(@"%@", [error localizedDescription]);
+    }
 }
 
 @end

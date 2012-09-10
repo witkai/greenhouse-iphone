@@ -17,7 +17,7 @@
 //  EventSession.m
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 9/6/12.
+//  Created by Roy Clarkson on 9/10/12.
 //
 
 #import "EventSession.h"
@@ -27,17 +27,18 @@
 
 @implementation EventSession
 
-@dynamic number;
-@dynamic title;
-@dynamic startTime;
 @dynamic endTime;
-@dynamic information;
 @dynamic hashtag;
+@dynamic information;
 @dynamic isFavorite;
-@dynamic rating;
 @dynamic leaderCount;
 @dynamic leaderDisplay;
-@dynamic leaders;
+@dynamic number;
+@dynamic rating;
+@dynamic startTime;
+@dynamic title;
+@dynamic isSelected;
 @dynamic event;
+@dynamic leaders;
 
 @end

@@ -22,6 +22,7 @@
 
 #import "GHEventSessionsViewController.h"
 #import "GHEventController.h"
+#import "GHEventSessionController.h"
 
 
 @implementation GHEventSessionsViewController
@@ -42,7 +43,6 @@
 	@catch (NSException * e) 
 	{
 		DLog(@"%@", [e reason]);
-		session = nil;
 	}
 	@finally 
 	{
@@ -62,23 +62,21 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//	self.sessionDetailsViewController.session = [self eventSessionForIndexPath:indexPath];
+    [[GHEventSessionController sharedInstance] setSelectedSession:[self eventSessionForIndexPath:indexPath]];
 	[self.navigationController pushViewController:self.sessionDetailsViewController animated:YES];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	CGFloat height = 44.0f;
-	
 	EventSession *session = [self eventSessionForIndexPath:indexPath];
-		
 	if (session)
 	{
+        // adjust the height of the cell based on the length of the session title
 		CGSize maxSize = CGSizeMake(tableView.frame.size.width - 40.0f, CGFLOAT_MAX);
 		CGSize textSize = [session.title sizeWithFont:[UIFont boldSystemFontOfSize:16.0f] constrainedToSize:maxSize lineBreakMode:UILineBreakModeWordWrap];
 		height = MAX(textSize.height + 26.0f, 44.0f);
-	}
-	
+	}	
 	return height;
 }
 
@@ -176,12 +174,10 @@
     [super viewWillAppear:animated];
     DLog(@"");
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
-    if (![self.currentEvent.eventId isEqualToString:self.event.eventId])
-	{
-		self.arraySessions = nil;
-		[self.tableView reloadData];
-	}
-	self.currentEvent = event;
+
+    // clear table of data
+	self.arraySessions = nil;
+	[self.tableView reloadData];
 }
 
 - (void)viewDidAppear:(BOOL)animated

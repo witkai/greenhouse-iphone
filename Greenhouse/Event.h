@@ -17,7 +17,7 @@
 //  Event.h
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 9/6/12.
+//  Created by Roy Clarkson on 9/10/12.
 //
 
 #import <Foundation/Foundation.h>
@@ -34,23 +34,24 @@
 @property (nonatomic, retain) NSString * information;
 @property (nonatomic, retain) NSString * location;
 @property (nonatomic, retain) NSString * name;
+@property (nonatomic, retain) NSNumber * isSelected;
 @property (nonatomic, retain) NSDate * startTime;
+@property (nonatomic, retain) NSString * timeZoneName;
 @property (nonatomic, retain) NSString * title;
-@property (nonatomic, retain) NSNumber * selected;
-@property (nonatomic, retain) NSSet *venues;
 @property (nonatomic, retain) NSSet *sessions;
+@property (nonatomic, retain) NSSet *venues;
 @end
 
 @interface Event (CoreDataGeneratedAccessors)
-
-- (void)addVenuesObject:(Venue *)value;
-- (void)removeVenuesObject:(Venue *)value;
-- (void)addVenues:(NSSet *)values;
-- (void)removeVenues:(NSSet *)values;
 
 - (void)addSessionsObject:(EventSession *)value;
 - (void)removeSessionsObject:(EventSession *)value;
 - (void)addSessions:(NSSet *)values;
 - (void)removeSessions:(NSSet *)values;
+
+- (void)addVenuesObject:(Venue *)value;
+- (void)removeVenuesObject:(Venue *)value;
+- (void)addVenues:(NSSet *)values;
+- (void)removeVenues:(NSSet *)values;
 
 @end

@@ -1,5 +1,5 @@
 //
-//  Copyright 2010-2012 the original author or authors.
+//  Copyright 2012 the original author or authors.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,17 +14,17 @@
 //  limitations under the License.
 //
 //
-//  GHEventSessionsCurrentViewController.h
+//  GHEventSessionsCurrentDelegate.h
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 7/13/10.
+//  Created by Roy Clarkson on 9/9/12.
 //
 
-#import <UIKit/UIKit.h>
-#import "GHEventSessionsViewController.h"
-#import "GHEventSessionController.h"
+#import <Foundation/Foundation.h>
 
+@protocol GHEventSessionsCurrentDelegate <NSObject>
 
-@interface GHEventSessionsCurrentViewController : GHEventSessionsViewController <GHEventSessionsCurrentDelegate>
+- (void)fetchCurrentSessionsDidFinishWithResults:(NSArray *)sessions;
+- (void)fetchCurrentSessionsDidFailWithError:(NSError *)error;
 
 @end

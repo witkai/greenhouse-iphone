@@ -21,20 +21,20 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "GHEventSessionController.h"
+#import "GHEventSessionUpdateFavoriteDelegate.h"
 
 
-@class GHEvent;
-@class GHEventSession;
+@class Event;
+@class EventSession;
 @class GHEventSessionDescriptionViewController;
 @class GHEventSessionTweetsViewController;
 @class GHEventSessionRateViewController;
 
 
-@interface GHEventSessionDetailsViewController : GHDataViewController <UITableViewDataSource, UITableViewDelegate, GHEventSessionControllerDelegate> { }
+@interface GHEventSessionDetailsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, GHEventSessionUpdateFavoriteDelegate>
 
-@property (nonatomic, strong) GHEvent *event;
-@property (nonatomic, strong) GHEventSession *session;
+@property (nonatomic, strong) Event *event;
+@property (nonatomic, strong) EventSession *session;
 @property (nonatomic, strong) NSArray *arrayMenuItems;
 @property (nonatomic, strong) IBOutlet UILabel *labelTitle;
 @property (nonatomic, strong) IBOutlet UILabel *labelLeader;

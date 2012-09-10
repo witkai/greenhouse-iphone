@@ -127,7 +127,7 @@
 		{
 			NSDate *eventDate = (NSDate *)[arrayEventDates objectAtIndex:indexPath.row];
 			NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-			[dateFormatter setDateFormat:@"EEEE"];
+			[dateFormatter setDateFormat:@"EEEE, MMMM d"];
 			s = [dateFormatter stringFromDate:eventDate];
 			break;
 		}

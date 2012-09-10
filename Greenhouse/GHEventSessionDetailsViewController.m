@@ -20,9 +20,11 @@
 //  Created by Roy Clarkson on 7/21/10.
 //
 
-#import "GHEvent.h"
-#import "GHEventSession.h"
-#import "GHVenueRoom.h"
+#import "Event.h"
+#import "EventSession.h"
+#import "VenueRoom.h"
+#import "GHEventController.h"
+#import "GHEventSessionController.h"
 #import "GHEventSessionDetailsViewController.h"
 #import "GHEventSessionDescriptionViewController.h"
 #import "GHEventSessionTweetsViewController.h"
@@ -32,7 +34,6 @@
 
 @interface GHEventSessionDetailsViewController()
 
-@property (nonatomic, strong) GHEventSessionController *eventSessionController;
 @property (nonatomic, strong) GHActivityIndicatorTableViewCell *favoriteTableViewCell;
 
 - (void)setRating:(double)rating imageView:(UIImageView *)imageView;
@@ -43,7 +44,6 @@
 
 @implementation GHEventSessionDetailsViewController
 
-@synthesize eventSessionController;
 @synthesize favoriteTableViewCell;
 @synthesize event;
 @synthesize session;
@@ -99,11 +99,7 @@
 - (void)updateFavoriteSession
 {
 	[favoriteTableViewCell startAnimating];
-	
-	self.eventSessionController = [[GHEventSessionController alloc] init];
-	eventSessionController.delegate = self;
-	
-	[eventSessionController updateFavoriteSession:session.number withEventId:event.eventId];
+	[[GHEventSessionController sharedInstance] updateFavoriteSessionWithEventId:event.eventId sessionNumber:session.number delegate:self];
 }
 
 
@@ -113,16 +109,13 @@
 - (void)updateFavoriteSessionDidFinishWithResults:(BOOL)isFavorite
 {
 	[favoriteTableViewCell stopAnimating];
-	self.eventSessionController = nil;
-	
-	session.isFavorite = isFavorite;
+	session.isFavorite = [NSNumber numberWithBool:isFavorite];
 	[tableViewMenu reloadData];
 }
 
 - (void)updateFavoriteSessionDidFailWithError:(NSError *)error
 {
 	[favoriteTableViewCell stopAnimating];
-	self.eventSessionController = nil;
 }
 
 
@@ -185,7 +178,7 @@
 
 	if (indexPath.row == 2)
 	{
-		cell.accessoryType = session.isFavorite ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+		cell.accessoryType = [session.isFavorite boolValue] ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
 	}
 	else if (indexPath.row == 3)
 	{
@@ -216,41 +209,6 @@
 
 
 #pragma mark -
-#pragma mark DataViewController methods
-
-- (void)refreshView
-{
-	if (session)
-	{
-		labelTitle.text = session.title;
-		labelLeader.text = session.leaderDisplay;
-		
-		sessionDescriptionViewController.session = session;
-		sessionTweetsViewController.event = event;
-		sessionTweetsViewController.session = session;
-		sessionRateViewController.event = event;
-		sessionRateViewController.session = session;
-		sessionRateViewController.sessionDetailsViewController = self;
-				
-		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-		[dateFormatter setDateFormat:@"h:mm a"];
-		NSString *formattedStartTime = [dateFormatter stringFromDate:session.startTime];
-		NSString *formattedEndTime = [dateFormatter stringFromDate:session.endTime];
-		NSString *formattedTime = [[NSString alloc] initWithFormat:@"%@ - %@", formattedStartTime, formattedEndTime];
-		labelTime.text = formattedTime;
-		labelLocation.text = session.room.label;
-		
-		NSArray *items = [[NSArray alloc] initWithObjects:@"Description", @"Tweets", @"Favorite", @"Rate", nil];
-		self.arrayMenuItems = items;
-
-		[tableViewMenu reloadData];
-		
-		[self updateRating:session.rating];
-	}	
-}
-
-
-#pragma mark -
 #pragma mark UIViewController methods
 
 - (void)viewDidLoad 
@@ -258,22 +216,46 @@
     [super viewDidLoad];
 	
 	self.title = @"Session";
-	
+    self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
+    self.session = [[GHEventSessionController sharedInstance] fetchSelectedSession];
 	self.sessionDescriptionViewController = [[GHEventSessionDescriptionViewController alloc] initWithNibName:nil bundle:nil];
 	self.sessionTweetsViewController = [[GHEventSessionTweetsViewController alloc] initWithNibName:@"GHTweetsViewController" bundle:nil];
 	self.sessionRateViewController = [[GHEventSessionRateViewController alloc] initWithNibName:nil bundle:nil];
 }
 
-- (void)didReceiveMemoryWarning 
+- (void)viewWillAppear:(BOOL)animated
 {
-    [super didReceiveMemoryWarning];
+    [super viewWillAppear:animated];
+    DLog(@"");
+    
+    if (session)
+	{
+		labelTitle.text = session.title;
+		labelLeader.text = session.leaderDisplay;
+		
+		sessionRateViewController.sessionDetailsViewController = self;
+        
+		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+		[dateFormatter setDateFormat:@"h:mm a"];
+		NSString *formattedStartTime = [dateFormatter stringFromDate:session.startTime];
+		NSString *formattedEndTime = [dateFormatter stringFromDate:session.endTime];
+		NSString *formattedTime = [[NSString alloc] initWithFormat:@"%@ - %@", formattedStartTime, formattedEndTime];
+		labelTime.text = formattedTime;
+//		labelLocation.text = session.room.label;
+		
+		NSArray *items = [[NSArray alloc] initWithObjects:@"Description", @"Tweets", @"Favorite", @"Rate", nil];
+		self.arrayMenuItems = items;
+        
+		[tableViewMenu reloadData];
+		
+		[self updateRating:[session.rating doubleValue]];
+	}
 }
 
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
 	
-	self.eventSessionController = nil;
 	self.favoriteTableViewCell = nil;
 	self.event = nil;
 	self.session = nil;

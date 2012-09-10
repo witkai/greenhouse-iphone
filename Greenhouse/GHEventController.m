@@ -129,6 +129,7 @@
         event.name = [eventDict stringByReplacingPercentEscapesForKey:@"name" usingEncoding:NSUTF8StringEncoding];
         event.hashtag = [eventDict stringByReplacingPercentEscapesForKey:@"hashtag" usingEncoding:NSUTF8StringEncoding];
         event.groupName = [eventDict stringByReplacingPercentEscapesForKey:@"groupName" usingEncoding:NSUTF8StringEncoding];
+        event.timeZoneName = [[eventDict objectForKey:@"timeZone"] objectForKey:@"id"];
         
         NSArray *venues = [eventDict objectForKey:@"venues"];
         [venues enumerateObjectsUsingBlock:^(NSDictionary *venueDict, NSUInteger idx, BOOL *stop) {
@@ -188,7 +189,7 @@
 - (Event *)fetchSelectedEvent
 {
     Event *event = nil;
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"selected == YES"];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isSelected == YES"];
     NSArray *fetchedObjects = [self fetchEventsWithPredicate:predicate];
     if (fetchedObjects && fetchedObjects.count > 0)
     {
@@ -209,7 +210,7 @@
             {
                 selected = YES;
             }
-            [(NSManagedObject *)obj setValue:[NSNumber numberWithBool:selected] forKey:@"selected"];
+            [(NSManagedObject *)obj setValue:[NSNumber numberWithBool:selected] forKey:@"isSelected"];
         }];
     }
     
