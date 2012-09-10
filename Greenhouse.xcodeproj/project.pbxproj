@@ -14,12 +14,14 @@
 		810FD30D15D9A0AE00A9B3B3 /* GHSignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 810FD30B15D9A0AE00A9B3B3 /* GHSignInViewController.m */; };
 		811BA5D0120C58E40045BB34 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 811BA5CF120C58E40045BB34 /* CoreLocation.framework */; };
 		815004E115EEFF5100972ACE /* GHAuthorizedRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 815004E015EEFF5100972ACE /* GHAuthorizedRequest.m */; };
+		817D816D15FE831200C7A351 /* GHEventSessionsScheduleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 817D816B15FE831200C7A351 /* GHEventSessionsScheduleViewController.m */; };
+		817D817015FE831900C7A351 /* GHEventSessionsScheduleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 817D817215FE831900C7A351 /* GHEventSessionsScheduleViewController.xib */; };
+		817D817815FE98D100C7A351 /* EventSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 817D817715FE98D100C7A351 /* EventSession.m */; };
+		817D817B15FE98D300C7A351 /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 817D817A15FE98D200C7A351 /* Event.m */; };
 		818BD9CD15DC949A00BD7842 /* OA2SignInRequestParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 818BD9CC15DC949A00BD7842 /* OA2SignInRequestParameters.m */; };
 		818BD9D415DCBF0C00BD7842 /* GHURLRequestParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 818BD9D315DCBF0C00BD7842 /* GHURLRequestParameters.m */; };
 		818C666115D95A1700594B97 /* NSDictionary_HelpersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 818C666015D95A1700594B97 /* NSDictionary_HelpersTests.m */; };
 		818C666215D95C6600594B97 /* NSDictionary+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42DE015ADE82F001FA72D /* NSDictionary+Helpers.m */; };
-		818F217415FDA7330003B72C /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 818F217315FDA7320003B72C /* Event.m */; };
-		818F217715FDA74E0003B72C /* EventSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 818F217615FDA74D0003B72C /* EventSession.m */; };
 		81963AE015E2B88B002C1BC6 /* GHKeychainManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 81963ADF15E2B88B002C1BC6 /* GHKeychainManager.m */; };
 		81963AE515E3E59E002C1BC6 /* GHServiceValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 81963AE315E3D95F002C1BC6 /* GHServiceValidator.m */; };
 		81963AE615E3EBF4002C1BC6 /* OA2AccessGrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 8196752515DD7B820056A806 /* OA2AccessGrant.m */; };
@@ -196,6 +198,13 @@
 		811BA5CF120C58E40045BB34 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		815004DF15EEFF5100972ACE /* GHAuthorizedRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHAuthorizedRequest.h; sourceTree = "<group>"; };
 		815004E015EEFF5100972ACE /* GHAuthorizedRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHAuthorizedRequest.m; sourceTree = "<group>"; };
+		817D816A15FE831200C7A351 /* GHEventSessionsScheduleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventSessionsScheduleViewController.h; sourceTree = "<group>"; };
+		817D816B15FE831200C7A351 /* GHEventSessionsScheduleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHEventSessionsScheduleViewController.m; sourceTree = "<group>"; };
+		817D817115FE831900C7A351 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GHEventSessionsScheduleViewController.xib; sourceTree = "<group>"; };
+		817D817615FE98D000C7A351 /* EventSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSession.h; sourceTree = "<group>"; };
+		817D817715FE98D100C7A351 /* EventSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventSession.m; sourceTree = "<group>"; };
+		817D817915FE98D200C7A351 /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
+		817D817A15FE98D200C7A351 /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Event.m; sourceTree = "<group>"; };
 		818BD9CB15DC949A00BD7842 /* OA2SignInRequestParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OA2SignInRequestParameters.h; sourceTree = "<group>"; };
 		818BD9CC15DC949A00BD7842 /* OA2SignInRequestParameters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OA2SignInRequestParameters.m; sourceTree = "<group>"; };
 		818BD9D215DCBF0C00BD7842 /* GHURLRequestParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHURLRequestParameters.h; sourceTree = "<group>"; };
@@ -206,10 +215,6 @@
 		818F216F15FD98F90003B72C /* GHEventSessionRateDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventSessionRateDelegate.h; sourceTree = "<group>"; };
 		818F217015FD9A8F0003B72C /* GHEventSessionsFavoritesDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventSessionsFavoritesDelegate.h; sourceTree = "<group>"; };
 		818F217115FD9ADA0003B72C /* GHEventSessionsConferenceFavoritesDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventSessionsConferenceFavoritesDelegate.h; sourceTree = "<group>"; };
-		818F217215FDA7320003B72C /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
-		818F217315FDA7320003B72C /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Event.m; sourceTree = "<group>"; };
-		818F217515FDA74D0003B72C /* EventSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSession.h; sourceTree = "<group>"; };
-		818F217615FDA74D0003B72C /* EventSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventSession.m; sourceTree = "<group>"; };
 		81963ADE15E2B88B002C1BC6 /* GHKeychainManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHKeychainManager.h; sourceTree = "<group>"; };
 		81963ADF15E2B88B002C1BC6 /* GHKeychainManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHKeychainManager.m; sourceTree = "<group>"; };
 		81963AE215E3D95F002C1BC6 /* GHServiceValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GHServiceValidator.h; path = ../GreenhouseLogicTests/GHServiceValidator.h; sourceTree = "<group>"; };
@@ -590,11 +595,11 @@
 			children = (
 				81E42DCD15ADE82F001FA72D /* GreenhouseAppDelegate.h */,
 				81E42DCE15ADE82F001FA72D /* GreenhouseAppDelegate.m */,
-				818F217215FDA7320003B72C /* Event.h */,
-				818F217315FDA7320003B72C /* Event.m */,
-				818F217515FDA74D0003B72C /* EventSession.h */,
-				818F217615FDA74D0003B72C /* EventSession.m */,
 				81E2BDE815EFB78000BFBDE0 /* Greenhouse.xcdatamodeld */,
+				817D817615FE98D000C7A351 /* EventSession.h */,
+				817D817715FE98D100C7A351 /* EventSession.m */,
+				817D817915FE98D200C7A351 /* Event.h */,
+				817D817A15FE98D200C7A351 /* Event.m */,
 				81CFAA5E15F9077500661D68 /* EventSessionLeader.h */,
 				81CFAA5F15F9077800661D68 /* EventSessionLeader.m */,
 				81CFAA5515F7F31500661D68 /* Profile.h */,
@@ -724,6 +729,9 @@
 				81E42DBF15ADE82F001FA72D /* GHEventSessionsMenuViewController.h */,
 				81E42DC015ADE82F001FA72D /* GHEventSessionsMenuViewController.m */,
 				81E42D8715ADE82F001FA72D /* GHEventSessionsMenuViewController.xib */,
+				817D816A15FE831200C7A351 /* GHEventSessionsScheduleViewController.h */,
+				817D816B15FE831200C7A351 /* GHEventSessionsScheduleViewController.m */,
+				817D817215FE831900C7A351 /* GHEventSessionsScheduleViewController.xib */,
 				81E42DC115ADE82F001FA72D /* GHEventSessionsViewController.h */,
 				81E42DC215ADE82F001FA72D /* GHEventSessionsViewController.m */,
 				81E42D8915ADE82F001FA72D /* GHEventSessionsViewController.xib */,
@@ -1023,6 +1031,7 @@
 				81E42E7A15ADE82F001FA72D /* twitter-logo.png in Resources */,
 				81A2491F15D9A6B400C84332 /* GHAuthorizeNavigationViewController.xib in Resources */,
 				81A2492315D9A6BF00C84332 /* GHSignInViewController.xib in Resources */,
+				817D817015FE831900C7A351 /* GHEventSessionsScheduleViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1154,8 +1163,9 @@
 				81CFAA5415F7F26000661D68 /* VenueRoom.m in Sources */,
 				81CFAA5715F7F31700661D68 /* Profile.m in Sources */,
 				81CFAA6015F9077C00661D68 /* EventSessionLeader.m in Sources */,
-				818F217415FDA7330003B72C /* Event.m in Sources */,
-				818F217715FDA74E0003B72C /* EventSession.m in Sources */,
+				817D816D15FE831200C7A351 /* GHEventSessionsScheduleViewController.m in Sources */,
+				817D817815FE98D100C7A351 /* EventSession.m in Sources */,
+				817D817B15FE98D300C7A351 /* Event.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1204,6 +1214,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		817D817215FE831900C7A351 /* GHEventSessionsScheduleViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				817D817115FE831900C7A351 /* en */,
+			);
+			name = GHEventSessionsScheduleViewController.xib;
+			sourceTree = "<group>";
+		};
 		81A1BD1F15D5AF9D0028A2D3 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (

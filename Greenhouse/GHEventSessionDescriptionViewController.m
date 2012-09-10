@@ -45,7 +45,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+    DLog(@"");
     self.session = [[GHEventSessionController sharedInstance] fetchSelectedSession];
     textViewDescription.text = session.information;
 }

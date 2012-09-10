@@ -73,8 +73,9 @@
                                        queue:[NSOperationQueue mainQueue]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
-        [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-         if (data.length > 0 && error == nil)
+         NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
+         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+         if (statusCode == 200 && data.length > 0 && error == nil)
          {
              DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
              NSError *error;
@@ -83,16 +84,20 @@
              Profile *profile = nil;
              if (!error)
              {
-                 DLog(@"%@", dictionary);
                  [self deleteProfile];
                  [self storeProfileWithJson:dictionary];
                  profile = [self fetchProfileFromDataStore];
              }
              [delegate fetchProfileDidFinishWithResults:profile];
          }
-         else
+         else if (error)
          {
+             [self requestDidFailWithError:error];
              [delegate fetchProfileDidFailWithError:error];
+         }
+         else if (statusCode != 200)
+         {
+             [self requestDidNotSucceedWithDefaultMessage:@"A problem occurred while retrieving the profile data." response:response];
          }
      }];
 }

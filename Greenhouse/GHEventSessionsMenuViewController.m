@@ -195,9 +195,9 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+    DLog(@"");
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
-    if (![currentEvent.eventId isEqualToString:event.eventId])
+    if (![currentEvent.eventId isEqualToNumber:event.eventId])
 	{
 		[dictionaryViewControllers removeAllObjects];
 		self.arrayEventDates = [GHDateHelper daysBetweenStartTime:event.startTime endTime:event.endTime];
@@ -205,11 +205,6 @@
 	}
 	
 	self.currentEvent = event;
-}
-
-- (void)didReceiveMemoryWarning 
-{
-    [super didReceiveMemoryWarning];
 }
 
 - (void)viewDidUnload 

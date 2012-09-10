@@ -23,7 +23,8 @@
 #import <UIKit/UIKit.h>
 
 @class GHEventDescriptionViewController;
-@class GHEventSessionsMenuViewController;
+@class GHEventSessionsScheduleViewController;
+@class GHEventSessionsFavoritesViewController;
 @class GHEventTweetsViewController;
 @class GHEventMapViewController;
 
@@ -35,7 +36,8 @@
 @property (nonatomic, strong) IBOutlet UILabel *labelLocation;
 @property (nonatomic, strong) IBOutlet UITableView *tableViewMenu;
 @property (nonatomic, strong) GHEventDescriptionViewController *eventDescriptionViewController;
-@property (nonatomic, strong) GHEventSessionsMenuViewController *eventSessionsMenuViewController;
+@property (nonatomic, strong) GHEventSessionsScheduleViewController *eventSessionsScheduleViewController;
+@property (nonatomic, strong) GHEventSessionsFavoritesViewController *eventSessionsFavoritesViewController;
 @property (nonatomic, strong) GHEventTweetsViewController *eventTweetsViewController;
 @property (nonatomic, strong) GHEventMapViewController *eventMapViewController;
 

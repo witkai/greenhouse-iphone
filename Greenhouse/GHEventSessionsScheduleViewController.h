@@ -14,30 +14,19 @@
 //  limitations under the License.
 //
 //
-//  Event.m
+//  GHEventSessionsScheduleViewController.h
 //  Greenhouse
 //
 //  Created by Roy Clarkson on 9/10/12.
 //
 
-#import "Event.h"
-#import "EventSession.h"
-#import "Venue.h"
+#import <UIKit/UIKit.h>
 
+@class GHEventSessionsByDayViewController;
 
-@implementation Event
+@interface GHEventSessionsScheduleViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
-@dynamic endTime;
-@dynamic eventId;
-@dynamic groupName;
-@dynamic hashtag;
-@dynamic information;
-@dynamic isSelected;
-@dynamic location;
-@dynamic startTime;
-@dynamic timeZoneName;
-@dynamic title;
-@dynamic sessions;
-@dynamic venues;
+@property (nonatomic, strong) IBOutlet UITableView *tableViewMenu;
+@property (nonatomic, strong) GHEventSessionsByDayViewController *sessionsByDayViewController;
 
 @end

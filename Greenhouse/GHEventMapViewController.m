@@ -188,7 +188,7 @@
     DLog(@"");
     
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
-    if (currentEvent == nil || ![currentEvent.eventId isEqualToString:event.eventId])
+    if (currentEvent == nil || ![currentEvent.eventId isEqualToNumber:event.eventId])
 	{
 		self.currentEvent = event;
 		[self reloadMapData];

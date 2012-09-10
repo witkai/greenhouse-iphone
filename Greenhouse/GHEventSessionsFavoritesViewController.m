@@ -23,17 +23,38 @@
 #import "GHEventSessionsFavoritesViewController.h"
 #import "GHEventSessionController.h"
 
-
 @interface GHEventSessionsFavoritesViewController ()
 
-@property (nonatomic, strong) GHEventSessionController *eventSessionController;
+@property (nonatomic, strong) NSArray *times;
 
 @end
 
-
 @implementation GHEventSessionsFavoritesViewController
 
-@synthesize eventSessionController;
+@synthesize times = _times;
+
+
+#pragma mark -
+#pragma mark GHEventSessionsViewController methods
+
+- (EventSession *)eventSessionForIndexPath:(NSIndexPath *)indexPath
+{
+	EventSession *session = nil;
+	
+	@try
+	{
+		NSArray *array = (NSArray *)[self.arraySessions objectAtIndex:indexPath.section];
+		session = (EventSession *)[array objectAtIndex:indexPath.row];
+	}
+	@catch (NSException * e)
+	{
+		DLog(@"%@", [e reason]);
+	}
+	@finally
+	{
+		return session;
+	}
+}
 
 
 #pragma mark -
@@ -41,7 +62,35 @@
 
 - (void)fetchFavoriteSessionsDidFinishWithResults:(NSArray *)sessions
 {
-    self.arraySessions = sessions;
+//    self.arraySessions = sessions;
+    
+    NSMutableArray *timeBlocks = [[NSMutableArray alloc] init];
+	NSMutableArray *times = [[NSMutableArray alloc] init];
+    NSMutableArray *timeBlock = nil;
+    NSDate *sessionTime = [NSDate distantPast];
+    
+    for (EventSession *session in sessions)
+    {
+        // for each time block create an array to hold the sessions for that block
+        if ([sessionTime compare:session.startTime] == NSOrderedAscending)
+        {
+            timeBlock = [[NSMutableArray alloc] init];
+            [timeBlocks addObject:timeBlock];
+            [timeBlock addObject:session];
+            
+            NSDate *date = [session.startTime copy];
+            [times addObject:date];
+        }
+        else if ([sessionTime compare:session.startTime] == NSOrderedSame)
+        {
+            [timeBlock addObject:session];
+        }
+        
+        sessionTime = session.startTime;
+    }
+    
+	self.arraySessions = timeBlocks;
+	self.times = times;
 	[self.tableView reloadData];
 	[self dataSourceDidFinishLoadingNewData];
 }
@@ -54,6 +103,51 @@
 	[self dataSourceDidFinishLoadingNewData];
 }
 
+
+#pragma mark -
+#pragma mark UITableViewDataSource methods
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+	if (_times)
+	{
+		return [_times count];
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+	if (self.arraySessions)
+	{
+		NSArray *array = (NSArray *)[self.arraySessions objectAtIndex:section];
+		return [array count];
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+	NSString *sectionTitle = nil;
+	if (_times)
+	{
+		NSDate *sessionTime = [_times objectAtIndex:section];
+		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+		[dateFormatter setDateFormat:@"EEEE, MMM d, h:mm a"];
+		NSString *dateString = [dateFormatter stringFromDate:sessionTime];
+		sectionTitle = dateString;
+	}
+	
+	return sectionTitle;
+}
+
+
 #pragma mark -
 #pragma mark PullRefreshTableViewController methods
 
@@ -62,10 +156,10 @@
 //	return (!self.arraySessions || self.lastRefreshExpired || [GHEventSessionController shouldRefreshFavorites]);
 //}
 
-//- (void)reloadTableViewDataSource
-//{
-//	[eventSessionController fetchFavoriteSessionsWithEventId:self.event.eventId delegate:self];
-//}
+- (void)reloadTableViewDataSource
+{
+	[[GHEventSessionController sharedInstance] sendRequestForFavoriteSessionsByEventId:self.event.eventId delegate:self];
+}
 
 
 #pragma mark -
@@ -77,27 +171,19 @@
 	
     [super viewDidLoad];
 	
-	self.title = @"My Favorites";
-    self.eventSessionController = [[GHEventSessionController alloc] init];
+	self.title = @"Favorite Sessions";
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
-   	[eventSessionController fetchFavoriteSessionsWithEventId:self.event.eventId delegate:self];
-}
-
-- (void)didReceiveMemoryWarning 
-{
-    [super didReceiveMemoryWarning];
+   	[[GHEventSessionController sharedInstance] fetchFavoriteSessionsWithEventId:self.event.eventId delegate:self];
 }
 
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
-	
-	self.eventSessionController = nil;
 }
 
 @end

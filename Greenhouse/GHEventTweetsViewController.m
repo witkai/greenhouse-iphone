@@ -51,7 +51,7 @@
 	url = [[NSURL alloc] initWithString:urlString];
 	self.retweetUrl = url;
 	
-	if (![currentEvent.eventId isEqualToString:event.eventId])
+	if (![currentEvent.eventId isEqualToNumber:event.eventId])
 	{
 		self.isLoading = YES;
 		[self.arrayTweets removeAllObjects];

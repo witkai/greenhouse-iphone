@@ -79,7 +79,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+    DLog(@"");
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
     self.session = [[GHEventSessionController sharedInstance] fetchSelectedSession];
     
@@ -95,7 +95,7 @@
 	url = [[NSURL alloc] initWithString:urlString];
 	self.retweetUrl = url;
 	
-	if (![currentSession.number isEqualToString:session.number])
+	if (![currentSession.number isEqualToNumber:session.number])
 	{
 		self.isLoading = YES;
 		[self.arrayTweets removeAllObjects];

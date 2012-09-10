@@ -33,38 +33,29 @@
 @interface GHEventSessionController : GHBaseController
 
 + (GHEventSessionController *)sharedInstance;
-+ (BOOL)shouldRefreshFavorites;
 
-- (void)fetchCurrentSessionsWithEventId:(NSString *)eventId delegate:(id<GHEventSessionsCurrentDelegate>)delegate;
-- (void)sendRequestForCurrentSessionsWithEventId:(NSString *)eventId delegate:(id<GHEventSessionsCurrentDelegate>)delegate;
-//- (void)fetchCurrentSessionsDidFinishWithResults:(NSArray *)sessions;
-//- (void)fetchCurrentSessionsDidFailWithError:(NSError *)error;
+- (void)fetchCurrentSessionsWithEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsCurrentDelegate>)delegate;
+- (void)sendRequestForCurrentSessionsWithEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsCurrentDelegate>)delegate;
 
-- (void)fetchSessionsWithEventId:(NSString *)eventId date:(NSDate *)eventDate delegate:(id<GHEventSessionsByDateDelegate>)delegate;
-- (void)sendRequestForSessionsWithEventId:(NSString *)eventId date:(NSDate *)eventDate delegate:(id<GHEventSessionsByDateDelegate>)delegate;
+- (void)fetchSessionsWithEventId:(NSNumber *)eventId date:(NSDate *)eventDate delegate:(id<GHEventSessionsByDateDelegate>)delegate;
+- (void)sendRequestForSessionsWithEventId:(NSNumber *)eventId date:(NSDate *)eventDate delegate:(id<GHEventSessionsByDateDelegate>)delegate;
+
+- (NSArray *)fetchSessionsWithEventId:(NSNumber *)eventId;
+- (EventSession *)fetchSessionWithNumber:(NSNumber *)number;
 - (NSArray *)fetchSessionsWithPredicate:(NSPredicate *)predicate;
-- (void)storeSessionsWithEventId:(NSString *)eventId json:(NSArray *)sessions;
-- (void)deleteSessionsWithEventId:(NSString *)eventId date:(NSDate *)date;
-- (NSPredicate *)predicateWithEventId:(NSString *)eventId date:(NSDate *)date;
-//- (void)fetchSessionsDidFinishWithResults:(NSArray *)sessions;
-//- (void)fetchSessionsDidFailWithError:(NSError *)error;
+- (void)storeSessionsWithEventId:(NSNumber *)eventId json:(NSArray *)sessions;
+- (void)deleteSessionsWithEventId:(NSNumber *)eventId date:(NSDate *)date;
+- (NSPredicate *)predicateWithEventId:(NSNumber *)eventId date:(NSDate *)date;
 
-- (void)fetchFavoriteSessionsWithEventId:(NSString *)eventId delegate:(id<GHEventSessionsFavoritesDelegate>)delegate;
-- (void)sendRequestForFavoriteSessionsByEventId:(NSString *)eventId delegate:(id<GHEventSessionsFavoritesDelegate>)delegate;
-//- (void)fetchFavoriteSessionsDidFinishWithResults:(NSArray *)sessions;
-//- (void)fetchFavoriteSessionsDidFailWithError:(NSError *)error;
+- (void)fetchFavoriteSessionsWithEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsFavoritesDelegate>)delegate;
+- (void)sendRequestForFavoriteSessionsByEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsFavoritesDelegate>)delegate;
 
-- (void)fetchConferenceFavoriteSessionsByEventId:(NSString *)eventId delegate:(id<GHEventSessionsConferenceFavoritesDelegate>)delegate;
-//- (void)fetchConferenceFavoriteSessionsDidFinishWithData:(NSData *)data;
-//- (void)fetchConferenceFavoriteSessionsDidFailWithError:(NSError *)error;
+- (void)fetchConferenceFavoriteSessionsByEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsConferenceFavoritesDelegate>)delegate;
 
-- (void)updateFavoriteSessionWithEventId:(NSString *)eventId sessionNumber:(NSString *)sessionNumber delegate:(id<GHEventSessionUpdateFavoriteDelegate>)delegate;
-//- (void)updateFavoriteSessionDidFinishWithData:(NSData *)data;
-//- (void)updateFavoriteSessionDidFailWithError:(NSError *)error;
+- (void)updateFavoriteSessionWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber delegate:(id<GHEventSessionUpdateFavoriteDelegate>)delegate;
+- (void)sendRequestToUpdateFavoriteSessionWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber delegate:(id<GHEventSessionUpdateFavoriteDelegate>)delegate;
 
-- (void)rateSession:(NSString *)sessionNumber withEventId:(NSString *)eventId rating:(NSInteger)rating comment:(NSString *)comment delegate:(id<GHEventSessionRateDelegate>)delegate;
-//- (void)rateSessionDidFinishWithData:(NSData *)data;
-//- (void)rateSessionDidFailWithError:(NSError *)error;
+- (void)rateSession:(NSNumber *)sessionNumber withEventId:(NSNumber *)eventId rating:(NSInteger)rating comment:(NSString *)comment delegate:(id<GHEventSessionRateDelegate>)delegate;
 
 - (EventSession *)fetchSelectedSession;
 - (void)setSelectedSession:(EventSession *)session;

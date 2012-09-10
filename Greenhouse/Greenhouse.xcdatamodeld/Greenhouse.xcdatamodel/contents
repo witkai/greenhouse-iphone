@@ -2,13 +2,12 @@
 <model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1487" systemVersion="12B19" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Event" representedClassName="Event" syncable="YES">
         <attribute name="endTime" attributeType="Date" syncable="YES"/>
-        <attribute name="eventId" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="eventId" attributeType="Integer 32" defaultValueString="0" indexed="YES" syncable="YES"/>
         <attribute name="groupName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="hashtag" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="information" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isSelected" attributeType="Boolean" defaultValueString="NO" indexed="YES" syncable="YES"/>
         <attribute name="location" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="startTime" attributeType="Date" syncable="YES"/>
         <attribute name="timeZoneName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
@@ -23,8 +22,9 @@
         <attribute name="isSelected" attributeType="Boolean" defaultValueString="NO" indexed="YES" syncable="YES"/>
         <attribute name="leaderCount" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="leaderDisplay" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="number" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="number" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="rating" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="sessionId" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="startTime" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="event" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Event" inverseName="sessions" inverseEntity="Event" syncable="YES"/>
@@ -57,8 +57,8 @@
         <relationship name="venue" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Venue" inverseName="rooms" inverseEntity="Venue" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Event" positionX="-1406" positionY="-922" width="128" height="240"/>
-        <element name="EventSession" positionX="-2250" positionY="-1035" width="128" height="240"/>
+        <element name="Event" positionX="-1406" positionY="-922" width="128" height="223"/>
+        <element name="EventSession" positionX="-2250" positionY="-1035" width="128" height="253"/>
         <element name="EventSessionLeader" positionX="-2007" positionY="-1026" width="128" height="88"/>
         <element name="Profile" positionX="-1395" positionY="-630" width="128" height="90"/>
         <element name="Venue" positionX="-1208" positionY="-919" width="128" height="163"/>

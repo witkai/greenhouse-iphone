@@ -103,6 +103,7 @@
          }
          else if (error)
          {
+             [self requestDidFailWithError:error];
              [delegate fetchEventsDidFailWithError:error];
          }
          else if (statusCode != 200)
@@ -120,13 +121,12 @@
         Event *event = [NSEntityDescription
                         insertNewObjectForEntityForName:@"Event"
                         inManagedObjectContext:context];
-        event.eventId = [eventDict stringForKey:@"id"];
+        event.eventId = [eventDict objectForKey:@"id"];
         event.title = [eventDict stringByReplacingPercentEscapesForKey:@"title" usingEncoding:NSUTF8StringEncoding];
         event.startTime = [eventDict dateWithMillisecondsSince1970ForKey:@"startTime"];
         event.endTime = [eventDict dateWithMillisecondsSince1970ForKey:@"endTime"];
         event.location = [eventDict stringByReplacingPercentEscapesForKey:@"location" usingEncoding:NSUTF8StringEncoding];
         event.information = [[eventDict stringForKey:@"description"] stringByXMLDecoding];
-        event.name = [eventDict stringByReplacingPercentEscapesForKey:@"name" usingEncoding:NSUTF8StringEncoding];
         event.hashtag = [eventDict stringByReplacingPercentEscapesForKey:@"hashtag" usingEncoding:NSUTF8StringEncoding];
         event.groupName = [eventDict stringByReplacingPercentEscapesForKey:@"groupName" usingEncoding:NSUTF8StringEncoding];
         event.timeZoneName = [[eventDict objectForKey:@"timeZone"] objectForKey:@"id"];
@@ -138,7 +138,6 @@
                             inManagedObjectContext:context];
             venue.venueId = [venueDict stringForKey:@"id"];
 			venue.locationHint = [venueDict stringForKey:@"locationHint"];
-			venue.name = [venueDict stringForKey:@"name"];
 			venue.postalAddress = [venueDict stringForKey:@"postalAddress"];
             venue.latitude = [[venueDict objectForKey:@"location"] objectForKey:@"latitude"];
             venue.longitude = [[venueDict objectForKey:@"location"] objectForKey:@"longitude"];
@@ -150,7 +149,25 @@
     [context save:&error];
     if (error)
     {
-        DLog(@"%@", [error localizedDescription]);
+//        DLog(@"%@", [error localizedDescription]);
+        DumpError(@"save event", error);
+    }
+}
+
+void DumpError(NSString* action, NSError* error) {
+    
+    if (!error)
+        return;
+    
+    NSLog(@"Failed to %@: %@", action, [error localizedDescription]);
+    NSArray* detailedErrors = [[error userInfo] objectForKey:NSDetailedErrorsKey];
+    if(detailedErrors && [detailedErrors count] > 0) {
+        for(NSError* detailedError in detailedErrors) {
+            NSLog(@"DetailedError: %@", [detailedError userInfo]);
+        }
+    }
+    else {
+        NSLog(@"%@", [error userInfo]);
     }
 }
 
@@ -174,7 +191,7 @@
     }
 }
 
-- (Event *)fetchEventWithId:(NSString *)eventId;
+- (Event *)fetchEventWithId:(NSNumber *)eventId;
 {
     Event *event = nil;
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"eventId == %@", eventId];
@@ -203,14 +220,13 @@
     if (event)
     {
         NSArray *objects = [self fetchEventsWithPredicate:nil];
-        [objects enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            NSManagedObject *o = (NSManagedObject *)obj;
+        [objects enumerateObjectsUsingBlock:^(Event *e, NSUInteger idx, BOOL *stop) {
             BOOL selected = NO;
-            if ([[o valueForKey:@"eventId"] isEqualToString:event.eventId])
+            if ([e.eventId isEqualToNumber:event.eventId])
             {
                 selected = YES;
             }
-            [(NSManagedObject *)obj setValue:[NSNumber numberWithBool:selected] forKey:@"isSelected"];
+            e.isSelected = [NSNumber numberWithBool:selected];
         }];
     }
     
@@ -222,89 +238,5 @@
         DLog(@"%@", [error localizedDescription]);
     }
 }
-
-//- (NSArray *)loadEventsFromDictionaryArray:(NSArray *)array
-//{
-//    NSMutableArray *events = [[NSMutableArray alloc] initWithCapacity:[array count]];
-//    [array enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-//        GHEvent *event = [self loadEventFromDictionary:obj];
-//        [events addObject:event];
-//    }];
-//    return events;
-//}
-//
-//- (GHEvent *)loadEventFromDictionary:(NSDictionary *)dictionary
-//{
-//    GHEvent *event = nil;
-//    if (dictionary)
-//    {
-//        NSString *eventId = [dictionary stringForKey:@"id"];
-//        NSString *title = [dictionary stringByReplacingPercentEscapesForKey:@"title" usingEncoding:NSUTF8StringEncoding];
-//        NSDate *startTime = [dictionary dateWithMillisecondsSince1970ForKey:@"startTime"];
-//        NSDate *endTime = [dictionary dateWithMillisecondsSince1970ForKey:@"endTime"];
-//        NSString *location = [dictionary stringByReplacingPercentEscapesForKey:@"location" usingEncoding:NSUTF8StringEncoding];
-//        NSString *description = [[dictionary stringForKey:@"description"] stringByXMLDecoding];
-//        NSString *name = [dictionary stringByReplacingPercentEscapesForKey:@"name" usingEncoding:NSUTF8StringEncoding];
-//        NSString *hashtag = [dictionary stringByReplacingPercentEscapesForKey:@"hashtag" usingEncoding:NSUTF8StringEncoding];
-//        NSString *groupName = [dictionary stringByReplacingPercentEscapesForKey:@"groupName" usingEncoding:NSUTF8StringEncoding];
-//        NSArray *venues = nil; // [self processVenueData:[dictionary objectForKey:@"venues"]]];
-//        
-//        event = [[GHEvent alloc] initWithEventId:eventId
-//                                           title:title
-//                                       startTime:startTime
-//                                         entTime:endTime
-//                                        location:location
-//                                     description:description
-//                                            name:name
-//                                         hashtag:hashtag
-//                                       groupName:groupName
-//                                          venues:venues];
-//    }
-//    return event;
-//}
-//
-//- (NSArray *)loadEventsFromManagedObjects:(NSArray *)objects
-//{
-//    NSMutableArray *events = [[NSMutableArray alloc] initWithCapacity:[objects count]];
-//    [objects enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-//        GHEvent *event = [self loadEventFromManagedObject:obj];
-//        [events addObject:event];
-//    }];
-//    return events;
-//}
-//
-//- (GHEvent *)loadEventFromManagedObject:(NSManagedObject *)object
-//{
-//    GHEvent *event = nil;
-//    if (object)
-//    {
-//        NSString *eventId = [object valueForKey:@"eventId"];
-//        NSString *title = [object valueForKey:@"title"];
-//        //        double startMillis = [[(NSNumber *)object valueForKey:@"startTime"] doubleValue];
-//        //        NSDate *startTime = [[NSDate alloc] initWithTimeIntervalSince1970:startMillis];
-//        NSDate *startTime = [object valueForKey:@"startTime"];
-//        //        double endMillis = [[(NSNumber *)object valueForKey:@"endTime"] doubleValue];
-//        //        NSDate *endTime = [[NSDate alloc] initWithTimeIntervalSince1970:endMillis];
-//        NSDate *endTime = [object valueForKey:@"endTime"];
-//        NSString *location = [object valueForKey:@"location"];
-//        NSString *description = [object valueForKey:@"information"];
-//        NSString *name = [object valueForKey:@"name"];
-//        NSString *hashtag = [object valueForKey:@"hashtag"];
-//        NSString *groupName = [object valueForKey:@"groupName"];
-//        NSArray *venues = nil;
-//        
-//        event = [[GHEvent alloc] initWithEventId:eventId
-//                                           title:title
-//                                       startTime:startTime
-//                                         entTime:endTime
-//                                        location:location
-//                                     description:description
-//                                            name:name
-//                                         hashtag:hashtag
-//                                       groupName:groupName
-//                                          venues:venues];
-//    }
-//    return event;
-//}
 
 @end

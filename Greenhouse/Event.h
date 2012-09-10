@@ -28,13 +28,12 @@
 @interface Event : NSManagedObject
 
 @property (nonatomic, retain) NSDate * endTime;
-@property (nonatomic, retain) NSString * eventId;
+@property (nonatomic, retain) NSNumber * eventId;
 @property (nonatomic, retain) NSString * groupName;
 @property (nonatomic, retain) NSString * hashtag;
 @property (nonatomic, retain) NSString * information;
-@property (nonatomic, retain) NSString * location;
-@property (nonatomic, retain) NSString * name;
 @property (nonatomic, retain) NSNumber * isSelected;
+@property (nonatomic, retain) NSString * location;
 @property (nonatomic, retain) NSDate * startTime;
 @property (nonatomic, retain) NSString * timeZoneName;
 @property (nonatomic, retain) NSString * title;

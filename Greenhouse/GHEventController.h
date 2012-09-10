@@ -33,7 +33,7 @@
 - (void)sendRequestForEventsWithDelegate:(id<GHEventControllerDelegate>)delegate;
 - (void)storeEventsWithJson:(NSArray *)events;
 - (void)deleteEvents;
-- (Event *)fetchEventWithId:(NSString *)eventId;
+- (Event *)fetchEventWithId:(NSNumber *)eventId;
 - (Event *)fetchSelectedEvent;
 - (void)setSelectedEvent:(Event *)event;
 

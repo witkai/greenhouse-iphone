@@ -24,20 +24,23 @@
 #import "Event.h"
 #import "GHEventController.h"
 #import "GHEventDescriptionViewController.h"
-#import "GHEventSessionsMenuViewController.h"
+#import "GHEventSessionsScheduleViewController.h"
+#import "GHEventSessionsFavoritesViewController.h"
 #import "GHEventTweetsViewController.h"
 #import "GHEventMapViewController.h"
 
 @interface GHEventDetailsViewController()
 
 @property (nonatomic, strong) Event *event;
-@property (nonatomic, strong) NSArray *arrayMenuItems;
+@property (nonatomic, strong) NSArray *menuItems;
+@property (nonatomic, strong) NSArray *viewControllers;
 
 @end
 
 @implementation GHEventDetailsViewController
 
-@synthesize arrayMenuItems;
+@synthesize menuItems;
+@synthesize viewControllers;
 @synthesize event;
 @synthesize labelTitle;
 @synthesize labelDescription;
@@ -45,7 +48,8 @@
 @synthesize labelLocation;
 @synthesize tableViewMenu;
 @synthesize eventDescriptionViewController;
-@synthesize eventSessionsMenuViewController;
+@synthesize eventSessionsScheduleViewController;
+@synthesize eventSessionsFavoritesViewController;
 @synthesize eventTweetsViewController;
 @synthesize eventMapViewController;
 
@@ -55,23 +59,29 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	switch (indexPath.row) 
-	{
-		case 0:
-			[self.navigationController pushViewController:eventDescriptionViewController animated:YES];
-			break;
-		case 1:
-			[self.navigationController pushViewController:eventSessionsMenuViewController animated:YES];
-			break;
-		case 2:
-			[self.navigationController pushViewController:eventTweetsViewController animated:YES];
-			break;
-		case 3:
-			[self.navigationController pushViewController:eventMapViewController animated:YES];
-			break;
-		default:
-			break;
-	}
+    UIViewController *vc = [viewControllers objectAtIndex:indexPath.row];
+    if (vc && ![vc isEqual:[NSNull null]])
+    {
+        [self.navigationController pushViewController:vc animated:YES];
+    }
+    
+//	switch (indexPath.row) 
+//	{
+//		case 0:
+//			[self.navigationController pushViewController:eventDescriptionViewController animated:YES];
+//			break;
+//		case 1:
+//			[self.navigationController pushViewController:eventSessionsMenuViewController animated:YES];
+//			break;
+//		case 2:
+//			[self.navigationController pushViewController:eventTweetsViewController animated:YES];
+//			break;
+//		case 3:
+//			[self.navigationController pushViewController:eventMapViewController animated:YES];
+//			break;
+//		default:
+//			break;
+//	}
 	
 	[tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
@@ -93,7 +103,7 @@
 		cell.selectionStyle = UITableViewCellSelectionStyleGray;
 	}
 	
-	NSString *s = (NSString *)[arrayMenuItems objectAtIndex:indexPath.row];
+	NSString *s = (NSString *)[menuItems objectAtIndex:indexPath.row];
 	
 	[cell.textLabel setText:s];
 	
@@ -102,9 +112,9 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	if (arrayMenuItems)
+	if (menuItems)
 	{
-		return [arrayMenuItems count];
+		return [menuItems count];
 	}
 	
 	return 0;
@@ -167,11 +177,19 @@
     DLog(@"");
 	
 	self.title = @"Event";
-	self.arrayMenuItems = [[NSArray alloc] initWithObjects:@"Description", @"Sessions", @"Tweets", @"Map", nil];
+	self.menuItems = [[NSArray alloc] initWithObjects:@"Description", @"Schedule", @"Favorites", @"Tweets", @"Map", nil];
 	self.eventDescriptionViewController = [[GHEventDescriptionViewController alloc] initWithNibName:nil bundle:nil];
-	self.eventSessionsMenuViewController = [[GHEventSessionsMenuViewController alloc] initWithNibName:nil bundle:nil];
+	self.eventSessionsScheduleViewController = [[GHEventSessionsScheduleViewController alloc] initWithNibName:nil bundle:nil];
+    self.eventSessionsFavoritesViewController = [[GHEventSessionsFavoritesViewController alloc] initWithNibName:@"GHEventSessionsViewController" bundle:nil];
 	self.eventTweetsViewController = [[GHEventTweetsViewController alloc] initWithNibName:@"GHTweetsViewController" bundle:nil];
 	self.eventMapViewController = [[GHEventMapViewController alloc] initWithNibName:nil bundle:nil];
+    self.viewControllers = [[NSArray alloc] initWithObjects:
+                            eventDescriptionViewController,
+                            eventSessionsScheduleViewController,
+                            eventSessionsFavoritesViewController,
+                            eventTweetsViewController,
+                            eventMapViewController,
+                            nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -199,7 +217,8 @@
 {
     [super viewDidUnload];
 	
-	self.arrayMenuItems = nil;
+	self.menuItems = nil;
+    self.viewControllers = nil;
 	self.event = nil;
 	self.labelTitle = nil;
 	self.labelDescription = nil;
@@ -207,7 +226,8 @@
 	self.labelLocation = nil;
 	self.tableViewMenu = nil;
 	self.eventDescriptionViewController = nil;
-	self.eventSessionsMenuViewController = nil;
+	self.eventSessionsScheduleViewController = nil;
+    self.eventSessionsFavoritesViewController = nil;
 	self.eventTweetsViewController = nil;
 	self.eventMapViewController = nil;
 }

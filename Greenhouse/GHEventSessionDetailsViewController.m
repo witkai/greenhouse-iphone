@@ -216,8 +216,6 @@
     [super viewDidLoad];
 	
 	self.title = @"Session";
-    self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
-    self.session = [[GHEventSessionController sharedInstance] fetchSelectedSession];
 	self.sessionDescriptionViewController = [[GHEventSessionDescriptionViewController alloc] initWithNibName:nil bundle:nil];
 	self.sessionTweetsViewController = [[GHEventSessionTweetsViewController alloc] initWithNibName:@"GHTweetsViewController" bundle:nil];
 	self.sessionRateViewController = [[GHEventSessionRateViewController alloc] initWithNibName:nil bundle:nil];
@@ -227,7 +225,8 @@
 {
     [super viewWillAppear:animated];
     DLog(@"");
-    
+    self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
+    self.session = [[GHEventSessionController sharedInstance] fetchSelectedSession];
     if (session)
 	{
 		labelTitle.text = session.title;

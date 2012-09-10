@@ -31,13 +31,14 @@
 @property (nonatomic, retain) NSString * hashtag;
 @property (nonatomic, retain) NSString * information;
 @property (nonatomic, retain) NSNumber * isFavorite;
+@property (nonatomic, retain) NSNumber * isSelected;
 @property (nonatomic, retain) NSNumber * leaderCount;
 @property (nonatomic, retain) NSString * leaderDisplay;
-@property (nonatomic, retain) NSString * number;
+@property (nonatomic, retain) NSNumber * number;
 @property (nonatomic, retain) NSNumber * rating;
 @property (nonatomic, retain) NSDate * startTime;
 @property (nonatomic, retain) NSString * title;
-@property (nonatomic, retain) NSNumber * isSelected;
+@property (nonatomic, retain) NSNumber * sessionId;
 @property (nonatomic, retain) Event *event;
 @property (nonatomic, retain) NSSet *leaders;
 @end

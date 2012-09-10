@@ -25,17 +25,19 @@
 
 @interface GHEventSessionsByDayViewController()
 
-@property (nonatomic, strong) NSArray *arrayTimes;
-@property (nonatomic, strong) NSDate *currentEventDate;
+@property (nonatomic, strong) NSArray *times;
 
 @end
 
 
 @implementation GHEventSessionsByDayViewController
 
-@synthesize arrayTimes;
-@synthesize currentEventDate;
+@synthesize times = _times;
 @synthesize eventDate;
+
+
+#pragma mark -
+#pragma mark GHEventSessionsViewController methods
 
 - (EventSession *)eventSessionForIndexPath:(NSIndexPath *)indexPath
 {
@@ -88,7 +90,7 @@
     }
     
 	self.arraySessions = timeBlocks;
-	self.arrayTimes = times;
+	self.times = times;
 	[self.tableView reloadData];
 	[self dataSourceDidFinishLoadingNewData];
 }
@@ -97,7 +99,7 @@
 {
 	NSArray *emptyArray = [[NSArray alloc] init];
 	self.arraySessions = emptyArray;
-	self.arrayTimes = emptyArray;
+	self.times = emptyArray;
 	[self.tableView reloadData];
 	[self dataSourceDidFinishLoadingNewData];
 }
@@ -108,9 +110,9 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	if (arrayTimes)
+	if (_times)
 	{
-		return [arrayTimes count];
+		return [_times count];
 	}
 	else 
 	{
@@ -134,9 +136,9 @@
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
 	NSString *sectionTitle = nil;
-	if (arrayTimes)
+	if (_times)
 	{
-		NSDate *sessionTime = (NSDate *)[arrayTimes objectAtIndex:section];
+		NSDate *sessionTime = [_times objectAtIndex:section];
 		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 		[dateFormatter setDateFormat:@"h:mm a"];
 		NSString *dateString = [dateFormatter stringFromDate:sessionTime];
@@ -195,7 +197,7 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    self.arrayTimes = nil;
+    self.times = nil;
     
     [super viewWillAppear:animated];
     DLog(@"");
@@ -220,8 +222,7 @@
 {
     [super viewDidUnload];
 	
-	self.arrayTimes = nil;
-	self.currentEventDate = nil;
+	self.times = nil;
 	self.eventDate = nil;
 }
 

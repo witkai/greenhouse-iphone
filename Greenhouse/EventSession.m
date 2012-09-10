@@ -31,13 +31,14 @@
 @dynamic hashtag;
 @dynamic information;
 @dynamic isFavorite;
+@dynamic isSelected;
 @dynamic leaderCount;
 @dynamic leaderDisplay;
 @dynamic number;
 @dynamic rating;
 @dynamic startTime;
 @dynamic title;
-@dynamic isSelected;
+@dynamic sessionId;
 @dynamic event;
 @dynamic leaders;
 
