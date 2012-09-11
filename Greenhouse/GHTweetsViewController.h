@@ -26,9 +26,7 @@
 #import "GHPullRefreshTableViewController.h"
 #import "GHTweetViewController.h"
 
-
 @class GHTweetDetailsViewController;
-
 
 @interface GHTweetsViewController : GHPullRefreshTableViewController <UITableViewDelegate, UITableViewDataSource, GHTwitterControllerDelegate, GHTwitterProfileImageDownloaderDelegate>
 { 

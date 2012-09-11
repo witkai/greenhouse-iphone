@@ -17,10 +17,11 @@
 //  VenueRoom.m
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 9/5/12.
+//  Created by Roy Clarkson on 9/11/12.
 //
 
 #import "VenueRoom.h"
+#import "EventSession.h"
 #import "Venue.h"
 
 
@@ -28,7 +29,7 @@
 
 @dynamic label;
 @dynamic roomId;
-@dynamic venueId;
 @dynamic venue;
+@dynamic sessions;
 
 @end

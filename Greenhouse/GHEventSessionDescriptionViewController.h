@@ -26,7 +26,6 @@
 
 @interface GHEventSessionDescriptionViewController : UIViewController
 
-@property (nonatomic, strong) EventSession *session;
 @property (nonatomic, strong) IBOutlet UITextView *textViewDescription;
 
 @end

@@ -17,13 +17,13 @@
 //  EventSession.h
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 9/10/12.
+//  Created by Roy Clarkson on 9/11/12.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class Event, EventSessionLeader;
+@class Event, EventSessionLeader, VenueRoom;
 
 @interface EventSession : NSManagedObject
 
@@ -31,16 +31,16 @@
 @property (nonatomic, retain) NSString * hashtag;
 @property (nonatomic, retain) NSString * information;
 @property (nonatomic, retain) NSNumber * isFavorite;
-@property (nonatomic, retain) NSNumber * isSelected;
 @property (nonatomic, retain) NSNumber * leaderCount;
 @property (nonatomic, retain) NSString * leaderDisplay;
 @property (nonatomic, retain) NSNumber * number;
 @property (nonatomic, retain) NSNumber * rating;
+@property (nonatomic, retain) NSNumber * sessionId;
 @property (nonatomic, retain) NSDate * startTime;
 @property (nonatomic, retain) NSString * title;
-@property (nonatomic, retain) NSNumber * sessionId;
 @property (nonatomic, retain) Event *event;
 @property (nonatomic, retain) NSSet *leaders;
+@property (nonatomic, retain) VenueRoom *room;
 @end
 
 @interface EventSession (CoreDataGeneratedAccessors)

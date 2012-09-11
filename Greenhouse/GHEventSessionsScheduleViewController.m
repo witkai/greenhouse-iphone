@@ -23,6 +23,7 @@
 #import "GHEventSessionsScheduleViewController.h"
 #import "Event.h"
 #import "GHEventController.h"
+#import "GHEventSessionController.h"
 #import "GHDateHelper.h"
 #import "GHEventSessionsByDayViewController.h"
 
@@ -55,7 +56,7 @@
         vc = [[GHEventSessionsByDayViewController alloc] initWithNibName:@"GHEventSessionsViewController" bundle:nil];
         [viewControllers setObject:vc forKey:[date description]];
     }
-    vc.eventDate = date;
+    [[GHEventSessionController sharedInstance] setSelectedScheduleDate:date];
     [self.navigationController pushViewController:vc animated:YES];
 	[tableView deselectRowAtIndexPath:indexPath animated:NO];
 }

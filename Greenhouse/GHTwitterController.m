@@ -21,8 +21,8 @@
 //
 
 #import "GHTwitterController.h"
-#import "GHTweet.h"
 #import "GHURLRequestParameters.h"
+#import "GHCoreDataManager.h"
 
 @implementation GHTwitterController
 
@@ -32,7 +32,8 @@
 #pragma mark -
 #pragma mark Instance methods
 
-- (void)fetchTweetsWithURL:(NSURL *)url page:(NSUInteger)page;
+- (void)sendRequestForTweetsWithURL:(NSURL *)url page:(NSUInteger)page delegate:(id<GHTwitterControllerDelegate>)d
+//- (void)sendRequestForTweetsWithEventId:(NSNumber *)eventId page:(NSUInteger)page delegate:(id<GHTwitterControllerDelegate>)d
 {
 	NSString *urlString = [[NSString alloc] initWithFormat:@"%@?page=%d&pageSize=%d", [url absoluteString], page, TWITTER_PAGE_SIZE];
     NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
@@ -46,11 +47,27 @@
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
          if (statusCode == 200 && data.length > 0 && error == nil)
          {
-             [self fetchTweetsDidFinishWithData:data];
+             DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+             NSMutableArray *tweets = [[NSMutableArray alloc] init];
+             BOOL lastPage = NO;
+             
+             NSError *error;
+             NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+             if (!error)
+             {
+                 DLog(@"%@", dictionary);
+                 lastPage = [dictionary boolForKey:@"lastPage"];
+                 NSArray *jsonArray = [dictionary objectForKey:@"tweets"];
+                 // TODO: delete tweets?
+                 [self storeTweetsWithJson:jsonArray];
+                 // TODO: fetch tweets from db?
+             }
+             [d fetchTweetsDidFinishWithResults:tweets lastPage:lastPage];
          }
          else if (error)
          {
-             [self fetchTweetsDidFailWithError:error];
+             [self requestDidFailWithError:error];
+             [delegate fetchTweetsDidFailWithError:error];
          }
          else if (statusCode != 200)
          {
@@ -59,40 +76,79 @@
      }];
 }
 
-- (void)fetchTweetsDidFinishWithData:(NSData *)data
+- (void)storeTweetsWithJson:(NSArray *)tweets
 {
-	DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-	
-	NSMutableArray *tweets = [[NSMutableArray alloc] init];
-	BOOL lastPage = NO;
+    DLog(@"");
+    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
+    [tweets enumerateObjectsUsingBlock:^(NSDictionary *tweetDict, NSUInteger idx, BOOL *stop) {
+        Tweet *tweet = [NSEntityDescription
+                        insertNewObjectForEntityForName:@"Tweet"
+                        inManagedObjectContext:context];
+        tweet.tweetId = [tweetDict stringForKey:@"id"];
+        tweet.text = [[tweetDict stringForKey:@"text"] stringByXMLDecoding];
+        tweet.createdAt = [tweetDict dateWithMillisecondsSince1970ForKey:@"createdAt"];
+        tweet.fromUser = [tweetDict stringByReplacingPercentEscapesForKey:@"fromUser" usingEncoding:NSUTF8StringEncoding];
+        tweet.profileImageUrl = [[tweetDict stringForKey:@"profileImageUrl"] stringByURLDecoding];
+        tweet.userId = [tweetDict stringForKey:@"userId"];
+        tweet.languageCode = [tweetDict stringForKey:@"languageCode"];
+        tweet.source = [[tweetDict stringForKey:@"source"] stringByURLDecoding];
+    }];
     
     NSError *error;
-    NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-    if (!error)
+    [context save:&error];
+    if (error)
     {
-        DLog(@"%@", dictionary);
-        lastPage = [dictionary boolForKey:@"lastPage"];
-        NSArray *jsonArray = (NSArray *)[dictionary objectForKey:@"tweets"];        
-        [jsonArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-            [tweets addObject:[[GHTweet alloc] initWithDictionary:obj]];
-        }];
+        DLog(@"%@", [error localizedDescription]);
     }
-
-	if ([delegate respondsToSelector:@selector(fetchTweetsDidFinishWithResults:lastPage:)])
-	{
-		[delegate fetchTweetsDidFinishWithResults:tweets lastPage:lastPage];
-	}
 }
 
-- (void)fetchTweetsDidFailWithError:(NSError *)error
+- (NSArray *)fetchTweetsWithEventId:(NSNumber *)eventId
 {
-	[self requestDidFailWithError:error];
-	
-	if ([delegate respondsToSelector:@selector(fetchTweetsDidFailWithError:)])
-	{
-		[delegate fetchTweetsDidFailWithError:error];
-	}
+    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Tweet" inManagedObjectContext:context];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"event.eventId == %@", eventId];
+    [fetchRequest setEntity:entity];
+    [fetchRequest setPredicate:predicate];
+    NSError *error;
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    return fetchedObjects;
 }
+
+//- (void)fetchTweetsDidFinishWithData:(NSData *)data
+//{
+//	DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+//	
+//	NSMutableArray *tweets = [[NSMutableArray alloc] init];
+//	BOOL lastPage = NO;
+//    
+//    NSError *error;
+//    NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+//    if (!error)
+//    {
+//        DLog(@"%@", dictionary);
+//        lastPage = [dictionary boolForKey:@"lastPage"];
+//        NSArray *jsonArray = (NSArray *)[dictionary objectForKey:@"tweets"];        
+//        [jsonArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+//            [tweets addObject:[[GHTweet alloc] initWithDictionary:obj]];
+//        }];
+//    }
+//
+//	if ([delegate respondsToSelector:@selector(fetchTweetsDidFinishWithResults:lastPage:)])
+//	{
+//		[delegate fetchTweetsDidFinishWithResults:tweets lastPage:lastPage];
+//	}
+//}
+
+//- (void)fetchTweetsDidFailWithError:(NSError *)error
+//{
+//	[self requestDidFailWithError:error];
+//	
+//	if ([delegate respondsToSelector:@selector(fetchTweetsDidFailWithError:)])
+//	{
+//		[delegate fetchTweetsDidFailWithError:error];
+//	}
+//}
 
 - (void)postUpdate:(NSString *)update withURL:(NSURL *)url
 {

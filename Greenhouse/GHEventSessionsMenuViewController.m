@@ -77,18 +77,14 @@
 	}
 	else if (indexPath.section == 1)
 	{
-		NSDate *date = (NSDate *)[arrayEventDates objectAtIndex:indexPath.row];
-		
+		NSDate *date = [arrayEventDates objectAtIndex:indexPath.row];
 		GHEventSessionsByDayViewController *vc = (GHEventSessionsByDayViewController *)[dictionaryViewControllers objectForKey:[date description]];
-		
 		if (vc == nil)
 		{
 			vc = [[GHEventSessionsByDayViewController alloc] initWithNibName:@"GHEventSessionsViewController" bundle:nil];
 			[dictionaryViewControllers setObject:vc forKey:[date description]];
 		}
-		
-		vc.eventDate = date;
-		
+        [[GHEventSessionController sharedInstance] setSelectedScheduleDate:date];
 		[self.navigationController pushViewController:vc animated:YES];
 	}
 		

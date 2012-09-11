@@ -22,11 +22,8 @@
 
 #import <UIKit/UIKit.h>
 #import "GHEventSessionsViewController.h"
-#import "GHEventSessionController.h"
-
+#import "GHEventSessionsByDateDelegate.h"
 
 @interface GHEventSessionsByDayViewController : GHEventSessionsViewController <GHEventSessionsByDateDelegate>
-
-@property (nonatomic, strong) NSDate *eventDate;
 
 @end

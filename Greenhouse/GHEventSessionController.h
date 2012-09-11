@@ -60,5 +60,8 @@
 - (EventSession *)fetchSelectedSession;
 - (void)setSelectedSession:(EventSession *)session;
 
+- (NSDate *)fetchSelectedScheduleDate;
+- (void)setSelectedScheduleDate:(NSDate *)date;
+
 @end
 

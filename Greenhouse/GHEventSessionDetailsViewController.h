@@ -35,7 +35,7 @@
 
 @property (nonatomic, strong) Event *event;
 @property (nonatomic, strong) EventSession *session;
-@property (nonatomic, strong) NSArray *arrayMenuItems;
+@property (nonatomic, strong) NSArray *menuItems;
 @property (nonatomic, strong) IBOutlet UILabel *labelTitle;
 @property (nonatomic, strong) IBOutlet UILabel *labelLeader;
 @property (nonatomic, strong) IBOutlet UILabel *labelTime;

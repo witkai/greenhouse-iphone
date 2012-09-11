@@ -25,6 +25,7 @@
 #import "GHEventController.h"
 #import "Event.h"
 #import "EventSessionLeader.h"
+#import "VenueRoom.h"
 
 @implementation GHEventSessionController
 
@@ -148,6 +149,7 @@
              NSArray *sessions = nil;
              if (!error)
              {
+                 DLog(@"%@", jsonArray);
                  [self deleteSessionsWithEventId:eventId date:eventDate];
                  [self storeSessionsWithEventId:eventId json:jsonArray];
                  NSPredicate *predicate = [self predicateWithEventId:eventId date:eventDate];
@@ -237,6 +239,14 @@
             leader.lastName = [leaderDict objectForKey:@"lastName"];
             [session addLeadersObject:leader];
         }];
+        
+        NSDictionary *roomDict = [sessionDict objectForKey:@"room"];
+        VenueRoom *room = [NSEntityDescription
+                           insertNewObjectForEntityForName:@"VenueRoom"
+                           inManagedObjectContext:context];
+        room.roomId = [roomDict objectForKey:@"id"];
+        room.label = [roomDict objectForKey:@"label"];
+        session.room = room;
         
         [event addSessionsObject:session];
     }];
@@ -527,46 +537,73 @@
 #pragma mark -
 #pragma mark Selected Session
 
+#define KEY_SELECTED_SESSION_NUMBER @"selectedSessionNumber"
+
 - (EventSession *)fetchSelectedSession
 {
-    EventSession *session = nil;
-    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"EventSession" inManagedObjectContext:context];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isSelected == YES"];
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    [fetchRequest setEntity:entity];
-    [fetchRequest setPredicate:predicate];
-    NSError *error;
-    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
-    if (fetchedObjects && fetchedObjects.count > 0)
-    {
-        session = [fetchedObjects objectAtIndex:0];
-    }
-    return session;
+    NSNumber *sessionNumber = [[NSUserDefaults standardUserDefaults] objectForKey:KEY_SELECTED_SESSION_NUMBER];
+    return [self fetchSessionWithNumber:sessionNumber];
 }
 
 - (void)setSelectedSession:(EventSession *)session
 {
-    if (session)
-    {
-        NSArray *sessions = [self fetchSessionsWithPredicate:nil];
-        [sessions enumerateObjectsUsingBlock:^(EventSession *s, NSUInteger idx, BOOL *stop) {
-            BOOL isSelected = NO;
-            if ([s.number isEqualToNumber:session.number])
-            {
-                isSelected = YES;
-            }
-            s.isSelected = [NSNumber numberWithBool:isSelected];
-        }];
-    }
-    
-    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
-    NSError *error;
-    [context save:&error];
-    if (error)
-    {
-        DLog(@"%@", [error localizedDescription]);
-    }
+	[[NSUserDefaults standardUserDefaults] setObject:session.number forKey:KEY_SELECTED_SESSION_NUMBER];
+	[[NSUserDefaults standardUserDefaults] synchronize];
 }
+
+#define KEY_SELECTED_SCHEDULE_DATE @"selectedScheduleDate"
+
+- (NSDate *)fetchSelectedScheduleDate
+{
+    return [[NSUserDefaults standardUserDefaults] objectForKey:KEY_SELECTED_SCHEDULE_DATE];
+}
+
+- (void)setSelectedScheduleDate:(NSDate *)date
+{
+    [[NSUserDefaults standardUserDefaults] setObject:date forKey:KEY_SELECTED_SCHEDULE_DATE];
+	[[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+//- (EventSession *)fetchSelectedSession
+//{
+//    EventSession *session = nil;
+//    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
+//    NSEntityDescription *entity = [NSEntityDescription entityForName:@"EventSession" inManagedObjectContext:context];
+//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isSelected == YES"];
+//    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+//    [fetchRequest setEntity:entity];
+//    [fetchRequest setPredicate:predicate];
+//    NSError *error;
+//    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+//    if (fetchedObjects && fetchedObjects.count > 0)
+//    {
+//        session = [fetchedObjects objectAtIndex:0];
+//    }
+//    return session;
+//}
+//
+//- (void)setSelectedSession:(EventSession *)session
+//{
+//    if (session)
+//    {
+//        NSArray *sessions = [self fetchSessionsWithPredicate:nil];
+//        [sessions enumerateObjectsUsingBlock:^(EventSession *s, NSUInteger idx, BOOL *stop) {
+//            BOOL isSelected = NO;
+//            if ([s.number isEqualToNumber:session.number])
+//            {
+//                isSelected = YES;
+//            }
+//            s.isSelected = [NSNumber numberWithBool:isSelected];
+//        }];
+//    }
+//    
+//    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
+//    NSError *error;
+//    [context save:&error];
+//    if (error)
+//    {
+//        DLog(@"%@", [error localizedDescription]);
+//    }
+//}
 
 @end

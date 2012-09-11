@@ -31,8 +31,7 @@
 #import "GHEventSessionRateViewController.h"
 #import "GHActivityIndicatorTableViewCell.h"
 
-
-@interface GHEventSessionDetailsViewController()
+@interface GHEventSessionDetailsViewController ()
 
 @property (nonatomic, strong) GHActivityIndicatorTableViewCell *favoriteTableViewCell;
 
@@ -41,13 +40,12 @@
 
 @end
 
-
 @implementation GHEventSessionDetailsViewController
 
 @synthesize favoriteTableViewCell;
 @synthesize event;
 @synthesize session;
-@synthesize arrayMenuItems;
+@synthesize menuItems;
 @synthesize labelTitle;
 @synthesize labelLeader;
 @synthesize labelTime;
@@ -190,7 +188,7 @@
 	}
 
 	
-	NSString *s = (NSString *)[arrayMenuItems objectAtIndex:indexPath.row];
+	NSString *s = (NSString *)[menuItems objectAtIndex:indexPath.row];
 	
 	[cell.textLabel setText:s];
 	
@@ -199,9 +197,9 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	if (arrayMenuItems)
+	if (menuItems)
 	{
-		return [arrayMenuItems count];
+		return [menuItems count];
 	}
 	
 	return 0;
@@ -225,6 +223,7 @@
 {
     [super viewWillAppear:animated];
     DLog(@"");
+    
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
     self.session = [[GHEventSessionController sharedInstance] fetchSelectedSession];
     if (session)
@@ -240,11 +239,9 @@
 		NSString *formattedEndTime = [dateFormatter stringFromDate:session.endTime];
 		NSString *formattedTime = [[NSString alloc] initWithFormat:@"%@ - %@", formattedStartTime, formattedEndTime];
 		labelTime.text = formattedTime;
-//		labelLocation.text = session.room.label;
+		labelLocation.text = session.room.label;
 		
-		NSArray *items = [[NSArray alloc] initWithObjects:@"Description", @"Tweets", @"Favorite", @"Rate", nil];
-		self.arrayMenuItems = items;
-        
+		self.menuItems = [[NSArray alloc] initWithObjects:@"Description", @"Tweets", @"Favorite", @"Rate", nil];        
 		[tableViewMenu reloadData];
 		
 		[self updateRating:[session.rating doubleValue]];
@@ -258,7 +255,7 @@
 	self.favoriteTableViewCell = nil;
 	self.event = nil;
 	self.session = nil;
-	self.arrayMenuItems = nil;
+	self.menuItems = nil;
 	self.labelTitle = nil;
 	self.labelLeader = nil;
 	self.labelTime = nil;

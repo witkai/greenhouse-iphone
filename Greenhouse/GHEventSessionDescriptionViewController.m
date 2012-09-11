@@ -23,6 +23,11 @@
 #import "GHEventSessionDescriptionViewController.h"
 #import "GHEventSessionController.h"
 
+@interface GHEventSessionDescriptionViewController ()
+
+@property (nonatomic, strong) EventSession *session;
+
+@end
 
 @implementation GHEventSessionDescriptionViewController
 

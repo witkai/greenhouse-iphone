@@ -23,19 +23,23 @@
 #import <CoreLocation/CoreLocation.h>
 #import "GHBaseController.h"
 #import "GHTwitterControllerDelegate.h"
+#import "Tweet.h"
 
 
 @interface GHTwitterController : GHBaseController
 
 @property (nonatomic, unsafe_unretained) id<GHTwitterControllerDelegate> delegate;
 
-- (void)fetchTweetsWithURL:(NSURL *)url page:(NSUInteger)page;
-- (void)fetchTweetsDidFinishWithData:(NSData *)data;
-- (void)fetchTweetsDidFailWithError:(NSError *)error;
+//- (void)fetchTweets
+- (void)sendRequestForTweetsWithURL:(NSURL *)url page:(NSUInteger)page delegate:(id<GHTwitterControllerDelegate>)delegate;
+//- (void)fetchTweetsDidFinishWithData:(NSData *)data;
+//- (void)fetchTweetsDidFailWithError:(NSError *)error;
+
 - (void)postUpdate:(NSString *)update withURL:(NSURL *)url;
 - (void)postUpdate:(NSString *)update withURL:(NSURL *)url location:(CLLocation *)location;
 - (void)postUpdateDidFinishWithData:(NSData *)data;
 - (void)postUpdateDidFailWithError:(NSError *)error;
+
 - (void)postRetweet:(NSString *)tweetId withURL:(NSURL *)url;
 - (void)postRetweetDidFinishWithData:(NSData *)data;
 - (void)postRetweetDidFailWithError:(NSError *)error;

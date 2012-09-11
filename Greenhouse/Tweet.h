@@ -14,33 +14,25 @@
 //  limitations under the License.
 //
 //
-//  EventSession.m
+//  Tweet.h
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 9/11/12.
+//  Created by Roy Clarkson on 9/10/12.
 //
 
-#import "EventSession.h"
-#import "Event.h"
-#import "EventSessionLeader.h"
-#import "VenueRoom.h"
+#import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 
 
-@implementation EventSession
+@interface Tweet : NSManagedObject
 
-@dynamic endTime;
-@dynamic hashtag;
-@dynamic information;
-@dynamic isFavorite;
-@dynamic leaderCount;
-@dynamic leaderDisplay;
-@dynamic number;
-@dynamic rating;
-@dynamic sessionId;
-@dynamic startTime;
-@dynamic title;
-@dynamic event;
-@dynamic leaders;
-@dynamic room;
+@property (nonatomic, retain) NSString * tweetId;
+@property (nonatomic, retain) NSString * text;
+@property (nonatomic, retain) NSDate * createdAt;
+@property (nonatomic, retain) NSString * fromUser;
+@property (nonatomic, retain) NSString * profileImageUrl;
+@property (nonatomic, retain) NSString * userId;
+@property (nonatomic, retain) NSString * languageCode;
+@property (nonatomic, retain) NSString * source;
 
 @end

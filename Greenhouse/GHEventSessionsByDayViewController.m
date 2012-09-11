@@ -21,14 +21,14 @@
 //
 
 #import "GHEventSessionsByDayViewController.h"
+#import "GHEventSessionController.h"
 
+@interface GHEventSessionsByDayViewController ()
 
-@interface GHEventSessionsByDayViewController()
-
+@property (nonatomic, strong) NSDate *eventDate;
 @property (nonatomic, strong) NSArray *times;
 
 @end
-
 
 @implementation GHEventSessionsByDayViewController
 
@@ -201,6 +201,8 @@
     
     [super viewWillAppear:animated];
     DLog(@"");
+    
+    self.eventDate = [[GHEventSessionController sharedInstance] fetchSelectedScheduleDate];
     
     // set the title of the view to the schedule day
 	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];

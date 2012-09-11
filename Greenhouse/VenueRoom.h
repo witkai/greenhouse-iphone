@@ -17,19 +17,27 @@
 //  VenueRoom.h
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 9/5/12.
+//  Created by Roy Clarkson on 9/11/12.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class Venue;
+@class EventSession, Venue;
 
 @interface VenueRoom : NSManagedObject
 
 @property (nonatomic, retain) NSString * label;
-@property (nonatomic, retain) NSString * roomId;
-@property (nonatomic, retain) NSString * venueId;
+@property (nonatomic, retain) NSNumber * roomId;
 @property (nonatomic, retain) Venue *venue;
+@property (nonatomic, retain) NSSet *sessions;
+@end
+
+@interface VenueRoom (CoreDataGeneratedAccessors)
+
+- (void)addSessionsObject:(EventSession *)value;
+- (void)removeSessionsObject:(EventSession *)value;
+- (void)addSessions:(NSSet *)values;
+- (void)removeSessions:(NSSet *)values;
 
 @end

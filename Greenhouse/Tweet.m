@@ -14,33 +14,24 @@
 //  limitations under the License.
 //
 //
-//  EventSession.m
+//  Tweet.m
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 9/11/12.
+//  Created by Roy Clarkson on 9/10/12.
 //
 
-#import "EventSession.h"
-#import "Event.h"
-#import "EventSessionLeader.h"
-#import "VenueRoom.h"
+#import "Tweet.h"
 
 
-@implementation EventSession
+@implementation Tweet
 
-@dynamic endTime;
-@dynamic hashtag;
-@dynamic information;
-@dynamic isFavorite;
-@dynamic leaderCount;
-@dynamic leaderDisplay;
-@dynamic number;
-@dynamic rating;
-@dynamic sessionId;
-@dynamic startTime;
-@dynamic title;
-@dynamic event;
-@dynamic leaders;
-@dynamic room;
+@dynamic tweetId;
+@dynamic text;
+@dynamic createdAt;
+@dynamic fromUser;
+@dynamic profileImageUrl;
+@dynamic userId;
+@dynamic languageCode;
+@dynamic source;
 
 @end

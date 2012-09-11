@@ -205,38 +205,50 @@ void DumpError(NSString* action, NSError* error) {
 
 - (Event *)fetchSelectedEvent
 {
-    Event *event = nil;
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isSelected == YES"];
-    NSArray *fetchedObjects = [self fetchEventsWithPredicate:predicate];
-    if (fetchedObjects && fetchedObjects.count > 0)
-    {
-        event = [fetchedObjects objectAtIndex:0];
-    }
-    return event;
+    NSNumber *eventId = [[NSUserDefaults standardUserDefaults] objectForKey:@"selectedEventId"];
+    return [self fetchEventWithId:eventId];
 }
 
 - (void)setSelectedEvent:(Event *)event
 {
-    if (event)
-    {
-        NSArray *objects = [self fetchEventsWithPredicate:nil];
-        [objects enumerateObjectsUsingBlock:^(Event *e, NSUInteger idx, BOOL *stop) {
-            BOOL selected = NO;
-            if ([e.eventId isEqualToNumber:event.eventId])
-            {
-                selected = YES;
-            }
-            e.isSelected = [NSNumber numberWithBool:selected];
-        }];
-    }
-    
-    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
-    NSError *error;
-    [context save:&error];
-    if (error)
-    {
-        DLog(@"%@", [error localizedDescription]);
-    }
+	[[NSUserDefaults standardUserDefaults] setObject:event.eventId forKey:@"selectedEventId"];
+	[[NSUserDefaults standardUserDefaults] synchronize];
 }
+
+//- (Event *)fetchSelectedEvent
+//{
+//    Event *event = nil;
+//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isSelected == YES"];
+//    NSArray *fetchedObjects = [self fetchEventsWithPredicate:predicate];
+//    if (fetchedObjects && fetchedObjects.count > 0)
+//    {
+//        event = [fetchedObjects objectAtIndex:0];
+//    }
+//    return event;
+//}
+//
+//- (void)setSelectedEvent:(Event *)event
+//{
+//    if (event)
+//    {
+//        NSArray *objects = [self fetchEventsWithPredicate:nil];
+//        [objects enumerateObjectsUsingBlock:^(Event *e, NSUInteger idx, BOOL *stop) {
+//            BOOL selected = NO;
+//            if ([e.eventId isEqualToNumber:event.eventId])
+//            {
+//                selected = YES;
+//            }
+//            e.isSelected = [NSNumber numberWithBool:selected];
+//        }];
+//    }
+//    
+//    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
+//    NSError *error;
+//    [context save:&error];
+//    if (error)
+//    {
+//        DLog(@"%@", [error localizedDescription]);
+//    }
+//}
 
 @end

@@ -114,8 +114,7 @@
 - (void)fetchNextPage
 {
 	self.twitterController = [[GHTwitterController alloc] init];
-	twitterController.delegate = self;
-	[twitterController fetchTweetsWithURL:tweetUrl page:++_currentPage];
+	[twitterController sendRequestForTweetsWithURL:tweetUrl page:++_currentPage delegate:self];
 }
 
 - (BOOL)shouldShowLoadingCell:(NSUInteger)row
@@ -190,7 +189,7 @@
 {
 	if (arrayTweets && [arrayTweets count] > indexPath.row)
 	{
-		GHTweet *tweet = (GHTweet *)[arrayTweets objectAtIndex:indexPath.row];
+		GHTweet *tweet = [arrayTweets objectAtIndex:indexPath.row];
 		tweetDetailsViewController.tweet = tweet;
 		tweetDetailsViewController.tweetUrl = tweetUrl;
 		tweetDetailsViewController.retweetUrl = retweetUrl;
@@ -203,7 +202,6 @@
 	if (arrayTweets && [arrayTweets count] > indexPath.row)
 	{
 		GHTweet *tweet = (GHTweet *)[arrayTweets objectAtIndex:indexPath.row];
-		
 		CGSize maxSize = CGSizeMake(self.tableView.frame.size.width - 63.0f, CGFLOAT_MAX);
 		CGSize textSize = [tweet.text sizeWithFont:[UIFont systemFontOfSize:13.0f] constrainedToSize:maxSize lineBreakMode:UILineBreakModeWordWrap];
 		return MAX(textSize.height + 26.0f, 58.0f);
@@ -314,8 +312,7 @@
 	[arrayTweets removeAllObjects];
 	
 	self.twitterController = [[GHTwitterController alloc] init];
-	twitterController.delegate = self;
-	[twitterController fetchTweetsWithURL:tweetUrl page:_currentPage];
+	[twitterController sendRequestForTweetsWithURL:tweetUrl page:_currentPage delegate:self];
 }
 
 
