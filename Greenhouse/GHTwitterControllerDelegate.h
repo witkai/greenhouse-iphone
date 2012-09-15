@@ -27,7 +27,7 @@
 
 @optional
 
-- (void)fetchTweetsDidFinishWithResults:(NSArray *)tweets lastPage:(BOOL)lastPage;
+- (void)fetchTweetsDidFinishWithResults:(NSArray *)tweets;
 - (void)fetchTweetsDidFailWithError:(NSError *)error;
 - (void)postUpdateDidFinish;
 - (void)postUpdateDidFailWithError:(NSError *)error;

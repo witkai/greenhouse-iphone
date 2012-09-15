@@ -26,40 +26,37 @@
 
 #import "GHTweetsViewController.h"
 #import "GHTweetTableViewCell.h"
-#import "GHTweet.h"
+#import "GHTwitterController.h"
+#import "Tweet.h"
 #import "GHTweetDetailsViewController.h"
 #import "GHActivityIndicatorTableViewCell.h"
 
 @interface GHTweetsViewController()
 
 @property (nonatomic, strong) NSMutableDictionary *imageDownloadsInProgress;
-@property (nonatomic, strong) GHTwitterController *twitterController;
 
-- (void)showTwitterForm;
-- (void)startImageDownload:(GHTweet *)tweet forIndexPath:(NSIndexPath *)indexPath;
+- (void)startImageDownload:(Tweet *)tweet forIndexPath:(NSIndexPath *)indexPath;
 - (void)completeFetchTweets:(NSArray *)tweets;
-- (void)fetchNextPage;
 - (BOOL)shouldShowLoadingCell:(NSUInteger)row;
 
 @end
 
 @implementation GHTweetsViewController
 
-@synthesize arrayTweets;
+@synthesize tweets = _tweets;
 @synthesize imageDownloadsInProgress;
-@synthesize twitterController;
-@synthesize tweetUrl;
-@synthesize retweetUrl;
 @synthesize tweetViewController;
 @synthesize tweetDetailsViewController;
+@synthesize isLastPage = _isLastPage;
 @synthesize isLoading = _isLoading;
+@synthesize currentPage = _currentPage;
 
 - (void)showTwitterForm
 {
 	[self presentModalViewController:tweetViewController animated:YES];
 }
 
-- (void)startImageDownload:(GHTweet *)tweet forIndexPath:(NSIndexPath *)indexPath
+- (void)startImageDownload:(Tweet *)tweet forIndexPath:(NSIndexPath *)indexPath
 {
     GHTwitterProfileImageDownloader *profileImageDownloader = [imageDownloadsInProgress objectForKey:indexPath];
 	
@@ -77,26 +74,26 @@
 // this method is used in case the user scrolled into a set of cells that don't have their profile images yet
 - (void)loadImagesForOnscreenRows
 {
-    if ([self.arrayTweets count] > 0)
+    if ([self.tweets count] > 0)
     {
         NSArray *visiblePaths = [self.tableView indexPathsForVisibleRows];
 		
         for (NSIndexPath *indexPath in visiblePaths)
         {
-			if (indexPath.row < [arrayTweets count])
+			if (indexPath.row < [_tweets count])
 			{
-				GHTweet *tweet = [self.arrayTweets objectAtIndex:indexPath.row];
+//				Tweet *tweet = [self.arrayTweets objectAtIndex:indexPath.row];
 				
-				if (!tweet.profileImage) // avoid the profile image download if it already has an image
-				{
-					[self startImageDownload:tweet forIndexPath:indexPath];
-				}
+//				if (!tweet.profileImage) // avoid the profile image download if it already has an image
+//				{
+//					[self startImageDownload:tweet forIndexPath:indexPath];
+//				}
 			}
 			else if (!_isLastPage)
 			{
 				// if this is the last cell in the table and we aren't on the last page, 
 				// initiate the request for more tweets
-				[self fetchNextPage];
+				[self fetchTweetsWithPage:++_currentPage];
 			}			
         }
     }
@@ -104,23 +101,20 @@
 
 - (void)completeFetchTweets:(NSArray *)tweets
 {
-	_isLoading = NO;
-	self.twitterController = nil;
-	[arrayTweets addObjectsFromArray:tweets];
+	self.isLoading = NO;
+	self.tweets = tweets;
 	[self.tableView reloadData];
 	[self dataSourceDidFinishLoadingNewData];
 }
 
-- (void)fetchNextPage
+- (void)fetchTweetsWithPage:(NSUInteger)page
 {
-	self.twitterController = [[GHTwitterController alloc] init];
-	[twitterController sendRequestForTweetsWithURL:tweetUrl page:++_currentPage delegate:self];
+    // in subclass
 }
 
 - (BOOL)shouldShowLoadingCell:(NSUInteger)row
 {
-	NSUInteger count = [arrayTweets count];
-	
+	NSUInteger count = [_tweets count];
 	return ((row == 0 && _isLoading) || (count > 0 && count == row && !_isLastPage));
 }
 
@@ -128,10 +122,10 @@
 #pragma mark -
 #pragma mark TwitterControllerDelegate methods
 
-- (void)fetchTweetsDidFinishWithResults:(NSArray *)tweets lastPage:(BOOL)lastPage
+- (void)fetchTweetsDidFinishWithResults:(NSArray *)tweets
 {
-	_isLastPage = lastPage;
-	
+//	self.isLastPage = lastPage; // value not being set by web service
+    self.isLastPage = (tweets.count < TWITTER_PAGE_SIZE);
 	[self completeFetchTweets:tweets];
 }
 
@@ -151,10 +145,10 @@
 	
     if (profileImageDownloader != nil)
     {
-        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:profileImageDownloader.indexPathInTableView];
+//        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:profileImageDownloader.indexPathInTableView];
         
         // Display the newly loaded image
-        cell.imageView.image = profileImageDownloader.tweet.profileImage;
+//        cell.imageView.image = profileImageDownloader.tweet.profileImage;
 		
 		[imageDownloadsInProgress removeObjectForKey:indexPath];
     }
@@ -187,21 +181,19 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	if (arrayTweets && [arrayTweets count] > indexPath.row)
+	if (_tweets && [_tweets count] > indexPath.row)
 	{
-		GHTweet *tweet = [arrayTweets objectAtIndex:indexPath.row];
-		tweetDetailsViewController.tweet = tweet;
-		tweetDetailsViewController.tweetUrl = tweetUrl;
-		tweetDetailsViewController.retweetUrl = retweetUrl;
+		Tweet *tweet = [_tweets objectAtIndex:indexPath.row];
+        [[GHTwitterController sharedInstance] setSelectedTweet:tweet];
 		[self.navigationController pushViewController:tweetDetailsViewController animated:YES];
 	}
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	if (arrayTweets && [arrayTweets count] > indexPath.row)
+	if (_tweets && [_tweets count] > indexPath.row)
 	{
-		GHTweet *tweet = (GHTweet *)[arrayTweets objectAtIndex:indexPath.row];
+		Tweet *tweet = [_tweets objectAtIndex:indexPath.row];
 		CGSize maxSize = CGSizeMake(self.tableView.frame.size.width - 63.0f, CGFLOAT_MAX);
 		CGSize textSize = [tweet.text sizeWithFont:[UIFont systemFontOfSize:13.0f] constrainedToSize:maxSize lineBreakMode:UILineBreakModeWordWrap];
 		return MAX(textSize.height + 26.0f, 58.0f);
@@ -221,7 +213,7 @@
 	static NSString *cellIdent = @"tweetCell";
 	static NSString *loadingCellIdent = @"loadingCell";
     
-	NSUInteger tweetCount = [arrayTweets count];
+	NSUInteger tweetCount = [_tweets count];
 	NSUInteger row = indexPath.row;
 
     // add a placeholder cell while waiting on table data
@@ -253,16 +245,16 @@
 	// Leave cells empty if there's no data yet
     if (tweetCount > 0)
 	{
-        GHTweet *tweet = (GHTweet *)[arrayTweets objectAtIndex:row];
+        Tweet *tweet = (Tweet *)[_tweets objectAtIndex:row];
 		
         // Only load cached images; defer new downloads until scrolling ends
-        if (!tweet.profileImage)
-        {
-            if (tableView.dragging == NO && tableView.decelerating == NO)
-            {
-                [self startImageDownload:tweet forIndexPath:indexPath];
-            }
-        }
+//        if (!tweet.profileImage)
+//        {
+//            if (tableView.dragging == NO && tableView.decelerating == NO)
+//            {
+//                [self startImageDownload:tweet forIndexPath:indexPath];
+//            }
+//        }
 
 		cell.tweet = tweet;
     }	
@@ -277,7 +269,7 @@
 		return 1;
 	}
 	
-	NSUInteger count = [arrayTweets count];
+	NSUInteger count = [_tweets count];
 	
 	if (count > 0 && !_isLastPage)
 	{
@@ -301,18 +293,16 @@
 
 - (BOOL)shouldReloadData
 {
-	return (_isLoading || [arrayTweets count] == 0 || self.lastRefreshExpired);
+	return (_isLoading || [_tweets count] == 0 || self.lastRefreshExpired);
 }
 
 - (void)reloadTableViewDataSource
 {
-	_currentPage = 1;
-	_isLastPage = NO;
+	self.currentPage = 1;
+	self.isLastPage = NO;
 	[imageDownloadsInProgress removeAllObjects];
-	[arrayTweets removeAllObjects];
-	
-	self.twitterController = [[GHTwitterController alloc] init];
-	[twitterController sendRequestForTweetsWithURL:tweetUrl page:_currentPage delegate:self];
+	self.tweets = nil;
+    [self fetchTweetsWithPage:_currentPage];
 }
 
 
@@ -324,17 +314,19 @@
     [super viewDidLoad];
 	
 	self.title = @"Tweets";
-	
 	self.imageDownloadsInProgress = [[NSMutableDictionary alloc] init];
-	self.arrayTweets = [[NSMutableArray alloc] init];
-	
-	self.tweetViewController = [[GHTweetViewController alloc] initWithNibName:nil bundle:nil];
-	self.tweetDetailsViewController = [[GHTweetDetailsViewController alloc] initWithNibName:nil bundle:nil];
-	
 	UIBarButtonItem *buttonItemCompose = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose 
 																				target:self 
 																				action:@selector(showTwitterForm)];
 	self.navigationItem.rightBarButtonItem = buttonItemCompose;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    self.isLoading = YES;
+    [self.tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning 
@@ -347,18 +339,15 @@
 	[imageDownloadsInProgress removeAllObjects];
 	
 	// delete cached profile images
-	[arrayTweets makeObjectsPerformSelector:@selector(removeCachedProfileImage)];
+	[_tweets makeObjectsPerformSelector:@selector(removeCachedProfileImage)];
 }
 
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
 	
-	self.arrayTweets = nil;
+	self.tweets = nil;
 	self.imageDownloadsInProgress = nil;
-	self.twitterController = nil;
-	self.tweetUrl = nil;
-	self.retweetUrl = nil;
 	self.tweetViewController = nil;
 	self.tweetDetailsViewController = nil;
 }

@@ -21,7 +21,7 @@
 //
 
 #import "GHTwitterProfileImageDownloader.h"
-#import "GHTweet.h"
+#import "Tweet.h"
 
 #define kImageHeight 48
 
@@ -103,12 +103,12 @@
 		UIGraphicsBeginImageContext(itemSize);
 		CGRect imageRect = CGRectMake(0.0, 0.0, itemSize.width, itemSize.height);
 		[image drawInRect:imageRect];
-		self.tweet.profileImage = UIGraphicsGetImageFromCurrentImageContext();
+//		self.tweet.profileImage = UIGraphicsGetImageFromCurrentImageContext();
 		UIGraphicsEndImageContext();
     }
     else
     {
-        self.tweet.profileImage = image;
+//        self.tweet.profileImage = image;
     }
 	
     [delegate profileImageDidLoad:self.indexPathInTableView];

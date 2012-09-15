@@ -14,28 +14,30 @@
 //  limitations under the License.
 //
 //
-//  Tweet.m
+//  VenueRoom.h
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 9/14/12.
+//  Created by Roy Clarkson on 9/15/12.
 //
 
-#import "Tweet.h"
-#import "Event.h"
-#import "EventSession.h"
+#import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 
+@class EventSession, Venue;
 
-@implementation Tweet
+@interface VenueRoom : NSManagedObject
 
-@dynamic createdAt;
-@dynamic fromUser;
-@dynamic languageCode;
-@dynamic profileImageUrl;
-@dynamic source;
-@dynamic text;
-@dynamic tweetId;
-@dynamic userId;
-@dynamic event;
-@dynamic session;
+@property (nonatomic, retain) NSString * label;
+@property (nonatomic, retain) NSNumber * roomId;
+@property (nonatomic, retain) NSSet *sessions;
+@property (nonatomic, retain) Venue *venue;
+@end
+
+@interface VenueRoom (CoreDataGeneratedAccessors)
+
+- (void)addSessionsObject:(EventSession *)value;
+- (void)removeSessionsObject:(EventSession *)value;
+- (void)addSessions:(NSSet *)values;
+- (void)removeSessions:(NSSet *)values;
 
 @end

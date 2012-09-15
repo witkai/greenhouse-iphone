@@ -21,18 +21,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "GHTwitterController.h"
-#import "GHTweet.h"
-
+#import "GHTwitterControllerDelegate.h"
 
 @class GHTweetViewController;
 
+@interface GHTweetDetailsViewController : UIViewController <GHTwitterControllerDelegate>
 
-@interface GHTweetDetailsViewController : GHDataViewController <GHTwitterControllerDelegate>
-
-@property (nonatomic, strong) GHTweet *tweet;
-@property (nonatomic, strong) NSURL *tweetUrl;
-@property (nonatomic, strong) NSURL *retweetUrl;
 @property (nonatomic, strong) IBOutlet UIImageView *imageViewProfile;
 @property (nonatomic, strong) IBOutlet UILabel *labelUser;
 @property (nonatomic, strong) IBOutlet UILabel *labelTime;

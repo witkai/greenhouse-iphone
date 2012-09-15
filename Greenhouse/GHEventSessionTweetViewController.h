@@ -14,28 +14,14 @@
 //  limitations under the License.
 //
 //
-//  Tweet.m
+//  GHEventSessionTweetViewController.h
 //  Greenhouse
 //
 //  Created by Roy Clarkson on 9/14/12.
 //
 
-#import "Tweet.h"
-#import "Event.h"
-#import "EventSession.h"
+#import "GHTweetViewController.h"
 
-
-@implementation Tweet
-
-@dynamic createdAt;
-@dynamic fromUser;
-@dynamic languageCode;
-@dynamic profileImageUrl;
-@dynamic source;
-@dynamic text;
-@dynamic tweetId;
-@dynamic userId;
-@dynamic event;
-@dynamic session;
+@interface GHEventSessionTweetViewController : GHTweetViewController
 
 @end

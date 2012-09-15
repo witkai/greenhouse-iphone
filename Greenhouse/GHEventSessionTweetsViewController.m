@@ -21,9 +21,9 @@
 //
 
 #import "GHEventSessionTweetsViewController.h"
+#import "GHEventSessionTweetViewController.h"
 #import "GHEventController.h"
 #import "GHEventSessionController.h"
-
 
 @interface GHEventSessionTweetsViewController()
 
@@ -31,39 +31,24 @@
 
 @end
 
-
 @implementation GHEventSessionTweetsViewController
 
 @synthesize event;
 @synthesize session;
-@synthesize currentSession;
 
-#pragma mark -
-#pragma mark PullRefreshTableViewController methods
+- (void)showTwitterForm
+{
+    self.tweetViewController.tweetText = [[NSString alloc] initWithFormat:@"%@ %@", event.hashtag, session.hashtag];
+    [super showTwitterForm];
+}
 
-//- (void)refreshView
-//{
-//	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSION_TWEETS_URL, event.eventId, session.number];
-//	NSURL *url = [[NSURL alloc] initWithString:urlString];
-//	self.tweetUrl = url;
-//	self.tweetViewController.tweetUrl = url;
-//	
-//	NSString *tweetText = [[NSString alloc] initWithFormat:@"%@ %@", event.hashtag, session.hashtag];
-//	self.tweetViewController.tweetText = tweetText;
-//	
-//	urlString = [[NSString alloc] initWithFormat:EVENT_SESSION_RETWEET_URL, event.eventId, session.number];
-//	url = [[NSURL alloc] initWithString:urlString];
-//	self.retweetUrl = url;
-//	
-//	if (![currentSession.number isEqualToString:session.number])
-//	{
-//		self.isLoading = YES;
-//		[self.arrayTweets removeAllObjects];
-//		[self.tableView reloadData];
-//	}
-//	
-//	self.currentSession = session;
-//}
+- (void)fetchTweetsWithPage:(NSUInteger)page
+{
+	[[GHTwitterController sharedInstance] sendRequestForTweetsWithEventId:event.eventId
+                                                            sessionNumber:session.number
+                                                                     page:page
+                                                                 delegate:self];
+}
 
 
 #pragma mark -
@@ -74,35 +59,21 @@
 	self.lastRefreshKey = @"EventSessionTweetsViewController_LastRefresh";
 	
 	[super viewDidLoad];
+    
+    self.tweetViewController = [[GHEventSessionTweetViewController alloc] initWithNibName:@"GHTweetViewController" bundle:nil];
+//	self.tweetDetailsViewController = [[GHEventSessionTweetDetailsViewController alloc] initWithNibName:@"GHTweetDetailsViewController" bundle:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     DLog(@"");
+    
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
     self.session = [[GHEventSessionController sharedInstance] fetchSelectedSession];
-    
-    NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSION_TWEETS_URL, event.eventId, session.number];
-	NSURL *url = [[NSURL alloc] initWithString:urlString];
-	self.tweetUrl = url;
-	self.tweetViewController.tweetUrl = url;
-	
-	NSString *tweetText = [[NSString alloc] initWithFormat:@"%@ %@", event.hashtag, session.hashtag];
-	self.tweetViewController.tweetText = tweetText;
-	
-	urlString = [[NSString alloc] initWithFormat:EVENT_SESSION_RETWEET_URL, event.eventId, session.number];
-	url = [[NSURL alloc] initWithString:urlString];
-	self.retweetUrl = url;
-	
-	if (![currentSession.number isEqualToNumber:session.number])
-	{
-		self.isLoading = YES;
-		[self.arrayTweets removeAllObjects];
-		[self.tableView reloadData];
-	}
-	
-	self.currentSession = session;
+    [[GHTwitterController sharedInstance] fetchTweetsWithEventId:event.eventId
+                                                   sessionNumber:session.number
+                                                        delegate:self];
 }
 
 - (void)viewDidUnload
@@ -111,7 +82,6 @@
 	
 	self.event = nil;
 	self.session = nil;
-	self.currentSession = nil;
 }
 
 @end

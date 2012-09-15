@@ -17,13 +17,13 @@
 //  EventSession.m
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 9/11/12.
+//  Created by Roy Clarkson on 9/15/12.
 //
 
 #import "EventSession.h"
 #import "Event.h"
 #import "EventSessionLeader.h"
-#import "VenueRoom.h"
+#import "Tweet.h"
 
 
 @implementation EventSession
@@ -42,5 +42,6 @@
 @dynamic event;
 @dynamic leaders;
 @dynamic room;
+@dynamic tweets;
 
 @end

@@ -25,10 +25,9 @@
 #import "GHTweetViewController.h"
 #import "GHTwitterController.h"
 
-@interface GHTweetViewController()
+@interface GHTweetViewController ()
 
 @property (nonatomic, strong) GHLocationManager *locationManager;
-@property (nonatomic, strong) GHTwitterController *twitterController;
 
 - (void)setCount:(NSUInteger)newCount;
 
@@ -37,8 +36,6 @@
 @implementation GHTweetViewController
 
 @synthesize locationManager;
-@synthesize twitterController;
-@synthesize tweetUrl;
 @synthesize tweetText;
 @synthesize barButtonCancel;
 @synthesize barButtonSend;
@@ -75,18 +72,7 @@
 
 - (IBAction)actionSend:(id)sender
 {
-	if ([GHUserSettings includeLocationInTweet])
-	{
-		self.locationManager = [[GHLocationManager alloc] init];
-		locationManager.delegate = self;
-		[locationManager startUpdatingLocation];
-	}
-	else 
-	{
-		self.twitterController = [[GHTwitterController alloc] init];
-		twitterController.delegate = self;
-		[twitterController postUpdate:textViewTweet.text withURL:tweetUrl];
-	}
+    // in subclass
 }
 
 
@@ -96,9 +82,6 @@
 - (void)locationManager:(GHLocationManager *)manager didUpdateLocation:(CLLocation *)newLocation
 {
 	self.locationManager = nil;
-	self.twitterController = [[GHTwitterController alloc] init];
-	twitterController.delegate = self;
-	[twitterController postUpdate:textViewTweet.text withURL:tweetUrl location:newLocation];
 }
 
 - (void)locationManager:(GHLocationManager *)manager didFailWithError:(NSError *)error
@@ -112,13 +95,12 @@
 
 - (void)postUpdateDidFinish
 {
-	self.twitterController = nil;
 	[self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)postUpdateDidFailWithError:(NSError *)error;
 {
-	self.twitterController = nil;
+
 }
 
 
@@ -142,6 +124,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
+    DLog(@"");
 	
 	self.switchGeotag.on = [GHUserSettings includeLocationInTweet];
 	
@@ -152,23 +135,11 @@
 	[textViewTweet becomeFirstResponder];
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
-	[super viewDidAppear:YES];	
-}
-
-- (void)didReceiveMemoryWarning 
-{
-    [super didReceiveMemoryWarning];
-}
-
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
 	
 	self.locationManager = nil;
-	self.twitterController = nil;
-	self.tweetUrl = nil;
 	self.tweetText = nil;
 	self.barButtonCancel = nil;
 	self.barButtonSend = nil;

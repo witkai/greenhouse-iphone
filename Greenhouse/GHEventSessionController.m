@@ -409,23 +409,11 @@
 
 - (void)updateFavoriteSessionWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber delegate:(id<GHEventSessionUpdateFavoriteDelegate>)delegate
 {
-    EventSession *session = nil;
-    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"EventSession" inManagedObjectContext:context];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isSelected == YES"];
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    [fetchRequest setEntity:entity];
-    [fetchRequest setPredicate:predicate];
-    NSError *error;
-    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
-    if (fetchedObjects && fetchedObjects.count > 0)
-    {
-        session = [fetchedObjects objectAtIndex:0];
-    }
-
+    EventSession *session = [self fetchSessionWithNumber:sessionNumber];
     if (session)
     {
         session.isFavorite = [NSNumber numberWithBool:YES];
+        NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
         NSError *error;
         [context save:&error];
         if (error)

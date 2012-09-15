@@ -14,28 +14,22 @@
 //  limitations under the License.
 //
 //
-//  Tweet.m
+//  VenueRoom.m
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 9/14/12.
+//  Created by Roy Clarkson on 9/15/12.
 //
 
-#import "Tweet.h"
-#import "Event.h"
+#import "VenueRoom.h"
 #import "EventSession.h"
+#import "Venue.h"
 
 
-@implementation Tweet
+@implementation VenueRoom
 
-@dynamic createdAt;
-@dynamic fromUser;
-@dynamic languageCode;
-@dynamic profileImageUrl;
-@dynamic source;
-@dynamic text;
-@dynamic tweetId;
-@dynamic userId;
-@dynamic event;
-@dynamic session;
+@dynamic label;
+@dynamic roomId;
+@dynamic sessions;
+@dynamic venue;
 
 @end

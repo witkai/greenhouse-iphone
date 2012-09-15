@@ -14,7 +14,7 @@
 //  limitations under the License.
 //
 //
-//  EventSession.h
+//  Event.h
 //  Greenhouse
 //
 //  Created by Roy Clarkson on 9/15/12.
@@ -23,37 +23,39 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class Event, EventSessionLeader, Tweet;
+@class EventSession, Tweet, Venue;
 
-@interface EventSession : NSManagedObject
+@interface Event : NSManagedObject
 
 @property (nonatomic, retain) NSDate * endTime;
+@property (nonatomic, retain) NSNumber * eventId;
+@property (nonatomic, retain) NSString * groupName;
 @property (nonatomic, retain) NSString * hashtag;
 @property (nonatomic, retain) NSString * information;
-@property (nonatomic, retain) NSNumber * isFavorite;
-@property (nonatomic, retain) NSNumber * leaderCount;
-@property (nonatomic, retain) NSString * leaderDisplay;
-@property (nonatomic, retain) NSNumber * number;
-@property (nonatomic, retain) NSNumber * rating;
-@property (nonatomic, retain) NSNumber * sessionId;
+@property (nonatomic, retain) NSString * location;
 @property (nonatomic, retain) NSDate * startTime;
+@property (nonatomic, retain) NSString * timeZoneName;
 @property (nonatomic, retain) NSString * title;
-@property (nonatomic, retain) Event *event;
-@property (nonatomic, retain) NSSet *leaders;
-@property (nonatomic, retain) Tweet *room;
+@property (nonatomic, retain) NSSet *sessions;
 @property (nonatomic, retain) NSSet *tweets;
+@property (nonatomic, retain) NSSet *venues;
 @end
 
-@interface EventSession (CoreDataGeneratedAccessors)
+@interface Event (CoreDataGeneratedAccessors)
 
-- (void)addLeadersObject:(EventSessionLeader *)value;
-- (void)removeLeadersObject:(EventSessionLeader *)value;
-- (void)addLeaders:(NSSet *)values;
-- (void)removeLeaders:(NSSet *)values;
+- (void)addSessionsObject:(EventSession *)value;
+- (void)removeSessionsObject:(EventSession *)value;
+- (void)addSessions:(NSSet *)values;
+- (void)removeSessions:(NSSet *)values;
 
 - (void)addTweetsObject:(Tweet *)value;
 - (void)removeTweetsObject:(Tweet *)value;
 - (void)addTweets:(NSSet *)values;
 - (void)removeTweets:(NSSet *)values;
+
+- (void)addVenuesObject:(Venue *)value;
+- (void)removeVenuesObject:(Venue *)value;
+- (void)addVenues:(NSSet *)values;
+- (void)removeVenues:(NSSet *)values;
 
 @end

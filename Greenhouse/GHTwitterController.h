@@ -20,28 +20,31 @@
 //  Created by Roy Clarkson on 8/27/10.
 //
 
-#import <CoreLocation/CoreLocation.h>
 #import "GHBaseController.h"
 #import "GHTwitterControllerDelegate.h"
-#import "Tweet.h"
 
+@class Tweet;
 
 @interface GHTwitterController : GHBaseController
 
-@property (nonatomic, unsafe_unretained) id<GHTwitterControllerDelegate> delegate;
++ (GHTwitterController *)sharedInstance;
 
-//- (void)fetchTweets
-- (void)sendRequestForTweetsWithURL:(NSURL *)url page:(NSUInteger)page delegate:(id<GHTwitterControllerDelegate>)delegate;
-//- (void)fetchTweetsDidFinishWithData:(NSData *)data;
-//- (void)fetchTweetsDidFailWithError:(NSError *)error;
+- (Tweet *)fetchTweetWithId:(NSString *)tweetId;
+- (NSArray *)fetchTweetsWithEventId:(NSNumber *)eventId;
+- (NSArray *)fetchTweetsWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber;
+- (void)fetchTweetsWithEventId:(NSNumber *)eventId delegate:(id<GHTwitterControllerDelegate>)delegate;
+- (void)fetchTweetsWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber delegate:(id<GHTwitterControllerDelegate>)delegate;
+- (Tweet *)fetchSelectedTweet;
+- (void)setSelectedTweet:(Tweet *)tweet;
 
-- (void)postUpdate:(NSString *)update withURL:(NSURL *)url;
-- (void)postUpdate:(NSString *)update withURL:(NSURL *)url location:(CLLocation *)location;
-- (void)postUpdateDidFinishWithData:(NSData *)data;
-- (void)postUpdateDidFailWithError:(NSError *)error;
+- (void)sendRequestForTweetsWithEventId:(NSNumber *)eventId page:(NSUInteger)page delegate:(id<GHTwitterControllerDelegate>)delegate;
+- (void)sendRequestForTweetsWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber page:(NSUInteger)page delegate:(id<GHTwitterControllerDelegate>)delegate;
 
-- (void)postRetweet:(NSString *)tweetId withURL:(NSURL *)url;
-- (void)postRetweetDidFinishWithData:(NSData *)data;
-- (void)postRetweetDidFailWithError:(NSError *)error;
+- (void)postUpdate:(NSString *)update eventId:(NSNumber *)eventId delegate:(id<GHTwitterControllerDelegate>)delegate;
+- (void)postUpdate:(NSString *)update eventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber delegate:(id<GHTwitterControllerDelegate>)delegate;
+
+- (void)postRetweetWithTweetId:(NSString *)tweetId eventId:(NSNumber *)eventId delegate:(id<GHTwitterControllerDelegate>)delegate;
+- (void)postRetweetWithTweetId:(NSString *)tweetId eventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber delegate:(id<GHTwitterControllerDelegate>)delegate;;
+
 
 @end

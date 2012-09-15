@@ -22,19 +22,18 @@
 
 #import "GHTweetDetailsViewController.h"
 #import "GHTweetViewController.h"
+#import "Tweet.h"
+#import "GHTwitterController.h"
 
-@interface GHTweetDetailsViewController()
+@interface GHTweetDetailsViewController ()
 
-@property (nonatomic, strong) GHTwitterController *twitterController;
+@property (nonatomic, strong) Tweet *tweet;
 
 @end
 
 @implementation GHTweetDetailsViewController
 
-@synthesize twitterController;
 @synthesize tweet;
-@synthesize tweetUrl;
-@synthesize retweetUrl;
 @synthesize imageViewProfile;
 @synthesize labelUser;
 @synthesize labelTime;
@@ -46,30 +45,19 @@
 
 - (IBAction)actionReply:(id)sender
 {
-	tweetViewController.tweetUrl = tweetUrl;
-	
-	NSString *replyText = [[NSString alloc] initWithFormat:@"@%@", tweet.fromUser];
-	tweetViewController.tweetText = replyText;
-	
+	tweetViewController.tweetText = [[NSString alloc] initWithFormat:@"@%@", tweet.fromUser];
 	[self presentModalViewController:tweetViewController animated:YES];
 }
 
 - (IBAction)actionQuote:(id)sender
 {
-	tweetViewController.tweetUrl = tweetUrl;
-	
-	NSString *quoteText = [[NSString alloc] initWithFormat:@"\"@%@: %@\"", tweet.fromUser, tweet.text];
-	tweetViewController.tweetText = quoteText;
-	
+	tweetViewController.tweetText = [[NSString alloc] initWithFormat:@"\"@%@: %@\"", tweet.fromUser, tweet.text];
 	[self presentModalViewController:tweetViewController animated:YES];
 }
 
 - (IBAction)actionRetweet:(id)sender
 {
-	self.twitterController = [[GHTwitterController alloc] init];
-	twitterController.delegate = self;
-	
-	[twitterController postRetweet:tweet.tweetId withURL:retweetUrl];
+    // implemented in subclass
 }
 
 
@@ -78,32 +66,12 @@
 
 - (void)postRetweetDidFinish
 {
-	self.twitterController = nil;
+
 }
 
 - (void)postRetweetDidFailWithError:(NSError *)error
 {
-	self.twitterController = nil;
-}
 
-#pragma mark -
-#pragma mark DataViewController methods
-
-- (void)refreshView
-{
-	if (tweet)
-	{
-		imageViewProfile.image = tweet.profileImage;
-		
-		NSString *user = [[NSString alloc] initWithFormat:@"@%@", tweet.fromUser];
-		labelUser.text = user;
-		
-		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-		[dateFormatter setDateFormat:@"MMM d h:mm a"];
-		labelTime.text = [dateFormatter stringFromDate:tweet.createdAt];
-		
-		textViewText.text = tweet.text;
-	}
 }
 
 
@@ -113,23 +81,32 @@
 - (void)viewDidLoad 
 {
     [super viewDidLoad];
-	
-	self.tweetViewController = [[GHTweetViewController alloc] initWithNibName:nil bundle:nil];
 }
 
-- (void)didReceiveMemoryWarning 
+- (void)viewWillAppear:(BOOL)animated
 {
-    [super didReceiveMemoryWarning];
+    [super viewWillAppear:animated];
+    
+    self.tweet = [[GHTwitterController sharedInstance] fetchSelectedTweet];
+    
+    if (tweet)
+	{
+//		imageViewProfile.image = tweet.profileImage;
+		
+		labelUser.text = [[NSString alloc] initWithFormat:@"@%@", tweet.fromUser];
+		textViewText.text = tweet.text;
+        
+		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+		[dateFormatter setDateFormat:@"MMM d h:mm a"];
+		labelTime.text = [dateFormatter stringFromDate:tweet.createdAt];
+	}
 }
 
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
 	
-	self.twitterController = nil;
 	self.tweet = nil;
-	self.tweetUrl = nil;
-	self.retweetUrl = nil;
     self.imageViewProfile = nil;
 	self.labelUser = nil;
 	self.textViewText = nil;

@@ -27,7 +27,6 @@
 
 @interface GHTweetViewController : UIViewController <UITextViewDelegate, GHLocationManagerDelegate, GHTwitterControllerDelegate>
 
-@property (nonatomic, strong) NSURL *tweetUrl;
 @property (nonatomic, copy) NSString *tweetText;
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *barButtonCancel;
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *barButtonSend;
