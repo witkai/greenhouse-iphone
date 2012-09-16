@@ -23,11 +23,9 @@
 #import <UIKit/UIKit.h>
 #import "GHEventSessionRateDelegate.h"
 
-
 @class Event;
 @class EventSession;
 @class GHEventSessionDetailsViewController;
-
 
 @interface GHEventSessionRateViewController : UIViewController <GHEventSessionRateDelegate, UITextViewDelegate>
 

@@ -29,7 +29,7 @@
         <relationship name="event" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Event" inverseName="sessions" inverseEntity="Event" syncable="YES"/>
         <relationship name="leaders" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="EventSessionLeader" inverseName="sessions" inverseEntity="EventSessionLeader" syncable="YES"/>
         <relationship name="room" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="VenueRoom" inverseName="sessions" inverseEntity="VenueRoom" syncable="YES"/>
-        <relationship name="tweets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tweet" inverseName="session" inverseEntity="Tweet" syncable="YES"/>
+        <relationship name="tweets" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Tweet" inverseName="session" inverseEntity="Tweet" syncable="YES"/>
     </entity>
     <entity name="EventSessionLeader" representedClassName="EventSessionLeader" syncable="YES">
         <attribute name="firstName" optional="YES" attributeType="String" syncable="YES"/>
@@ -74,8 +74,8 @@
         <element name="EventSession" positionX="-2250" positionY="-1035" width="128" height="268"/>
         <element name="EventSessionLeader" positionX="-2007" positionY="-1026" width="128" height="88"/>
         <element name="Profile" positionX="-1395" positionY="-630" width="128" height="90"/>
-        <element name="Tweet" positionX="-2036" positionY="-639" width="128" height="180"/>
+        <element name="Tweet" positionX="-1080" positionY="-666" width="128" height="180"/>
         <element name="Venue" positionX="-1208" positionY="-919" width="128" height="163"/>
-        <element name="VenueRoom" positionX="-1037" positionY="-918" width="128" height="103"/>
+        <element name="VenueRoom" positionX="-1037" positionY="-918" width="128" height="105"/>
     </elements>
 </model>

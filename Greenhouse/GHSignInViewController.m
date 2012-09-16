@@ -98,11 +98,14 @@
          }
          else if (error)
          {
-             DLog(@"%@", [error localizedDescription]);
+             DLog(@"%d - %@", [error code], [error localizedDescription]);
              NSString *msg;
              switch ([error code]) {
                  case NSURLErrorUserCancelledAuthentication:
                      msg = @"Your email or password was entered incorrectly.";
+                     break;
+                 case NSURLErrorCannotConnectToHost:
+                     msg = @"The server is unavailable. Please try again in a few minutes.";
                      break;
                  default:
                      msg = @"A problem occurred with the network connection. Please try again in a few minutes.";
@@ -119,6 +122,7 @@
          }
          else if (statusCode != 200)
          {
+             DLog(@"HTTP Status Code: %d", statusCode);
              NSString *msg;
              switch (statusCode) {
                  default:

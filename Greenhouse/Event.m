@@ -17,7 +17,7 @@
 //  Event.m
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 9/11/12.
+//  Created by Roy Clarkson on 9/15/12.
 //
 
 #import "Event.h"
@@ -38,7 +38,7 @@
 @dynamic timeZoneName;
 @dynamic title;
 @dynamic sessions;
-@dynamic venues;
 @dynamic tweets;
+@dynamic venues;
 
 @end

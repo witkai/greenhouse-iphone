@@ -21,6 +21,8 @@
 //
 
 #import "GHEventSessionsByDayViewController.h"
+#import "Event.h"
+#import "EventSession.h"
 #import "GHEventSessionController.h"
 
 @interface GHEventSessionsByDayViewController ()
@@ -36,34 +38,8 @@
 @synthesize eventDate;
 
 
-#pragma mark -
-#pragma mark GHEventSessionsViewController methods
-
-- (EventSession *)eventSessionForIndexPath:(NSIndexPath *)indexPath
+- (void)reloadTableDataWithSessions:(NSArray *)sessions
 {
-	EventSession *session = nil;
-	
-	@try 
-	{
-		NSArray *array = (NSArray *)[self.arraySessions objectAtIndex:indexPath.section];
-		session = (EventSession *)[array objectAtIndex:indexPath.row];
-	}
-	@catch (NSException * e) 
-	{
-		DLog(@"%@", [e reason]);
-	}
-	@finally 
-	{
-		return session;
-	}
-}
-
-
-#pragma mark -
-#pragma mark EventSessionsByDateDelegate methods
-
-- (void)fetchSessionsByDateDidFinishWithResults:(NSArray *)sessions
-{    
     NSMutableArray *timeBlocks = [[NSMutableArray alloc] init];
 	NSMutableArray *times = [[NSMutableArray alloc] init];
     NSMutableArray *timeBlock = nil;
@@ -89,18 +65,52 @@
         sessionTime = session.startTime;
     }
     
-	self.arraySessions = timeBlocks;
+	self.sessions = timeBlocks;
 	self.times = times;
-	[self.tableView reloadData];
+    [self.tableView reloadData];
+}
+
+#pragma mark -
+#pragma mark GHEventSessionsViewController methods
+
+- (EventSession *)eventSessionForIndexPath:(NSIndexPath *)indexPath
+{
+	EventSession *session = nil;
+	
+	@try 
+	{
+		NSArray *array = (NSArray *)[self.sessions objectAtIndex:indexPath.section];
+		session = (EventSession *)[array objectAtIndex:indexPath.row];
+	}
+	@catch (NSException * e) 
+	{
+		DLog(@"%@", [e reason]);
+	}
+	@finally 
+	{
+		return session;
+	}
+}
+
+
+#pragma mark -
+#pragma mark EventSessionsByDateDelegate methods
+
+- (void)fetchSessionsByDateDidFinishWithResults:(NSArray *)sessions
+{
+    [self reloadTableDataWithSessions:sessions];
 	[self dataSourceDidFinishLoadingNewData];
 }
 
 - (void)fetchSessionsByDateDidFailWithError:(NSError *)error
 {
-	NSArray *emptyArray = [[NSArray alloc] init];
-	self.arraySessions = emptyArray;
-	self.times = emptyArray;
-	[self.tableView reloadData];
+    if (self.sessions == nil && self.times == nil)
+    {
+        NSArray *empty = [NSArray array];
+        self.sessions = empty;
+        self.times = empty;
+        [self.tableView reloadData];
+    }
 	[self dataSourceDidFinishLoadingNewData];
 }
 
@@ -122,9 +132,9 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	if (self.arraySessions)
+	if (self.sessions)
 	{
-		NSArray *array = (NSArray *)[self.arraySessions objectAtIndex:section];
+		NSArray *array = (NSArray *)[self.sessions objectAtIndex:section];
 		return [array count];
 	}
 	else 
@@ -149,33 +159,8 @@
 }
 
 
-//#pragma mark -
-//#pragma mark PullRefreshTableViewController methods
-//
-//- (void)refreshView
-//{
-//	// set the title of the view to the schedule day
-//	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-//	[dateFormatter setDateFormat:@"EEEE"];
-//	NSString *dateString = [dateFormatter stringFromDate:eventDate];
-//	self.title = dateString;
-//	
-//	if (![self.currentEvent.eventId isEqualToString:self.event.eventId] ||
-//		[currentEventDate compare:eventDate] != NSOrderedSame)
-//	{
-//		self.arraySessions = nil;
-//		self.arrayTimes = nil;
-//		[self.tableView reloadData];
-//	}
-//	
-//	self.currentEvent = self.event;
-//	self.currentEventDate = eventDate;
-//}
-//
-//- (BOOL)shouldReloadData
-//{
-//	return (self.arraySessions == nil || arrayTimes == nil || self.lastRefreshExpired);
-//}
+#pragma mark -
+#pragma mark PullRefreshTableViewController methods
 
 - (void)reloadTableViewDataSource
 {
@@ -189,8 +174,8 @@
 - (void)viewDidLoad 
 {
 	self.lastRefreshKey = @"EventSessionsByDayViewController_LastRefresh";
-	
     [super viewDidLoad];
+    DLog(@"");
 	
 	self.title = @"Schedule";
 }
@@ -203,26 +188,36 @@
     DLog(@"");
     
     self.eventDate = [[GHEventSessionController sharedInstance] fetchSelectedScheduleDate];
-    
-    // set the title of the view to the schedule day
-	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-	[dateFormatter setDateFormat:@"EEEE"];
-	NSString *dateString = [dateFormatter stringFromDate:eventDate];
-	self.title = dateString;
-
-    // fetch fresh data
-    [[GHEventSessionController sharedInstance] fetchSessionsWithEventId:self.event.eventId date:eventDate delegate:self];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    DLog(@"");
+    if (self.eventDate == nil)
+    {
+        DLog(@"selected event date not available");
+        [self.navigationController popToRootViewControllerAnimated:NO];
+    }
+    else
+    {
+        // set the title of the view to the schedule day
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"EEEE"];
+        NSString *dateString = [dateFormatter stringFromDate:eventDate];
+        self.title = dateString;
+        
+        // fetch session data
+        self.sessions = [[GHEventSessionController sharedInstance] fetchSessionsWithEventId:self.event.eventId date:eventDate];
+        if (self.sessions && self.sessions.count > 0)
+        {
+            [self reloadTableDataWithSessions:self.sessions];
+        }
+        if (self.sessions == nil || self.sessions.count == 0 || self.lastRefreshExpired)
+        {
+            [[GHEventSessionController sharedInstance] sendRequestForSessionsWithEventId:self.event.eventId date:eventDate delegate:self];
+        }
+    }
 }
 
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
+    DLog(@"");
 	
 	self.times = nil;
 	self.eventDate = nil;

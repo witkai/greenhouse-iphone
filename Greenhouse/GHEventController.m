@@ -20,9 +20,18 @@
 //  Created by Roy Clarkson on 8/31/10.
 //
 
+#define KEY_SELECTED_EVENT_ID   @"selectedEventId"
+
 #import "GHEventController.h"
 #import "GHCoreDataManager.h"
+#import "Event.h"
 #import "Venue.h"
+
+@interface GHEventController ()
+
+- (NSArray *)fetchEventsWithPredicate:(NSPredicate *)predicate;
+
+@end
 
 @implementation GHEventController
 
@@ -31,19 +40,48 @@
 #pragma mark Static methods
 
 // Use this class method to obtain the shared instance of the class.
-+ (GHEventController *)sharedInstance
++ (id)sharedInstance
 {
-    static GHEventController *_sharedInstance = nil;
+    static id _sharedInstance = nil;
     static dispatch_once_t predicate;
     dispatch_once(&predicate, ^{
-        _sharedInstance = [[GHEventController alloc] init];
+        _sharedInstance = [[self alloc] init];
     });
     return _sharedInstance;
 }
 
 
 #pragma mark -
-#pragma mark Instance methods
+#pragma mark Public Instance methods
+
+- (NSArray *)fetchEvents
+{
+    return [self fetchEventsWithPredicate:nil];
+}
+
+- (Event *)fetchEventWithId:(NSNumber *)eventId;
+{
+    Event *event = nil;
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"eventId == %@", eventId];
+    NSArray *fetchedObjects = [self fetchEventsWithPredicate:predicate];
+    if (fetchedObjects && fetchedObjects.count > 0)
+    {
+        event = [fetchedObjects objectAtIndex:0];
+    }
+    return event;
+}
+
+- (Event *)fetchSelectedEvent
+{
+    NSNumber *eventId = [[NSUserDefaults standardUserDefaults] objectForKey:KEY_SELECTED_EVENT_ID];
+    return [self fetchEventWithId:eventId];
+}
+
+- (void)setSelectedEvent:(Event *)event
+{
+	[[NSUserDefaults standardUserDefaults] setObject:event.eventId forKey:KEY_SELECTED_EVENT_ID];
+	[[NSUserDefaults standardUserDefaults] synchronize];
+}
 
 - (void)fetchEventsWithDelegate:(id<GHEventControllerDelegate>)delegate;
 {
@@ -56,21 +94,6 @@
     {
         [self sendRequestForEventsWithDelegate:delegate];
     }
-}
-
-- (NSArray *)fetchEventsWithPredicate:(NSPredicate *)predicate;
-{
-    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Event" inManagedObjectContext:context];
-    [fetchRequest setEntity:entity];
-    if (predicate)
-    {
-        [fetchRequest setPredicate:predicate];
-    }
-    NSError *error;
-    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
-    return fetchedObjects;
 }
 
 - (void)sendRequestForEventsWithDelegate:(id<GHEventControllerDelegate>)delegate
@@ -149,25 +172,7 @@
     [context save:&error];
     if (error)
     {
-//        DLog(@"%@", [error localizedDescription]);
-        DumpError(@"save event", error);
-    }
-}
-
-void DumpError(NSString* action, NSError* error) {
-    
-    if (!error)
-        return;
-    
-    NSLog(@"Failed to %@: %@", action, [error localizedDescription]);
-    NSArray* detailedErrors = [[error userInfo] objectForKey:NSDetailedErrorsKey];
-    if(detailedErrors && [detailedErrors count] > 0) {
-        for(NSError* detailedError in detailedErrors) {
-            NSLog(@"DetailedError: %@", [detailedError userInfo]);
-        }
-    }
-    else {
-        NSLog(@"%@", [error userInfo]);
+        ProcessError(@"save event", error);
     }
 }
 
@@ -191,64 +196,26 @@ void DumpError(NSString* action, NSError* error) {
     }
 }
 
-- (Event *)fetchEventWithId:(NSNumber *)eventId;
+
+#pragma mark -
+#pragma mark Private Instance methods
+
+- (NSArray *)fetchEventsWithPredicate:(NSPredicate *)predicate;
 {
-    Event *event = nil;
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"eventId == %@", eventId];
-    NSArray *fetchedObjects = [self fetchEventsWithPredicate:predicate];
-    if (fetchedObjects && fetchedObjects.count > 0)
+    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Event" inManagedObjectContext:context];
+    NSSortDescriptor *sortByDate = [NSSortDescriptor sortDescriptorWithKey:@"startTime" ascending:NO];
+    [fetchRequest setEntity:entity];
+    [fetchRequest setSortDescriptors:[NSArray arrayWithObject:sortByDate]];
+    if (predicate)
     {
-        event = [fetchedObjects objectAtIndex:0];
+        [fetchRequest setPredicate:predicate];
     }
-    return event;
+    NSError *error;
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    return fetchedObjects;
 }
 
-- (Event *)fetchSelectedEvent
-{
-    NSNumber *eventId = [[NSUserDefaults standardUserDefaults] objectForKey:@"selectedEventId"];
-    return [self fetchEventWithId:eventId];
-}
-
-- (void)setSelectedEvent:(Event *)event
-{
-	[[NSUserDefaults standardUserDefaults] setObject:event.eventId forKey:@"selectedEventId"];
-	[[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-//- (Event *)fetchSelectedEvent
-//{
-//    Event *event = nil;
-//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isSelected == YES"];
-//    NSArray *fetchedObjects = [self fetchEventsWithPredicate:predicate];
-//    if (fetchedObjects && fetchedObjects.count > 0)
-//    {
-//        event = [fetchedObjects objectAtIndex:0];
-//    }
-//    return event;
-//}
-//
-//- (void)setSelectedEvent:(Event *)event
-//{
-//    if (event)
-//    {
-//        NSArray *objects = [self fetchEventsWithPredicate:nil];
-//        [objects enumerateObjectsUsingBlock:^(Event *e, NSUInteger idx, BOOL *stop) {
-//            BOOL selected = NO;
-//            if ([e.eventId isEqualToNumber:event.eventId])
-//            {
-//                selected = YES;
-//            }
-//            e.isSelected = [NSNumber numberWithBool:selected];
-//        }];
-//    }
-//    
-//    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
-//    NSError *error;
-//    [context save:&error];
-//    if (error)
-//    {
-//        DLog(@"%@", [error localizedDescription]);
-//    }
-//}
 
 @end

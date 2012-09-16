@@ -23,13 +23,11 @@
 #import "GHPullRefreshTableViewController.h"
 #import "EGORefreshTableHeaderView.h"
 
-
 @interface GHPullRefreshTableViewController()
 
 @property (nonatomic, strong) EGORefreshTableHeaderView *refreshHeaderView;
 
 @end
-
 
 @implementation GHPullRefreshTableViewController
 
@@ -77,7 +75,7 @@
 	_reloading = NO;
 	
 	[UIView beginAnimations:nil context:NULL];
-	[UIView setAnimationDuration:.3];
+	[UIView setAnimationDuration:0.3];
 	[self.tableView setContentInset:UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f)];
 	[UIView commitAnimations];
 	

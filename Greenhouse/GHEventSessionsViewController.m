@@ -21,15 +21,17 @@
 //
 
 #import "GHEventSessionsViewController.h"
+#import "GHEventSessionDetailsViewController.h"
+#import "Event.h"
+#import "EventSession.h"
 #import "GHEventController.h"
 #import "GHEventSessionController.h"
 
 
 @implementation GHEventSessionsViewController
 
-@synthesize arraySessions;
+@synthesize sessions;
 @synthesize event;
-@synthesize currentEvent;
 @synthesize sessionDetailsViewController;
 
 - (EventSession *)eventSessionForIndexPath:(NSIndexPath *)indexPath
@@ -38,7 +40,7 @@
 	
 	@try 
 	{
-		session = [self.arraySessions objectAtIndex:indexPath.row];
+		session = [self.sessions objectAtIndex:indexPath.row];
 	}
 	@catch (NSException * e) 
 	{
@@ -52,7 +54,7 @@
 
 - (BOOL)displayLoadingCell
 {
-	NSInteger count = [self.arraySessions count];
+	NSInteger count = [self.sessions count];
 	return (count == 0);
 }
 
@@ -131,9 +133,9 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	if (self.arraySessions)
+	if (self.sessions)
 	{
-		return [self.arraySessions count];
+		return [self.sessions count];
 	}
 	else 
 	{
@@ -142,29 +144,13 @@
 }
 
 
-//#pragma mark -
-//#pragma mark PullRefreshTableViewController methods
-//
-//- (void)reloadData
-//{
-//	if (self.shouldReloadData)
-//	{
-//		[self reloadTableViewDataSource];
-//	}
-//}
-//
-//- (BOOL)shouldReloadData
-//{
-//	return (!arraySessions || self.lastRefreshExpired);
-//}
-
-
 #pragma mark -
 #pragma mark UIViewController methods
 
 - (void)viewDidLoad 
 {
     [super viewDidLoad];
+    DLog(@"");
 	
 	self.sessionDetailsViewController = [[GHEventSessionDetailsViewController alloc] initWithNibName:nil bundle:nil];
 }
@@ -173,10 +159,16 @@
 {
     [super viewWillAppear:animated];
     DLog(@"");
+    
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
+    if (self.event == nil)
+    {
+        DLog(@"selected event not available")
+        [self.navigationController popToRootViewControllerAnimated:NO];
+    }
 
     // clear table of data
-	self.arraySessions = nil;
+	self.sessions = nil;
 	[self.tableView reloadData];
 }
 
@@ -189,10 +181,10 @@
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
+    DLog(@"");
 	
-	self.arraySessions = nil;
+	self.sessions = nil;
 	self.event = nil;
-	self.currentEvent = nil;
 	self.sessionDetailsViewController = nil;
 }
 

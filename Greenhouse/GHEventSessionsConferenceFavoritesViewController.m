@@ -21,18 +21,10 @@
 //
 
 #import "GHEventSessionsConferenceFavoritesViewController.h"
-
-
-@interface GHEventSessionsConferenceFavoritesViewController()
-
-@property (nonatomic, strong) GHEventSessionController *eventSessionController;
-
-@end
-
+#import "Event.h"
+#import "GHEventSessionController.h"
 
 @implementation GHEventSessionsConferenceFavoritesViewController
-
-@synthesize eventSessionController;
 
 
 #pragma mark -
@@ -40,16 +32,13 @@
 
 - (void)fetchConferenceFavoriteSessionsDidFinishWithResults:(NSArray *)sessions
 {
-	self.arraySessions = sessions;
+	self.sessions = sessions;
 	[self.tableView reloadData];
 	[self dataSourceDidFinishLoadingNewData];
 }
 
 - (void)fetchConferenceFavoriteSessionsDidFailWithError:(NSError *)error
 {
-	NSArray *emptyarray = [[NSArray alloc] init];
-	self.arraySessions = emptyarray;
-	[self.tableView reloadData];
 	[self dataSourceDidFinishLoadingNewData];
 }
 
@@ -69,30 +58,24 @@
 - (void)viewDidLoad 
 {
 	self.lastRefreshKey = @"EventSessionFavoritesViewController_LastRefresh";
-	
     [super viewDidLoad];
-	
+    DLog(@"");
+    
 	self.title = @"Conference Favorites";
-	self.eventSessionController = [[GHEventSessionController alloc] init];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    DLog(@"");
     
-	[eventSessionController fetchConferenceFavoriteSessionsByEventId:self.event.eventId delegate:self];
+	[[GHEventSessionController sharedInstance] fetchConferenceFavoriteSessionsByEventId:self.event.eventId delegate:self];
 }
 
-- (void)didReceiveMemoryWarning 
-{
-    [super didReceiveMemoryWarning];
-}
-
-- (void)viewDidUnload 
+- (void)viewDidUnload
 {
     [super viewDidUnload];
-	
-	self.eventSessionController = nil;
+    DLog(@"");
 }
 
 @end

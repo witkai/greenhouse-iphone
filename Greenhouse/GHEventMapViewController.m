@@ -21,15 +21,14 @@
 //
 
 #import "GHEventMapViewController.h"
+#import "GHVenueDetailsViewController.h"
 #import "GHEventController.h"
 #import "Event.h"
 #import "Venue.h"
 #import "GHVenueAnnotation.h"
-#import "GHVenueDetailsViewController.h"
 
 @interface GHEventMapViewController()
 
-@property (nonatomic, strong) Event *event;
 @property (nonatomic, strong) Event *currentEvent;
 @property (nonatomic, strong) NSMutableArray *venueAnnotations;
 
@@ -41,7 +40,6 @@
 
 @synthesize venueAnnotations;
 @synthesize currentEvent;
-@synthesize event;
 @synthesize mapViewLocation;
 @synthesize venueDetailsViewController;
 
@@ -176,6 +174,7 @@
 - (void)viewDidLoad 
 {
     [super viewDidLoad];
+    DLog(@"");
 	
 	self.title = @"Map";
 	self.venueAnnotations = [[NSMutableArray alloc] init];
@@ -187,26 +186,26 @@
     [super viewWillAppear:animated];
     DLog(@"");
     
-    self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
-    if (currentEvent == nil || ![currentEvent.eventId isEqualToNumber:event.eventId])
+    Event *event = [[GHEventController sharedInstance] fetchSelectedEvent];
+    if (event == nil)
+    {
+        DLog(@"selected event not available");
+        [self.navigationController popToRootViewControllerAnimated:NO];
+    }
+    else if (currentEvent == nil || ![currentEvent.eventId isEqualToNumber:event.eventId])
 	{
 		self.currentEvent = event;
 		[self reloadMapData];
 	}
 }
 
-- (void)didReceiveMemoryWarning 
-{
-    [super didReceiveMemoryWarning];
-}
-
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
-	
+	DLog(@"");
+    
 	self.venueAnnotations = nil;
 	self.currentEvent = nil;
-	self.event = nil;
 	self.mapViewLocation = nil;
 	self.venueDetailsViewController = nil;
 }

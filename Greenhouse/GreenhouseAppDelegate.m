@@ -79,13 +79,10 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-	if (buttonIndex == 1)
-	{
-		// sign out
-		[GHOAuth2Controller deleteAccessGrant];
-        [[GHCoreDataManager sharedInstance] deletePersistentStore];
-		[self showAuthorizeNavigationViewController];
-	}
+    // sign out
+    [GHOAuth2Controller deleteAccessGrant];
+    [[GHCoreDataManager sharedInstance] deletePersistentStore];
+    [self showAuthorizeNavigationViewController];    
 }
 
 

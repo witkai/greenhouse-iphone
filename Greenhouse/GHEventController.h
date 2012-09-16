@@ -22,19 +22,20 @@
 
 #import "GHBaseController.h"
 #import "GHEventControllerDelegate.h"
-#import "Event.h"
 
-@interface GHEventController : GHBaseController 
+@class Event;
 
-+ (GHEventController *)sharedInstance;
+@interface GHEventController : GHBaseController
 
-- (void)fetchEventsWithDelegate:(id<GHEventControllerDelegate>)delegate;
-- (NSArray *)fetchEventsWithPredicate:(NSPredicate *)predicate;
-- (void)sendRequestForEventsWithDelegate:(id<GHEventControllerDelegate>)delegate;
-- (void)storeEventsWithJson:(NSArray *)events;
-- (void)deleteEvents;
++ (id)sharedInstance;
+
+- (NSArray *)fetchEvents;
 - (Event *)fetchEventWithId:(NSNumber *)eventId;
 - (Event *)fetchSelectedEvent;
 - (void)setSelectedEvent:(Event *)event;
+- (void)fetchEventsWithDelegate:(id<GHEventControllerDelegate>)delegate;
+- (void)sendRequestForEventsWithDelegate:(id<GHEventControllerDelegate>)delegate;
+- (void)storeEventsWithJson:(NSArray *)events;
+- (void)deleteEvents;
 
 @end

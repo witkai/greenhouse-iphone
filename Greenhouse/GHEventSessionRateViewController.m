@@ -20,6 +20,8 @@
 //  Created by Roy Clarkson on 8/2/10.
 //
 
+#define MAX_MESSAGE_SIZE	140
+
 #import "GHEventSessionRateViewController.h"
 #import "Event.h"
 #import "EventSession.h"
@@ -27,10 +29,7 @@
 #import "GHEventSessionController.h"
 #import "GHEventSessionDetailsViewController.h"
 
-#define MAX_MESSAGE_SIZE	140
-
-
-@interface GHEventSessionRateViewController()
+@interface GHEventSessionRateViewController ()
 
 @property (nonatomic, assign) NSUInteger rating;
 
@@ -38,7 +37,6 @@
 - (void)updateCharacterCount:(NSInteger)newCount;
 
 @end
-
 
 @implementation GHEventSessionRateViewController
 
@@ -58,7 +56,7 @@
 
 
 #pragma mark -
-#pragma mark Public methods
+#pragma mark Public Instance methods
 
 - (IBAction)actionSelectRating:(id)sender
 {
@@ -73,12 +71,16 @@
 
 - (IBAction)actionSubmit:(id)sender
 {
-	[[GHEventSessionController sharedInstance] rateSession:session.number withEventId:event.eventId rating:rating comment:textViewComments.text delegate:self];
+	[[GHEventSessionController sharedInstance] rateSession:session.number
+                                               withEventId:event.eventId
+                                                    rating:rating
+                                                   comment:textViewComments.text
+                                                  delegate:self];
 }
 
 
 #pragma mark -
-#pragma mark Private methods
+#pragma mark Private Instance methods
 
 - (void)updateRatingButtons:(NSInteger)count
 {
@@ -187,35 +189,40 @@
 - (void)viewDidLoad 
 {
     [super viewDidLoad];
+    DLog(@"");
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
     DLog(@"");
+    
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
     self.session = [[GHEventSessionController sharedInstance] fetchSelectedSession];
-	
-	textViewComments.text = @"";
-	[self updateCharacterCount:0];
-	[self updateRatingButtons:0];
-	
-	// display the keyboard
-	[textViewComments becomeFirstResponder];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-	[super viewDidAppear:animated];	
+    if (self.event == nil || self.session == nil)
+    {
+        DLog(@"selected event or session not available");
+        [self dismissModalViewControllerAnimated:NO];
+    }
+    else
+    {
+        textViewComments.text = @"";
+        [self updateCharacterCount:0];
+        [self updateRatingButtons:0];
+        
+        // display the keyboard
+        [textViewComments becomeFirstResponder];
+    }
 }
 
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
+    DLog(@"");
 	
 	self.event = nil;
-	self.sessionDetailsViewController = nil;
 	self.session = nil;
+	self.sessionDetailsViewController = nil;
 	self.barButtonCancel = nil;
 	self.barButtonSubmit = nil;
 	self.buttonRating1 = nil;

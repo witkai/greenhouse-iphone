@@ -27,15 +27,10 @@
 
 
 @interface GHBaseController : NSObject
-{
-	GHActivityAlertView *_activityAlertView;
-	id _didFailDelegate;
-	SEL _didFailSelector;
-	NSError *_error;
-}
 
 @property (nonatomic, strong) GHActivityAlertView *activityAlertView;
 
+void ProcessError(NSString* action, NSError* error);
 - (void)requestDidNotSucceedWithDefaultMessage:(NSString *)message response:(NSURLResponse *)response;
 - (void)requestDidFailWithError:(NSError *)error;
 

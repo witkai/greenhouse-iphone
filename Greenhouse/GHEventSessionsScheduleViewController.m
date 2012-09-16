@@ -101,6 +101,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    DLog(@"");
 	
 	self.title = @"Schedule";
 	self.eventDates = [[NSMutableArray alloc] init];
@@ -111,20 +112,24 @@
 {
     [super viewWillAppear:animated];
     DLog(@"");
+    
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
-	[viewControllers removeAllObjects];
-	self.eventDates = [GHDateHelper daysBetweenStartTime:event.startTime endTime:event.endTime];
-	[tableViewMenu reloadData];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
+    if (self.event == nil)
+    {
+        [self.navigationController popToRootViewControllerAnimated:NO];
+    }
+    else
+    {
+        [viewControllers removeAllObjects];
+        self.eventDates = [GHDateHelper daysBetweenStartTime:event.startTime endTime:event.endTime];
+        [tableViewMenu reloadData];
+    }
 }
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
+    DLog(@"");
 	
 	self.eventDates = nil;
 	self.viewControllers = nil;

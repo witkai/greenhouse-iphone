@@ -23,13 +23,11 @@
 #import <UIKit/UIKit.h>
 #import "GHEventSessionUpdateFavoriteDelegate.h"
 
-
 @class Event;
 @class EventSession;
 @class GHEventSessionDescriptionViewController;
 @class GHEventSessionTweetsViewController;
 @class GHEventSessionRateViewController;
-
 
 @interface GHEventSessionDetailsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, GHEventSessionUpdateFavoriteDelegate>
 

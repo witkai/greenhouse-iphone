@@ -78,7 +78,6 @@
 {
     [super viewDidAppear:animated];
     DLog(@"");
-    [self reloadData];
 }
 
 - (void)viewDidUnload

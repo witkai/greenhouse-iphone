@@ -21,14 +21,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "GHProfileController.h"
-#import "GHWebImageView.h"
+#import "GHBaseViewController.h"
+#import "GHProfileControllerDelegate.h"
 
-@interface GHProfileMainViewController : UIViewController <GHProfileControllerDelegate>
+@interface GHProfileMainViewController : GHBaseViewController <GHProfileControllerDelegate, UIAlertViewDelegate>
 
 @property (nonatomic, strong) IBOutlet UILabel *labelDisplayName;
-@property (nonatomic, strong) IBOutlet GHWebImageView *imageViewPicture;
-@property (nonatomic, strong) IBOutlet UIActivityIndicatorView *activityIndicatorView;
 
 - (IBAction)actionSignOut:(id)sender;
 - (IBAction)actionRefresh:(id)sender;

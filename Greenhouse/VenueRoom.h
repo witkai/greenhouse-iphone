@@ -17,7 +17,7 @@
 //  VenueRoom.h
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 9/11/12.
+//  Created by Roy Clarkson on 9/15/12.
 //
 
 #import <Foundation/Foundation.h>
@@ -29,8 +29,8 @@
 
 @property (nonatomic, retain) NSString * label;
 @property (nonatomic, retain) NSNumber * roomId;
-@property (nonatomic, retain) Venue *venue;
 @property (nonatomic, retain) NSSet *sessions;
+@property (nonatomic, retain) Venue *venue;
 @end
 
 @interface VenueRoom (CoreDataGeneratedAccessors)

@@ -21,7 +21,6 @@
 //
 
 #import "GHBaseController.h"
-#import "EventSession.h"
 #import "GHEventSessionsByDateDelegate.h"
 #import "GHEventSessionsCurrentDelegate.h"
 #import "GHEventSessionUpdateFavoriteDelegate.h"
@@ -29,39 +28,36 @@
 #import "GHEventSessionsFavoritesDelegate.h"
 #import "GHEventSessionsConferenceFavoritesDelegate.h"
 
+@class EventSession;
 
 @interface GHEventSessionController : GHBaseController
 
-+ (GHEventSessionController *)sharedInstance;
++ (id)sharedInstance;
 
-- (void)fetchCurrentSessionsWithEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsCurrentDelegate>)delegate;
-- (void)sendRequestForCurrentSessionsWithEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsCurrentDelegate>)delegate;
-
-- (void)fetchSessionsWithEventId:(NSNumber *)eventId date:(NSDate *)eventDate delegate:(id<GHEventSessionsByDateDelegate>)delegate;
-- (void)sendRequestForSessionsWithEventId:(NSNumber *)eventId date:(NSDate *)eventDate delegate:(id<GHEventSessionsByDateDelegate>)delegate;
-
-- (NSArray *)fetchSessionsWithEventId:(NSNumber *)eventId;
 - (EventSession *)fetchSessionWithNumber:(NSNumber *)number;
-- (NSArray *)fetchSessionsWithPredicate:(NSPredicate *)predicate;
+- (NSArray *)fetchSessionsWithEventId:(NSNumber *)eventId;
+- (NSArray *)fetchSessionsWithEventId:(NSNumber *)eventId date:(NSDate *)eventDate;
+- (EventSession *)fetchSelectedSession;
+- (void)setSelectedSession:(EventSession *)session;
+- (NSDate *)fetchSelectedScheduleDate;
+- (void)setSelectedScheduleDate:(NSDate *)date;
+
+- (void)sendRequestForSessionsWithEventId:(NSNumber *)eventId date:(NSDate *)eventDate delegate:(id<GHEventSessionsByDateDelegate>)delegate;
 - (void)storeSessionsWithEventId:(NSNumber *)eventId json:(NSArray *)sessions;
 - (void)deleteSessionsWithEventId:(NSNumber *)eventId date:(NSDate *)date;
-- (NSPredicate *)predicateWithEventId:(NSNumber *)eventId date:(NSDate *)date;
 
 - (void)fetchFavoriteSessionsWithEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsFavoritesDelegate>)delegate;
 - (void)sendRequestForFavoriteSessionsByEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsFavoritesDelegate>)delegate;
-
-- (void)fetchConferenceFavoriteSessionsByEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsConferenceFavoritesDelegate>)delegate;
 
 - (void)updateFavoriteSessionWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber delegate:(id<GHEventSessionUpdateFavoriteDelegate>)delegate;
 - (void)sendRequestToUpdateFavoriteSessionWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber delegate:(id<GHEventSessionUpdateFavoriteDelegate>)delegate;
 
 - (void)rateSession:(NSNumber *)sessionNumber withEventId:(NSNumber *)eventId rating:(NSInteger)rating comment:(NSString *)comment delegate:(id<GHEventSessionRateDelegate>)delegate;
 
-- (EventSession *)fetchSelectedSession;
-- (void)setSelectedSession:(EventSession *)session;
 
-- (NSDate *)fetchSelectedScheduleDate;
-- (void)setSelectedScheduleDate:(NSDate *)date;
+- (void)fetchCurrentSessionsWithEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsCurrentDelegate>)delegate;
+- (void)sendRequestForCurrentSessionsWithEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsCurrentDelegate>)delegate;
+- (void)fetchConferenceFavoriteSessionsByEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsConferenceFavoritesDelegate>)delegate;
 
 @end
 

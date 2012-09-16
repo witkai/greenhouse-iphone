@@ -17,10 +17,11 @@
 //  Venue.m
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 9/5/12.
+//  Created by Roy Clarkson on 9/15/12.
 //
 
 #import "Venue.h"
+#import "Event.h"
 #import "VenueRoom.h"
 
 

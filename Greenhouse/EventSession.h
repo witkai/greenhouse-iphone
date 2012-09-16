@@ -23,7 +23,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class Event, EventSessionLeader, Tweet;
+@class Event, EventSessionLeader, Tweet, VenueRoom;
 
 @interface EventSession : NSManagedObject
 
@@ -40,7 +40,7 @@
 @property (nonatomic, retain) NSString * title;
 @property (nonatomic, retain) Event *event;
 @property (nonatomic, retain) NSSet *leaders;
-@property (nonatomic, retain) Tweet *room;
+@property (nonatomic, retain) VenueRoom *room;
 @property (nonatomic, retain) NSSet *tweets;
 @end
 

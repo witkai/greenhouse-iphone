@@ -21,36 +21,51 @@
 //
 
 #import "GHProfileMainViewController.h"
-//#import "GHProfile.h"
+#import "GHProfileController.h"
+#import "Profile.h"
 #import "GHCoreDataManager.h"
 
 @interface GHProfileMainViewController()
 
-@property (nonatomic, strong) GHProfileController *profileController;
+@property (nonatomic, strong) Profile *profile;
+
+- (void)signOut;
 
 @end
 
 @implementation GHProfileMainViewController
 
-@synthesize profileController;
+@synthesize profile = _profile;
 @synthesize labelDisplayName;
-@synthesize imageViewPicture;
-@synthesize activityIndicatorView;
 
 
 #pragma mark -
-#pragma mark Public methods
+#pragma mark Public Instance methods
 
 - (IBAction)actionSignOut:(id)sender
 {
-    [GHOAuth2Controller deleteAccessGrant];
-    [[GHCoreDataManager sharedInstance] deletePersistentStore];
-	[appDelegate showAuthorizeNavigationViewController];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
+                                                        message:@"Would like to sign out?"
+                                                       delegate:self
+                                              cancelButtonTitle:@"Cancel"
+                                              otherButtonTitles:@"OK", nil];
+    [alertView show];
 }
 
 - (IBAction)actionRefresh:(id)sender
 {
-    [profileController sendRequestForProfileWithDelegate:self];
+    [[GHProfileController sharedInstance] sendRequestForProfileWithDelegate:self];
+}
+
+
+#pragma mark -
+#pragma mark Private Instance methods
+
+- (void)signOut
+{
+    [GHOAuth2Controller deleteAccessGrant];
+    [[GHCoreDataManager sharedInstance] deletePersistentStore];
+	[appDelegate showAuthorizeNavigationViewController];
 }
 
 
@@ -59,15 +74,25 @@
 
 - (void)fetchProfileDidFinishWithResults:(Profile *)profile;
 {
-//	[activityIndicatorView stopAnimating];
-	labelDisplayName.text = profile.displayName;
-	imageViewPicture.imageUrl = [NSURL URLWithString:profile.imageUrl];
-	[imageViewPicture startImageDownload];
+    self.profile = profile;
+	labelDisplayName.text = self.profile.displayName;
 }
 
 - (void)fetchProfileDidFailWithError:(NSError *)error
 {
-//	[activityIndicatorView stopAnimating];
+
+}
+
+
+#pragma mark -
+#pragma mark UIAlertViewDelegate methods
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 1)
+    {
+        [self signOut];
+    }
 }
 
 
@@ -78,48 +103,31 @@
 {
     [super viewDidLoad];
     DLog(@"");
-    self.profileController = [[GHProfileController alloc] init];
-	activityIndicatorView.hidesWhenStopped = YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     DLog(@"");
-    [profileController fetchProfileWithDelegate:self];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-	[super viewDidAppear:animated];
-    DLog(@"");
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    DLog(@"");
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
-    DLog(@"");
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
+    
+    self.profile = [[GHProfileController sharedInstance] fetchProfile];
+    if (self.profile == nil)
+    {
+        [[GHProfileController sharedInstance] sendRequestForProfileWithDelegate:self];
+    }
+    else
+    {
+        labelDisplayName.text = self.profile.displayName;
+    }
 }
 
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
     DLog(@"");
-	self.profileController = nil;
+    
+    self.profile = nil;
 	self.labelDisplayName = nil;
-	self.imageViewPicture = nil;
-	self.activityIndicatorView = nil;
 }
 
 @end

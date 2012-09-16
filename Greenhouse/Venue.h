@@ -17,13 +17,13 @@
 //  Venue.h
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 9/5/12.
+//  Created by Roy Clarkson on 9/15/12.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
-@class VenueRoom;
+@class Event, VenueRoom;
 
 @interface Venue : NSManagedObject
 
@@ -39,8 +39,8 @@
 
 @interface Venue (CoreDataGeneratedAccessors)
 
-- (void)addEventsObject:(NSManagedObject *)value;
-- (void)removeEventsObject:(NSManagedObject *)value;
+- (void)addEventsObject:(Event *)value;
+- (void)removeEventsObject:(Event *)value;
 - (void)addEvents:(NSSet *)values;
 - (void)removeEvents:(NSSet *)values;
 

@@ -21,6 +21,7 @@
 //
 
 #import "GHEventSessionDescriptionViewController.h"
+#import "EventSession.h"
 #import "GHEventSessionController.h"
 
 @interface GHEventSessionDescriptionViewController ()
@@ -41,9 +42,9 @@
 - (void)viewDidLoad 
 {
     [super viewDidLoad];
+    DLog(@"");
 	
 	self.title = @"Description";
-	
 	textViewDescription.editable = NO;
 }
 
@@ -51,14 +52,24 @@
 {
     [super viewWillAppear:animated];
     DLog(@"");
+    
     self.session = [[GHEventSessionController sharedInstance] fetchSelectedSession];
-    textViewDescription.text = session.information;
+    if (self.session == nil)
+    {
+        DLog(@"selected session not available");
+        [self.navigationController popToRootViewControllerAnimated:NO];
+    }
+    else
+    {
+        textViewDescription.text = session.information;
+    }
 }
 
-- (void)viewDidUnload 
+- (void)viewDidUnload
 {
     [super viewDidUnload];
-	
+    DLog(@"");
+    
 	self.session = nil;
 	self.textViewDescription = nil;
 }

@@ -24,6 +24,7 @@
 #import "Event.h"
 #import "EventSessionLeader.h"
 #import "Tweet.h"
+#import "VenueRoom.h"
 
 
 @implementation EventSession

@@ -212,6 +212,7 @@
 - (void)viewDidLoad 
 {
     [super viewDidLoad];
+    DLog(@"");
 	
 	self.title = @"Session";
 	self.sessionDescriptionViewController = [[GHEventSessionDescriptionViewController alloc] initWithNibName:nil bundle:nil];
@@ -226,7 +227,12 @@
     
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
     self.session = [[GHEventSessionController sharedInstance] fetchSelectedSession];
-    if (session)
+    if (self.event == nil || self.session == nil)
+    {
+        DLog(@"selected event or session not available");
+        [self.navigationController popToRootViewControllerAnimated:NO];
+    }
+    else
 	{
 		labelTitle.text = session.title;
 		labelLeader.text = session.leaderDisplay;
@@ -251,6 +257,7 @@
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
+    DLog(@"");
 	
 	self.favoriteTableViewCell = nil;
 	self.event = nil;

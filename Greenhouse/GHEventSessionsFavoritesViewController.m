@@ -21,6 +21,8 @@
 //
 
 #import "GHEventSessionsFavoritesViewController.h"
+#import "Event.h"
+#import "EventSession.h"
 #import "GHEventSessionController.h"
 
 @interface GHEventSessionsFavoritesViewController ()
@@ -43,8 +45,8 @@
 	
 	@try
 	{
-		NSArray *array = (NSArray *)[self.arraySessions objectAtIndex:indexPath.section];
-		session = (EventSession *)[array objectAtIndex:indexPath.row];
+		NSArray *array = [self.sessions objectAtIndex:indexPath.section];
+		session = [array objectAtIndex:indexPath.row];
 	}
 	@catch (NSException * e)
 	{
@@ -62,8 +64,6 @@
 
 - (void)fetchFavoriteSessionsDidFinishWithResults:(NSArray *)sessions
 {
-//    self.arraySessions = sessions;
-    
     NSMutableArray *timeBlocks = [[NSMutableArray alloc] init];
 	NSMutableArray *times = [[NSMutableArray alloc] init];
     NSMutableArray *timeBlock = nil;
@@ -89,7 +89,7 @@
         sessionTime = session.startTime;
     }
     
-	self.arraySessions = timeBlocks;
+	self.sessions = timeBlocks;
 	self.times = times;
 	[self.tableView reloadData];
 	[self dataSourceDidFinishLoadingNewData];
@@ -97,9 +97,13 @@
 
 - (void)fetchFavoriteSessionsDidFailWithError:(NSError *)error
 {
-	NSArray *emptyarray = [[NSArray alloc] init];
-    self.arraySessions = emptyarray;
-	[self.tableView reloadData];
+    if (self.sessions == nil && self.times == nil)
+    {
+        NSArray *empty = [NSArray array];
+        self.sessions = empty;
+        self.times = empty;
+        [self.tableView reloadData];
+    }
 	[self dataSourceDidFinishLoadingNewData];
 }
 
@@ -121,9 +125,9 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	if (self.arraySessions)
+	if (self.sessions)
 	{
-		NSArray *array = (NSArray *)[self.arraySessions objectAtIndex:section];
+		NSArray *array = [self.sessions objectAtIndex:section];
 		return [array count];
 	}
 	else
@@ -168,8 +172,8 @@
 - (void)viewDidLoad 
 {
 	self.lastRefreshKey = @"EventSessionFavoritesViewController_LastRefresh";
-	
     [super viewDidLoad];
+    DLog(@"");
 	
 	self.title = @"Favorite Sessions";
 }
@@ -177,6 +181,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    DLog(@"");
     
    	[[GHEventSessionController sharedInstance] fetchFavoriteSessionsWithEventId:self.event.eventId delegate:self];
 }
@@ -184,6 +189,9 @@
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
+    DLog(@"");
+    
+    self.times = nil;
 }
 
 @end

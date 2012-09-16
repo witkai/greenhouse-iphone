@@ -17,7 +17,7 @@
 //  VenueRoom.m
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 9/11/12.
+//  Created by Roy Clarkson on 9/15/12.
 //
 
 #import "VenueRoom.h"
@@ -29,7 +29,7 @@
 
 @dynamic label;
 @dynamic roomId;
-@dynamic venue;
 @dynamic sessions;
+@dynamic venue;
 
 @end

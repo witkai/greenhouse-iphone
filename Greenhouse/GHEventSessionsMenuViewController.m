@@ -21,17 +21,17 @@
 //
 
 #import "GHEventSessionsMenuViewController.h"
-#import "Event.h"
-#import "GHEventController.h"
 #import "GHEventSessionsCurrentViewController.h"
 #import "GHEventSessionsFavoritesViewController.h"
 #import "GHEventSessionsConferenceFavoritesViewController.h"
 #import "GHEventSessionsByDayViewController.h"
+#import "Event.h"
+#import "GHEventController.h"
+#import "GHEventSessionController.h"
 #import "GHDateHelper.h"
 
 @interface GHEventSessionsMenuViewController ()
 
-@property (nonatomic, strong) Event *event;
 @property (nonatomic, strong) Event *currentEvent;
 @property (nonatomic, strong) NSArray *arrayMenuItems;
 @property (nonatomic, strong) NSArray *arrayEventDates;
@@ -45,7 +45,6 @@
 @synthesize arrayEventDates;
 @synthesize dictionaryViewControllers;
 @synthesize currentEvent;
-@synthesize event;
 @synthesize tableViewMenu;
 @synthesize sessionsCurrentViewController;
 @synthesize sessionsFavoritesViewController;
@@ -192,7 +191,8 @@
 {
     [super viewWillAppear:animated];
     DLog(@"");
-    self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
+    
+    Event *event = [[GHEventController sharedInstance] fetchSelectedEvent];
     if (![currentEvent.eventId isEqualToNumber:event.eventId])
 	{
 		[dictionaryViewControllers removeAllObjects];
@@ -211,7 +211,6 @@
 	self.arrayEventDates = nil;
 	self.dictionaryViewControllers = nil;
 	self.currentEvent = nil;
-	self.event = nil;
 	self.tableViewMenu = nil;
 	self.sessionsCurrentViewController = nil;
 	self.sessionsFavoritesViewController = nil;

@@ -22,21 +22,24 @@
 //
 
 #import "GHEventSessionsCurrentViewController.h"
+#import "Event.h"
+#import "EventSession.h"
 #import "GHEventController.h"
+#import "GHEventSessionController.h"
 
 @interface GHEventSessionsCurrentViewController ()
 
 @property (nonatomic, strong) GHEventSessionController *eventSessionController;
-@property (nonatomic, strong) NSArray *arrayCurrentSessions;
-@property (nonatomic, strong) NSArray *arrayUpcomingSessions;
+@property (nonatomic, strong) NSArray *currentSessions;
+@property (nonatomic, strong) NSArray *upcomingSessions;
 
 @end
 
 @implementation GHEventSessionsCurrentViewController
 
 @synthesize eventSessionController;
-@synthesize arrayCurrentSessions;
-@synthesize arrayUpcomingSessions;
+@synthesize currentSessions = _currentSessions;
+@synthesize upcomingSessions = _upcomingSessions;
 
 - (EventSession *)eventSessionForIndexPath:(NSIndexPath *)indexPath
 {
@@ -44,11 +47,11 @@
 	
 	if (indexPath.section == 0)
 	{
-		session = (EventSession *)[arrayCurrentSessions objectAtIndex:indexPath.row];
+		session = [_currentSessions objectAtIndex:indexPath.row];
 	}
 	else if (indexPath.section == 1)
 	{
-		session = (EventSession *)[arrayUpcomingSessions objectAtIndex:indexPath.row];	
+		session = [_upcomingSessions objectAtIndex:indexPath.row];
 	}
 	
 	return session;
@@ -56,8 +59,8 @@
 
 - (BOOL)displayLoadingCell
 {
-	NSInteger currentCount = [arrayCurrentSessions count];
-	NSInteger upcomingCount = [arrayUpcomingSessions count];
+	NSInteger currentCount = [_currentSessions count];
+	NSInteger upcomingCount = [_upcomingSessions count];
 	
 	return (currentCount == 0 && upcomingCount == 0);
 }
@@ -101,18 +104,14 @@
         }
     }
     
-	self.arrayCurrentSessions = currentSessions;
-	self.arrayUpcomingSessions = upcomingSessions;
+	self.currentSessions = currentSessions;
+	self.upcomingSessions = upcomingSessions;
 	[self.tableView reloadData];
 	[self dataSourceDidFinishLoadingNewData];
 }
 
 - (void)fetchCurrentSessionsDidFailWithError:(NSError *)error
 {
-	NSArray *emptyarray = [[NSArray alloc] init];
-	self.arrayCurrentSessions = emptyarray;
-	self.arrayUpcomingSessions = emptyarray;
-	[self.tableView reloadData];
 	[self dataSourceDidFinishLoadingNewData];
 }
 
@@ -122,7 +121,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	if (arrayCurrentSessions && arrayUpcomingSessions)
+	if (_currentSessions && _upcomingSessions)
 	{
 		return 2;
 	}
@@ -134,13 +133,13 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	if (arrayCurrentSessions && section == 0)
+	if (_currentSessions && section == 0)
 	{
-		return [arrayCurrentSessions count];
+		return [_currentSessions count];
 	}
-	else if (arrayUpcomingSessions && section == 1)
+	else if (_upcomingSessions && section == 1)
 	{
-		return [arrayUpcomingSessions count];
+		return [_upcomingSessions count];
 	}
 	else 
 	{
@@ -151,11 +150,11 @@
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
 	
-	if ([arrayCurrentSessions count] > 0 && section == 0)
+	if ([_currentSessions count] > 0 && section == 0)
 	{
 		return @"Happening Now:";
 	}
-	else if ([arrayUpcomingSessions count] > 0 && section == 1)
+	else if ([_upcomingSessions count] > 0 && section == 1)
 	{
 		return @"Up Next:";
 	}
@@ -168,19 +167,6 @@
 
 #pragma mark -
 #pragma mark PullRefreshTableViewController methods
-
-//- (void)refreshView
-//{
-//	if (![self.currentEvent.eventId isEqualToString:self.event.eventId])
-//	{
-//		self.arrayCurrentSessions = nil;
-//		self.arrayUpcomingSessions = nil;
-//	
-//		[self.tableView reloadData];
-//	}
-//	
-//	self.currentEvent = self.event;
-//}
 
 //- (BOOL)shouldReloadData
 //{
@@ -208,8 +194,8 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    self.arrayCurrentSessions = nil;
-    self.arrayUpcomingSessions = nil;
+    self.currentSessions = nil;
+    self.upcomingSessions = nil;
     
     [super viewWillAppear:animated];
     
@@ -221,8 +207,8 @@
     [super viewDidUnload];
 	
 	self.eventSessionController = nil;
-	self.arrayCurrentSessions = nil;
-	self.arrayUpcomingSessions = nil;
+	self.currentSessions = nil;
+	self.upcomingSessions = nil;
 }
 
 @end

@@ -21,8 +21,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "EventSession.h"
-
 
 @interface GHEventSessionDescriptionViewController : UIViewController
 

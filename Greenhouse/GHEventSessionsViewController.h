@@ -22,16 +22,15 @@
 
 #import <UIKit/UIKit.h>
 #import "GHPullRefreshTableViewController.h"
-#import "Event.h"
-#import "EventSession.h"
-#import "GHEventSessionDetailsViewController.h"
 
+@class Event;
+@class EventSession;
+@class GHEventSessionDetailsViewController;
 
 @interface GHEventSessionsViewController : GHPullRefreshTableViewController
 
-@property (nonatomic, strong) NSArray *arraySessions;
+@property (nonatomic, strong) NSArray *sessions;
 @property (nonatomic, strong) Event *event;
-@property (nonatomic, strong) Event *currentEvent;
 @property (nonatomic, strong) GHEventSessionDetailsViewController *sessionDetailsViewController;
 
 - (EventSession *)eventSessionForIndexPath:(NSIndexPath *)indexPath;

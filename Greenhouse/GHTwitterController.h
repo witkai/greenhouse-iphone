@@ -27,7 +27,7 @@
 
 @interface GHTwitterController : GHBaseController
 
-+ (GHTwitterController *)sharedInstance;
++ (id)sharedInstance;
 
 - (Tweet *)fetchTweetWithId:(NSString *)tweetId;
 - (NSArray *)fetchTweetsWithEventId:(NSNumber *)eventId;

@@ -60,7 +60,8 @@
 	else 
 	{
 		// default of 4 hours
-		return 14400;
+//		return 14400;
+        return 30;
 	}
 }
 

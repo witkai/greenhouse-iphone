@@ -22,42 +22,42 @@
 
 #import "GHProfileController.h"
 #import "GHCoreDataManager.h"
+#import "Profile.h"
 
 @implementation GHProfileController
 
 
 #pragma mark -
-#pragma mark Instance methods
+#pragma mark Static methods
 
-- (void)fetchProfileWithDelegate:(id<GHProfileControllerDelegate>)delegate
+// Use this class method to obtain the shared instance of the class.
++ (id)sharedInstance
 {
-    Profile *profile = [self fetchProfileFromDataStore];
-    if (profile)
-    {
-        [delegate fetchProfileDidFinishWithResults:profile];
-    }
-    else
-    {
-        [self sendRequestForProfileWithDelegate:delegate];
-    }
+    static id _sharedInstance = nil;
+    static dispatch_once_t predicate;
+    dispatch_once(&predicate, ^{
+        _sharedInstance = [[self alloc] init];
+    });
+    return _sharedInstance;
 }
 
-- (Profile *)fetchProfileFromDataStore
+
+#pragma mark -
+#pragma mark Instance methods
+
+- (Profile *)fetchProfile
 {
     NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Profile" inManagedObjectContext:context];
     [fetchRequest setEntity:entity];
-    
     NSError *error;
     NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
-    
     Profile *profile = nil;
     if (!error && fetchedObjects.count > 0)
     {
         profile = [fetchedObjects objectAtIndex:0];
     }
-    
     return profile;
 }
 
@@ -84,9 +84,10 @@
              Profile *profile = nil;
              if (!error)
              {
+                 DLog(@"%@", dictionary);
                  [self deleteProfile];
                  [self storeProfileWithJson:dictionary];
-                 profile = [self fetchProfileFromDataStore];
+                 profile = [self fetchProfile];
              }
              [delegate fetchProfileDidFinishWithResults:profile];
          }
@@ -124,10 +125,10 @@
 {
     DLog(@"");
     NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
-    NSManagedObject *object = [self fetchProfileFromDataStore];
-    if (object)
+    Profile *profile = [self fetchProfile];
+    if (profile)
     {
-        [context deleteObject:object];
+        [context deleteObject:profile];
         NSError *error;
         [context save:&error];
         if (error)

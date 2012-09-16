@@ -20,12 +20,23 @@
 //  Created by Roy Clarkson on 9/7/10.
 //
 
+#define KEY_SELECTED_SESSION_NUMBER @"selectedSessionNumber"
+#define KEY_SELECTED_SCHEDULE_DATE @"selectedScheduleDate"
+
 #import "GHEventSessionController.h"
 #import "GHCoreDataManager.h"
 #import "GHEventController.h"
+#import "EventSession.h"
 #import "Event.h"
 #import "EventSessionLeader.h"
 #import "VenueRoom.h"
+
+@interface GHEventSessionController ()
+
+- (NSArray *)fetchSessionsWithPredicate:(NSPredicate *)predicate;
+- (NSPredicate *)predicateWithEventId:(NSNumber *)eventId date:(NSDate *)date;
+
+@end
 
 @implementation GHEventSessionController
 
@@ -33,96 +44,80 @@
 #pragma mark -
 #pragma mark Static methods
 
-+ (GHEventSessionController *)sharedInstance
+// Use this class method to obtain the shared instance of the class.
++ (id)sharedInstance
 {
-    static GHEventSessionController *_sharedInstance = nil;
+    static id _sharedInstance = nil;
     static dispatch_once_t predicate;
     dispatch_once(&predicate, ^{
-        _sharedInstance = [[GHEventSessionController alloc] init];
+        _sharedInstance = [[self alloc] init];
     });
     return _sharedInstance;
 }
 
 
 #pragma mark -
-#pragma mark Fetch Current Sessions With Id
+#pragma mark Selected Session
 
-- (void)fetchCurrentSessionsWithEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsCurrentDelegate>)delegate
+- (EventSession *)fetchSelectedSession
 {
-    NSPredicate *predicate = [self predicateWithEventId:eventId date:[NSDate date]];
-    NSArray *sessions = [self fetchSessionsWithPredicate:predicate];
-    if (sessions.count > 0)
-    {
-        [delegate fetchCurrentSessionsDidFinishWithResults:sessions];
-    }
-    else
-    {
-        [self sendRequestForCurrentSessionsWithEventId:eventId delegate:delegate];
-    }
+    NSNumber *sessionNumber = [[NSUserDefaults standardUserDefaults] objectForKey:KEY_SELECTED_SESSION_NUMBER];
+    return [self fetchSessionWithNumber:sessionNumber];
 }
 
-- (void)sendRequestForCurrentSessionsWithEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsCurrentDelegate>)delegate
+- (void)setSelectedSession:(EventSession *)session
 {
-	// request the sessions for the current day
-	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-	[dateFormatter setDateFormat:@"YYYY-MM-d"];
-    NSDate *now = [NSDate date];
-	NSString *dateString = [dateFormatter stringFromDate:now];
-	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSIONS_BY_DAY_URL, eventId, dateString];
-	NSURL *url = [[NSURL alloc] initWithString:urlString];
-	
-    NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
-	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-	
-	DLog(@"%@", request);
-	
-    [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
-                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
-     {
-         NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
-         if (statusCode == 200 && data.length > 0 && error == nil)
-         {
-             DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-             NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-             NSArray *sessions = nil;
-             if (!error)
-             {
-                 [self deleteSessionsWithEventId:eventId date:now];
-                 [self storeSessionsWithEventId:eventId json:jsonArray];
-                 NSPredicate *predicate = [self predicateWithEventId:eventId date:now];
-                 sessions = [self fetchSessionsWithPredicate:predicate];
-             }
-             [delegate fetchCurrentSessionsDidFinishWithResults:sessions];
-         }
-         else if (error)
-         {
-             [self requestDidFailWithError:error];
-             [delegate fetchCurrentSessionsDidFailWithError:error];
-         }
-         else if (statusCode != 200)
-         {
-             [self requestDidNotSucceedWithDefaultMessage:@"A problem occurred while retrieving the session data." response:response];
-         }
-     }];
+	[[NSUserDefaults standardUserDefaults] setObject:session.number forKey:KEY_SELECTED_SESSION_NUMBER];
+	[[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 
 #pragma mark -
-#pragma mark Fetch Sessions With Id
+#pragma mark Selected Schedule Date
 
-- (void)fetchSessionsWithEventId:(NSNumber *)eventId date:(NSDate *)eventDate delegate:(id<GHEventSessionsByDateDelegate>)delegate
+- (NSDate *)fetchSelectedScheduleDate
+{
+    return [[NSUserDefaults standardUserDefaults] objectForKey:KEY_SELECTED_SCHEDULE_DATE];
+}
+
+- (void)setSelectedScheduleDate:(NSDate *)date
+{
+    [[NSUserDefaults standardUserDefaults] setObject:date forKey:KEY_SELECTED_SCHEDULE_DATE];
+	[[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+
+#pragma mark -
+#pragma mark Sessions
+
+- (EventSession *)fetchSessionWithNumber:(NSNumber *)number
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"number == %@", number];
+    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"EventSession" inManagedObjectContext:context];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    [fetchRequest setEntity:entity];
+    [fetchRequest setPredicate:predicate];
+    NSError *error;
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    EventSession *session = nil;
+    if (fetchedObjects && fetchedObjects.count > 0)
+    {
+        session = [fetchedObjects objectAtIndex:0];
+    }
+    return session;
+}
+
+- (NSArray *)fetchSessionsWithEventId:(NSString *)eventId
+{
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"event.eventId == %@", eventId];
+    return [self fetchSessionsWithPredicate:predicate];
+}
+
+- (NSArray *)fetchSessionsWithEventId:(NSNumber *)eventId date:(NSDate *)eventDate
 {
     NSPredicate *predicate = [self predicateWithEventId:eventId date:eventDate];
-    NSArray *sessions = [self fetchSessionsWithPredicate:predicate];
-    if (sessions.count > 0)
-    {
-        [delegate fetchSessionsByDateDidFinishWithResults:sessions];
-    }
-    else
-    {
-        [self sendRequestForSessionsWithEventId:eventId date:eventDate delegate:delegate];
-    }
+    return [self fetchSessionsWithPredicate:predicate];
 }
 
 - (void)sendRequestForSessionsWithEventId:(NSNumber *)eventId date:(NSDate *)eventDate delegate:(id<GHEventSessionsByDateDelegate>)delegate
@@ -167,48 +162,6 @@
              [self requestDidNotSucceedWithDefaultMessage:@"A problem occurred while retrieving the session data." response:response];
          }
      }];
-}
-
-- (EventSession *)fetchSessionWithNumber:(NSNumber *)number
-{
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"number == %@", number];
-    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"EventSession" inManagedObjectContext:context];
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    [fetchRequest setEntity:entity];
-    [fetchRequest setPredicate:predicate];
-    NSError *error;
-    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
-    EventSession *session = nil;
-    if (fetchedObjects && fetchedObjects.count > 0)
-    {
-        session = [fetchedObjects objectAtIndex:0];
-    }
-    return session;
-}
-
-- (NSArray *)fetchSessionsWithEventId:(NSString *)eventId
-{
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"event.eventId == %@", eventId];
-    return [self fetchSessionsWithPredicate:predicate];
-}
-
-- (NSArray *)fetchSessionsWithPredicate:(NSPredicate *)predicate
-{
-    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"EventSession" inManagedObjectContext:context];
-    NSSortDescriptor *sortByStartTime = [[NSSortDescriptor alloc] initWithKey:@"startTime" ascending:YES];
-    NSSortDescriptor *sortByTitle = [[NSSortDescriptor alloc] initWithKey:@"title" ascending:YES];
-    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    [fetchRequest setEntity:entity];
-    [fetchRequest setSortDescriptors:[NSArray arrayWithObjects:sortByStartTime, sortByTitle, nil]];
-    if (predicate)
-    {
-        [fetchRequest setPredicate:predicate];
-    }
-    NSError *error;
-    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
-    return fetchedObjects;
 }
 
 - (void)storeSessionsWithEventId:(NSNumber *)eventId json:(NSArray *)sessions
@@ -280,23 +233,9 @@
     }
 }
 
-- (NSPredicate *)predicateWithEventId:(NSNumber *)eventId date:(NSDate *)date
-{
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    NSUInteger units = (NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSTimeZoneCalendarUnit);
-    NSDateComponents *components = [calendar components:units fromDate:date];
-    NSDate *startDate = [calendar dateFromComponents:components];
-    components = [[NSDateComponents alloc] init];
-    [components setDay:1];
-    NSDate *endDate = [calendar dateByAddingComponents:components toDate:startDate options:0];
-    DLog(@"startDate: %@", startDate);
-    DLog(@"endDate: %@", endDate);
-    return [NSPredicate predicateWithFormat:@"(event.eventId == %@) AND (startTime > %@) AND (startTime <= %@)", eventId, startDate, endDate];
-}
-
 
 #pragma mark -
-#pragma mark Fetch Favorite Sessions
+#pragma mark Favorite Sessions
 
 - (void)fetchFavoriteSessionsWithEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsFavoritesDelegate>)delegate
 {
@@ -359,54 +298,6 @@
      }];
 }
 
-
-#pragma mark -
-#pragma mark Fetch Conference Favorite Sessions
-
-- (void)fetchConferenceFavoriteSessionsByEventId:(NSString *)eventId delegate:(id<GHEventSessionsConferenceFavoritesDelegate>)delegate
-{
-	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSIONS_CONFERENCE_FAVORITES_URL, eventId];
-	NSURL *url = [[NSURL alloc] initWithString:urlString];
-	
-    NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
-	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-	DLog(@"%@", request);
-	
-    [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
-                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
-     {
-         NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
-         if (statusCode == 200 && data.length > 0 && error == nil)
-         {
-             DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-             
-             NSError *error;
-             NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-             NSMutableArray *arraySessions = [[NSMutableArray alloc] init];
-             if (!error)
-             {
-                 DLog(@"%@", array);
-                 // TODO: something
-             }
-             [delegate fetchConferenceFavoriteSessionsDidFinishWithResults:arraySessions];
-         }
-         else if (error)
-         {
-             [self requestDidFailWithError:error];
-             [delegate fetchConferenceFavoriteSessionsDidFailWithError:error];
-         }
-         else if (statusCode != 200)
-         {
-             [self requestDidNotSucceedWithDefaultMessage:@"A problem occurred while retrieving the session data." response:response];
-         }
-     }];
-}
-
-
-#pragma mark -
-#pragma mark Update Favorite Session
-
 - (void)updateFavoriteSessionWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber delegate:(id<GHEventSessionUpdateFavoriteDelegate>)delegate
 {
     EventSession *session = [self fetchSessionWithNumber:sessionNumber];
@@ -463,7 +354,7 @@
 - (void)rateSession:(NSString *)sessionNumber withEventId:(NSString *)eventId rating:(NSInteger)rating comment:(NSString *)comment delegate:(id<GHEventSessionRateDelegate>)delegate
 {
 	self.activityAlertView = [[GHActivityAlertView alloc] initWithActivityMessage:@"Submitting rating..."];
-	[_activityAlertView startAnimating];
+	[self.activityAlertView startAnimating];
 	
 	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSION_RATING_URL, eventId, sessionNumber];
 	NSURL *url = [[NSURL alloc] initWithString:urlString];
@@ -486,7 +377,7 @@
                                        queue:[NSOperationQueue mainQueue]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
-         [_activityAlertView stopAnimating];
+         [self.activityAlertView stopAnimating];
          self.activityAlertView = nil;
          
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
@@ -523,75 +414,150 @@
 
 
 #pragma mark -
-#pragma mark Selected Session
+#pragma mark Current Sessions
 
-#define KEY_SELECTED_SESSION_NUMBER @"selectedSessionNumber"
-
-- (EventSession *)fetchSelectedSession
+- (void)fetchCurrentSessionsWithEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsCurrentDelegate>)delegate
 {
-    NSNumber *sessionNumber = [[NSUserDefaults standardUserDefaults] objectForKey:KEY_SELECTED_SESSION_NUMBER];
-    return [self fetchSessionWithNumber:sessionNumber];
+    NSPredicate *predicate = [self predicateWithEventId:eventId date:[NSDate date]];
+    NSArray *sessions = [self fetchSessionsWithPredicate:predicate];
+    if (sessions.count > 0)
+    {
+        [delegate fetchCurrentSessionsDidFinishWithResults:sessions];
+    }
+    else
+    {
+        [self sendRequestForCurrentSessionsWithEventId:eventId delegate:delegate];
+    }
 }
 
-- (void)setSelectedSession:(EventSession *)session
+- (void)sendRequestForCurrentSessionsWithEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsCurrentDelegate>)delegate
 {
-	[[NSUserDefaults standardUserDefaults] setObject:session.number forKey:KEY_SELECTED_SESSION_NUMBER];
-	[[NSUserDefaults standardUserDefaults] synchronize];
+	// request the sessions for the current day
+	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+	[dateFormatter setDateFormat:@"YYYY-MM-d"];
+    NSDate *now = [NSDate date];
+	NSString *dateString = [dateFormatter stringFromDate:now];
+	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSIONS_BY_DAY_URL, eventId, dateString];
+	NSURL *url = [[NSURL alloc] initWithString:urlString];
+	
+    NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
+	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+	
+	DLog(@"%@", request);
+	
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+     {
+         NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
+         if (statusCode == 200 && data.length > 0 && error == nil)
+         {
+             DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+             NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+             NSArray *sessions = nil;
+             if (!error)
+             {
+                 [self deleteSessionsWithEventId:eventId date:now];
+                 [self storeSessionsWithEventId:eventId json:jsonArray];
+                 NSPredicate *predicate = [self predicateWithEventId:eventId date:now];
+                 sessions = [self fetchSessionsWithPredicate:predicate];
+             }
+             [delegate fetchCurrentSessionsDidFinishWithResults:sessions];
+         }
+         else if (error)
+         {
+             [self requestDidFailWithError:error];
+             [delegate fetchCurrentSessionsDidFailWithError:error];
+         }
+         else if (statusCode != 200)
+         {
+             [self requestDidNotSucceedWithDefaultMessage:@"A problem occurred while retrieving the session data." response:response];
+         }
+     }];
 }
 
-#define KEY_SELECTED_SCHEDULE_DATE @"selectedScheduleDate"
 
-- (NSDate *)fetchSelectedScheduleDate
+#pragma mark -
+#pragma mark Conference Favorite Sessions
+
+- (void)fetchConferenceFavoriteSessionsByEventId:(NSString *)eventId delegate:(id<GHEventSessionsConferenceFavoritesDelegate>)delegate
 {
-    return [[NSUserDefaults standardUserDefaults] objectForKey:KEY_SELECTED_SCHEDULE_DATE];
+	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSIONS_CONFERENCE_FAVORITES_URL, eventId];
+	NSURL *url = [[NSURL alloc] initWithString:urlString];
+	
+    NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
+	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+	DLog(@"%@", request);
+	
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:[NSOperationQueue mainQueue]
+                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+     {
+         NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
+         if (statusCode == 200 && data.length > 0 && error == nil)
+         {
+             DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+             
+             NSError *error;
+             NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+             NSMutableArray *arraySessions = [[NSMutableArray alloc] init];
+             if (!error)
+             {
+                 DLog(@"%@", array);
+                 // TODO: something
+             }
+             [delegate fetchConferenceFavoriteSessionsDidFinishWithResults:arraySessions];
+         }
+         else if (error)
+         {
+             [self requestDidFailWithError:error];
+             [delegate fetchConferenceFavoriteSessionsDidFailWithError:error];
+         }
+         else if (statusCode != 200)
+         {
+             [self requestDidNotSucceedWithDefaultMessage:@"A problem occurred while retrieving the session data." response:response];
+         }
+     }];
 }
 
-- (void)setSelectedScheduleDate:(NSDate *)date
+
+
+
+
+
+#pragma mark -
+#pragma mark Private Instance methods
+
+- (NSArray *)fetchSessionsWithPredicate:(NSPredicate *)predicate
 {
-    [[NSUserDefaults standardUserDefaults] setObject:date forKey:KEY_SELECTED_SCHEDULE_DATE];
-	[[NSUserDefaults standardUserDefaults] synchronize];
+    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:@"EventSession" inManagedObjectContext:context];
+    NSSortDescriptor *sortByStartTime = [[NSSortDescriptor alloc] initWithKey:@"startTime" ascending:YES];
+    NSSortDescriptor *sortByTitle = [[NSSortDescriptor alloc] initWithKey:@"title" ascending:YES];
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    [fetchRequest setEntity:entity];
+    [fetchRequest setSortDescriptors:[NSArray arrayWithObjects:sortByStartTime, sortByTitle, nil]];
+    if (predicate)
+    {
+        [fetchRequest setPredicate:predicate];
+    }
+    NSError *error;
+    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    return fetchedObjects;
 }
 
-//- (EventSession *)fetchSelectedSession
-//{
-//    EventSession *session = nil;
-//    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
-//    NSEntityDescription *entity = [NSEntityDescription entityForName:@"EventSession" inManagedObjectContext:context];
-//    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isSelected == YES"];
-//    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-//    [fetchRequest setEntity:entity];
-//    [fetchRequest setPredicate:predicate];
-//    NSError *error;
-//    NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
-//    if (fetchedObjects && fetchedObjects.count > 0)
-//    {
-//        session = [fetchedObjects objectAtIndex:0];
-//    }
-//    return session;
-//}
-//
-//- (void)setSelectedSession:(EventSession *)session
-//{
-//    if (session)
-//    {
-//        NSArray *sessions = [self fetchSessionsWithPredicate:nil];
-//        [sessions enumerateObjectsUsingBlock:^(EventSession *s, NSUInteger idx, BOOL *stop) {
-//            BOOL isSelected = NO;
-//            if ([s.number isEqualToNumber:session.number])
-//            {
-//                isSelected = YES;
-//            }
-//            s.isSelected = [NSNumber numberWithBool:isSelected];
-//        }];
-//    }
-//    
-//    NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
-//    NSError *error;
-//    [context save:&error];
-//    if (error)
-//    {
-//        DLog(@"%@", [error localizedDescription]);
-//    }
-//}
+- (NSPredicate *)predicateWithEventId:(NSNumber *)eventId date:(NSDate *)date
+{
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSUInteger units = (NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSTimeZoneCalendarUnit);
+    NSDateComponents *components = [calendar components:units fromDate:date];
+    NSDate *startDate = [calendar dateFromComponents:components];
+    components = [[NSDateComponents alloc] init];
+    [components setDay:1];
+    NSDate *endDate = [calendar dateByAddingComponents:components toDate:startDate options:0];
+    DLog(@"startDate: %@", startDate);
+    DLog(@"endDate: %@", endDate);
+    return [NSPredicate predicateWithFormat:@"(event.eventId == %@) AND (startTime > %@) AND (startTime <= %@)", eventId, startDate, endDate];
+}
 
 @end

@@ -15,16 +15,14 @@
 		811BA5D0120C58E40045BB34 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 811BA5CF120C58E40045BB34 /* CoreLocation.framework */; };
 		815004E115EEFF5100972ACE /* GHAuthorizedRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 815004E015EEFF5100972ACE /* GHAuthorizedRequest.m */; };
 		815D0A271604248B002786A4 /* GHEventSessionTweetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 815D0A261604248B002786A4 /* GHEventSessionTweetViewController.m */; };
-		815D0A2E16042C2D002786A4 /* Tweet.m in Sources */ = {isa = PBXBuildFile; fileRef = 815D0A2D16042C2D002786A4 /* Tweet.m */; };
-		815D0A31160435D5002786A4 /* EventSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 815D0A30160435D5002786A4 /* EventSession.m */; };
-		815D0A3416043695002786A4 /* Tweet.m in Sources */ = {isa = PBXBuildFile; fileRef = 815D0A3316043695002786A4 /* Tweet.m */; };
-		815D0A37160436A6002786A4 /* EventSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 815D0A36160436A6002786A4 /* EventSession.m */; };
-		815D0A3A160436C6002786A4 /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 815D0A39160436C6002786A4 /* Event.m */; };
-		815D0A3D160436D5002786A4 /* VenueRoom.m in Sources */ = {isa = PBXBuildFile; fileRef = 815D0A3C160436D5002786A4 /* VenueRoom.m */; };
+		815D0A411604F306002786A4 /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 815D0A401604F306002786A4 /* Event.m */; };
+		815D0A441604F31F002786A4 /* EventSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 815D0A431604F31F002786A4 /* EventSession.m */; };
+		815D0A4A1604F372002786A4 /* Tweet.m in Sources */ = {isa = PBXBuildFile; fileRef = 815D0A491604F372002786A4 /* Tweet.m */; };
+		815D0A4D1604F4AC002786A4 /* VenueRoom.m in Sources */ = {isa = PBXBuildFile; fileRef = 815D0A4C1604F4AB002786A4 /* VenueRoom.m */; };
+		815D0A501604F4C7002786A4 /* Venue.m in Sources */ = {isa = PBXBuildFile; fileRef = 815D0A4F1604F4C7002786A4 /* Venue.m */; };
+		815D0A5316063B2F002786A4 /* GHBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 815D0A5216063B2E002786A4 /* GHBaseViewController.m */; };
 		817D816D15FE831200C7A351 /* GHEventSessionsScheduleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 817D816B15FE831200C7A351 /* GHEventSessionsScheduleViewController.m */; };
 		817D817015FE831900C7A351 /* GHEventSessionsScheduleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 817D817215FE831900C7A351 /* GHEventSessionsScheduleViewController.xib */; };
-		817D818415FFD92100C7A351 /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 817D818315FFD92000C7A351 /* Event.m */; };
-		817D819315FFEC1700C7A351 /* VenueRoom.m in Sources */ = {isa = PBXBuildFile; fileRef = 817D819215FFEC1500C7A351 /* VenueRoom.m */; };
 		817D819616003E4900C7A351 /* GHEventTweetDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 817D819516003E4700C7A351 /* GHEventTweetDetailsViewController.m */; };
 		818BD9CD15DC949A00BD7842 /* OA2SignInRequestParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 818BD9CC15DC949A00BD7842 /* OA2SignInRequestParameters.m */; };
 		818BD9D415DCBF0C00BD7842 /* GHURLRequestParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 818BD9D315DCBF0C00BD7842 /* GHURLRequestParameters.m */; };
@@ -71,7 +69,6 @@
 		81CD37001602C33800FFFCEA /* GHEventTweetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CD36FF1602C33800FFFCEA /* GHEventTweetViewController.m */; };
 		81CFAA4815F1615D00661D68 /* GHCoreDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CFAA4715F1615D00661D68 /* GHCoreDataManager.m */; };
 		81CFAA4B15F4584700661D68 /* NSDate+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CFAA4A15F4584700661D68 /* NSDate+Helpers.m */; };
-		81CFAA5115F7F1F200661D68 /* Venue.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CFAA5015F7F1F100661D68 /* Venue.m */; };
 		81CFAA5715F7F31700661D68 /* Profile.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CFAA5615F7F31600661D68 /* Profile.m */; };
 		81CFAA6015F9077C00661D68 /* EventSessionLeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 81CFAA5F15F9077800661D68 /* EventSessionLeader.m */; };
 		81E2BDE615EFB3DB00BFBDE0 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28860BE40F44EE6400985440 /* CoreData.framework */; };
@@ -89,7 +86,6 @@
 		81E42E2415ADE82F001FA72D /* GHCustomNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42D6D15ADE82F001FA72D /* GHCustomNavigationBar.m */; };
 		81E42E2515ADE82F001FA72D /* GHCustomTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42D6F15ADE82F001FA72D /* GHCustomTabBar.m */; };
 		81E42E2615ADE82F001FA72D /* GHCustomToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42D7115ADE82F001FA72D /* GHCustomToolbar.m */; };
-		81E42E2715ADE82F001FA72D /* GHDataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42D7315ADE82F001FA72D /* GHDataViewController.m */; };
 		81E42E2815ADE82F001FA72D /* GHDateHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42D7515ADE82F001FA72D /* GHDateHelper.m */; };
 		81E42E2915ADE82F001FA72D /* EGORefreshTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 81E42D7815ADE82F001FA72D /* EGORefreshTableHeaderView.m */; };
 		81E42E2A15ADE82F001FA72D /* GHAuthorizeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 81E42D7915ADE82F001FA72D /* GHAuthorizeViewController.xib */; };
@@ -208,25 +204,21 @@
 		815004E015EEFF5100972ACE /* GHAuthorizedRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHAuthorizedRequest.m; sourceTree = "<group>"; };
 		815D0A251604248B002786A4 /* GHEventSessionTweetViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventSessionTweetViewController.h; sourceTree = "<group>"; };
 		815D0A261604248B002786A4 /* GHEventSessionTweetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHEventSessionTweetViewController.m; sourceTree = "<group>"; };
-		815D0A2C16042C2C002786A4 /* Tweet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tweet.h; sourceTree = "<group>"; };
-		815D0A2D16042C2D002786A4 /* Tweet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tweet.m; sourceTree = "<group>"; };
-		815D0A2F160435D5002786A4 /* EventSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSession.h; sourceTree = "<group>"; };
-		815D0A30160435D5002786A4 /* EventSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventSession.m; sourceTree = "<group>"; };
-		815D0A3216043695002786A4 /* Tweet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tweet.h; sourceTree = "<group>"; };
-		815D0A3316043695002786A4 /* Tweet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tweet.m; sourceTree = "<group>"; };
-		815D0A35160436A6002786A4 /* EventSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSession.h; sourceTree = "<group>"; };
-		815D0A36160436A6002786A4 /* EventSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventSession.m; sourceTree = "<group>"; };
-		815D0A38160436C6002786A4 /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
-		815D0A39160436C6002786A4 /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Event.m; sourceTree = "<group>"; };
-		815D0A3B160436D4002786A4 /* VenueRoom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VenueRoom.h; sourceTree = "<group>"; };
-		815D0A3C160436D5002786A4 /* VenueRoom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VenueRoom.m; sourceTree = "<group>"; };
+		815D0A3F1604F306002786A4 /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
+		815D0A401604F306002786A4 /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Event.m; sourceTree = "<group>"; };
+		815D0A421604F31F002786A4 /* EventSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSession.h; sourceTree = "<group>"; };
+		815D0A431604F31F002786A4 /* EventSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventSession.m; sourceTree = "<group>"; };
+		815D0A481604F372002786A4 /* Tweet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tweet.h; sourceTree = "<group>"; };
+		815D0A491604F372002786A4 /* Tweet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tweet.m; sourceTree = "<group>"; };
+		815D0A4B1604F4AB002786A4 /* VenueRoom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VenueRoom.h; sourceTree = "<group>"; };
+		815D0A4C1604F4AB002786A4 /* VenueRoom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VenueRoom.m; sourceTree = "<group>"; };
+		815D0A4E1604F4C7002786A4 /* Venue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Venue.h; sourceTree = "<group>"; };
+		815D0A4F1604F4C7002786A4 /* Venue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Venue.m; sourceTree = "<group>"; };
+		815D0A5116063B2D002786A4 /* GHBaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHBaseViewController.h; sourceTree = "<group>"; };
+		815D0A5216063B2E002786A4 /* GHBaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHBaseViewController.m; sourceTree = "<group>"; };
 		817D816A15FE831200C7A351 /* GHEventSessionsScheduleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventSessionsScheduleViewController.h; sourceTree = "<group>"; };
 		817D816B15FE831200C7A351 /* GHEventSessionsScheduleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHEventSessionsScheduleViewController.m; sourceTree = "<group>"; };
 		817D817115FE831900C7A351 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GHEventSessionsScheduleViewController.xib; sourceTree = "<group>"; };
-		817D818215FFD91F00C7A351 /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
-		817D818315FFD92000C7A351 /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Event.m; sourceTree = "<group>"; };
-		817D819115FFEC1400C7A351 /* VenueRoom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VenueRoom.h; sourceTree = "<group>"; };
-		817D819215FFEC1500C7A351 /* VenueRoom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VenueRoom.m; sourceTree = "<group>"; };
 		817D819416003E4600C7A351 /* GHEventTweetDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHEventTweetDetailsViewController.h; sourceTree = "<group>"; };
 		817D819516003E4700C7A351 /* GHEventTweetDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHEventTweetDetailsViewController.m; sourceTree = "<group>"; };
 		818BD9CB15DC949A00BD7842 /* OA2SignInRequestParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OA2SignInRequestParameters.h; sourceTree = "<group>"; };
@@ -283,8 +275,6 @@
 		81CFAA4715F1615D00661D68 /* GHCoreDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHCoreDataManager.m; sourceTree = "<group>"; };
 		81CFAA4915F4584700661D68 /* NSDate+Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Helpers.h"; sourceTree = "<group>"; };
 		81CFAA4A15F4584700661D68 /* NSDate+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Helpers.m"; sourceTree = "<group>"; };
-		81CFAA4F15F7F1EF00661D68 /* Venue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Venue.h; sourceTree = "<group>"; };
-		81CFAA5015F7F1F100661D68 /* Venue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Venue.m; sourceTree = "<group>"; };
 		81CFAA5515F7F31500661D68 /* Profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Profile.h; sourceTree = "<group>"; };
 		81CFAA5615F7F31600661D68 /* Profile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Profile.m; sourceTree = "<group>"; };
 		81CFAA5E15F9077500661D68 /* EventSessionLeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSessionLeader.h; sourceTree = "<group>"; };
@@ -312,8 +302,6 @@
 		81E42D6F15ADE82F001FA72D /* GHCustomTabBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHCustomTabBar.m; sourceTree = "<group>"; };
 		81E42D7015ADE82F001FA72D /* GHCustomToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHCustomToolbar.h; sourceTree = "<group>"; };
 		81E42D7115ADE82F001FA72D /* GHCustomToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHCustomToolbar.m; sourceTree = "<group>"; };
-		81E42D7215ADE82F001FA72D /* GHDataViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHDataViewController.h; sourceTree = "<group>"; };
-		81E42D7315ADE82F001FA72D /* GHDataViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHDataViewController.m; sourceTree = "<group>"; };
 		81E42D7415ADE82F001FA72D /* GHDateHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHDateHelper.h; sourceTree = "<group>"; };
 		81E42D7515ADE82F001FA72D /* GHDateHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHDateHelper.m; sourceTree = "<group>"; };
 		81E42D7615ADE82F001FA72D /* DLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLog.h; sourceTree = "<group>"; };
@@ -516,14 +504,6 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				815D0A3216043695002786A4 /* Tweet.h */,
-				815D0A3316043695002786A4 /* Tweet.m */,
-				815D0A35160436A6002786A4 /* EventSession.h */,
-				815D0A36160436A6002786A4 /* EventSession.m */,
-				815D0A38160436C6002786A4 /* Event.h */,
-				815D0A39160436C6002786A4 /* Event.m */,
-				815D0A3B160436D4002786A4 /* VenueRoom.h */,
-				815D0A3C160436D5002786A4 /* VenueRoom.m */,
 				81E42D5D15ADE82F001FA72D /* Greenhouse */,
 				81A1BD1C15D5AF9D0028A2D3 /* GreenhouseLogicTests */,
 				81A1BD3915D5B44E0028A2D3 /* GreenhouseApplicationTests */,
@@ -548,6 +528,41 @@
 				81A1BD1815D5AF9D0028A2D3 /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		815D0A3E1604F1F1002786A4 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				815D0A3F1604F306002786A4 /* Event.h */,
+				815D0A401604F306002786A4 /* Event.m */,
+				815D0A421604F31F002786A4 /* EventSession.h */,
+				815D0A431604F31F002786A4 /* EventSession.m */,
+				81CFAA5E15F9077500661D68 /* EventSessionLeader.h */,
+				81CFAA5F15F9077800661D68 /* EventSessionLeader.m */,
+				81CFAA5515F7F31500661D68 /* Profile.h */,
+				81CFAA5615F7F31600661D68 /* Profile.m */,
+				815D0A481604F372002786A4 /* Tweet.h */,
+				815D0A491604F372002786A4 /* Tweet.m */,
+				815D0A4E1604F4C7002786A4 /* Venue.h */,
+				815D0A4F1604F4C7002786A4 /* Venue.m */,
+				815D0A4B1604F4AB002786A4 /* VenueRoom.h */,
+				815D0A4C1604F4AB002786A4 /* VenueRoom.m */,
+			);
+			name = CoreData;
+			sourceTree = "<group>";
+		};
+		815D0A541606570A002786A4 /* Unused */ = {
+			isa = PBXGroup;
+			children = (
+				81E42DB915ADE82F001FA72D /* GHEventSessionsConferenceFavoritesViewController.h */,
+				81E42DBA15ADE82F001FA72D /* GHEventSessionsConferenceFavoritesViewController.m */,
+				81E42DBB15ADE82F001FA72D /* GHEventSessionsCurrentViewController.h */,
+				81E42DBC15ADE82F001FA72D /* GHEventSessionsCurrentViewController.m */,
+				81E42DBF15ADE82F001FA72D /* GHEventSessionsMenuViewController.h */,
+				81E42DC015ADE82F001FA72D /* GHEventSessionsMenuViewController.m */,
+				81E42D8715ADE82F001FA72D /* GHEventSessionsMenuViewController.xib */,
+			);
+			name = Unused;
 			sourceTree = "<group>";
 		};
 		8196752915DE7C320056A806 /* Categories */ = {
@@ -645,6 +660,7 @@
 		81CD36FA16023F2100FFFCEA /* Sessions */ = {
 			isa = PBXGroup;
 			children = (
+				815D0A541606570A002786A4 /* Unused */,
 				81E42DAF15ADE82F001FA72D /* GHEventSessionDescriptionViewController.h */,
 				81E42DB015ADE82F001FA72D /* GHEventSessionDescriptionViewController.m */,
 				81E42D8115ADE82F001FA72D /* GHEventSessionDescriptionViewController.xib */,
@@ -656,15 +672,8 @@
 				81E42D8515ADE82F001FA72D /* GHEventSessionRateViewController.xib */,
 				81E42DB715ADE82F001FA72D /* GHEventSessionsByDayViewController.h */,
 				81E42DB815ADE82F001FA72D /* GHEventSessionsByDayViewController.m */,
-				81E42DB915ADE82F001FA72D /* GHEventSessionsConferenceFavoritesViewController.h */,
-				81E42DBA15ADE82F001FA72D /* GHEventSessionsConferenceFavoritesViewController.m */,
-				81E42DBB15ADE82F001FA72D /* GHEventSessionsCurrentViewController.h */,
-				81E42DBC15ADE82F001FA72D /* GHEventSessionsCurrentViewController.m */,
 				81E42DBD15ADE82F001FA72D /* GHEventSessionsFavoritesViewController.h */,
 				81E42DBE15ADE82F001FA72D /* GHEventSessionsFavoritesViewController.m */,
-				81E42DBF15ADE82F001FA72D /* GHEventSessionsMenuViewController.h */,
-				81E42DC015ADE82F001FA72D /* GHEventSessionsMenuViewController.m */,
-				81E42D8715ADE82F001FA72D /* GHEventSessionsMenuViewController.xib */,
 				817D816A15FE831200C7A351 /* GHEventSessionsScheduleViewController.h */,
 				817D816B15FE831200C7A351 /* GHEventSessionsScheduleViewController.m */,
 				817D817215FE831900C7A351 /* GHEventSessionsScheduleViewController.xib */,
@@ -727,22 +736,9 @@
 			children = (
 				81E42DCD15ADE82F001FA72D /* GreenhouseAppDelegate.h */,
 				81E42DCE15ADE82F001FA72D /* GreenhouseAppDelegate.m */,
-				815D0A2F160435D5002786A4 /* EventSession.h */,
-				815D0A30160435D5002786A4 /* EventSession.m */,
 				81E2BDE815EFB78000BFBDE0 /* Greenhouse.xcdatamodeld */,
-				815D0A2C16042C2C002786A4 /* Tweet.h */,
-				815D0A2D16042C2D002786A4 /* Tweet.m */,
-				817D818215FFD91F00C7A351 /* Event.h */,
-				817D818315FFD92000C7A351 /* Event.m */,
-				81CFAA5E15F9077500661D68 /* EventSessionLeader.h */,
-				81CFAA5F15F9077800661D68 /* EventSessionLeader.m */,
-				81CFAA5515F7F31500661D68 /* Profile.h */,
-				81CFAA5615F7F31600661D68 /* Profile.m */,
-				81CFAA4F15F7F1EF00661D68 /* Venue.h */,
-				81CFAA5015F7F1F100661D68 /* Venue.m */,
-				817D819115FFEC1400C7A351 /* VenueRoom.h */,
-				817D819215FFEC1500C7A351 /* VenueRoom.m */,
 				81E42D9315ADE82F001FA72D /* MainWindow.xib */,
+				815D0A3E1604F1F1002786A4 /* CoreData */,
 				81E42ED615AF43C4001FA72D /* Categories */,
 				81E42ED515AF4160001FA72D /* Controllers */,
 				81E42ED415AF3E96001FA72D /* Helpers */,
@@ -828,6 +824,8 @@
 		81E42ED215AF377D001FA72D /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				815D0A5116063B2D002786A4 /* GHBaseViewController.h */,
+				815D0A5216063B2E002786A4 /* GHBaseViewController.m */,
 				81CD36F816023F1900FFFCEA /* Events */,
 				81CD36FC1602425700FFFCEA /* Profile */,
 				81CD36FD1602426E00FFFCEA /* Info */,
@@ -910,8 +908,6 @@
 			children = (
 				81E42DE315ADE82F001FA72D /* GHBaseController.h */,
 				81E42DE415ADE82F001FA72D /* GHBaseController.m */,
-				81E42D7215ADE82F001FA72D /* GHDataViewController.h */,
-				81E42D7315ADE82F001FA72D /* GHDataViewController.m */,
 				81E42DA115ADE82F001FA72D /* GHEventController.h */,
 				81E42DA215ADE82F001FA72D /* GHEventController.m */,
 				81E42DA315ADE82F001FA72D /* GHEventControllerDelegate.h */,
@@ -1174,7 +1170,6 @@
 				81E42E2415ADE82F001FA72D /* GHCustomNavigationBar.m in Sources */,
 				81E42E2515ADE82F001FA72D /* GHCustomTabBar.m in Sources */,
 				81E42E2615ADE82F001FA72D /* GHCustomToolbar.m in Sources */,
-				81E42E2715ADE82F001FA72D /* GHDataViewController.m in Sources */,
 				81E42E2815ADE82F001FA72D /* GHDateHelper.m in Sources */,
 				81E42E2915ADE82F001FA72D /* EGORefreshTableHeaderView.m in Sources */,
 				81E42E3D15ADE82F001FA72D /* GHEvent.m in Sources */,
@@ -1239,21 +1234,18 @@
 				81E2BDEA15EFB78000BFBDE0 /* Greenhouse.xcdatamodeld in Sources */,
 				81CFAA4815F1615D00661D68 /* GHCoreDataManager.m in Sources */,
 				81CFAA4B15F4584700661D68 /* NSDate+Helpers.m in Sources */,
-				81CFAA5115F7F1F200661D68 /* Venue.m in Sources */,
 				81CFAA5715F7F31700661D68 /* Profile.m in Sources */,
 				81CFAA6015F9077C00661D68 /* EventSessionLeader.m in Sources */,
 				817D816D15FE831200C7A351 /* GHEventSessionsScheduleViewController.m in Sources */,
-				817D818415FFD92100C7A351 /* Event.m in Sources */,
-				817D819315FFEC1700C7A351 /* VenueRoom.m in Sources */,
 				817D819616003E4900C7A351 /* GHEventTweetDetailsViewController.m in Sources */,
 				81CD37001602C33800FFFCEA /* GHEventTweetViewController.m in Sources */,
 				815D0A271604248B002786A4 /* GHEventSessionTweetViewController.m in Sources */,
-				815D0A2E16042C2D002786A4 /* Tweet.m in Sources */,
-				815D0A31160435D5002786A4 /* EventSession.m in Sources */,
-				815D0A3416043695002786A4 /* Tweet.m in Sources */,
-				815D0A37160436A6002786A4 /* EventSession.m in Sources */,
-				815D0A3A160436C6002786A4 /* Event.m in Sources */,
-				815D0A3D160436D5002786A4 /* VenueRoom.m in Sources */,
+				815D0A411604F306002786A4 /* Event.m in Sources */,
+				815D0A441604F31F002786A4 /* EventSession.m in Sources */,
+				815D0A4A1604F372002786A4 /* Tweet.m in Sources */,
+				815D0A4D1604F4AC002786A4 /* VenueRoom.m in Sources */,
+				815D0A501604F4C7002786A4 /* Venue.m in Sources */,
+				815D0A5316063B2F002786A4 /* GHBaseViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

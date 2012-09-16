@@ -21,12 +21,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "GHBaseViewController.h"
 
-
-@interface GHPullRefreshTableViewController : UIViewController <UIScrollViewDelegate>
-{
-	BOOL _reloading;
-}
+@interface GHPullRefreshTableViewController : GHBaseViewController <UIScrollViewDelegate>
 
 @property (nonatomic, strong) IBOutlet UITableView *tableView;
 @property (assign, getter=isReloading) BOOL reloading;

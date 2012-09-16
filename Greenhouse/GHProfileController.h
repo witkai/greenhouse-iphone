@@ -22,13 +22,14 @@
 
 #import "GHBaseController.h"
 #import "GHProfileControllerDelegate.h"
-#import "Profile.h"
 
+@class Profile;
 
-@interface GHProfileController : GHBaseController 
+@interface GHProfileController : GHBaseController
 
-- (void)fetchProfileWithDelegate:(id<GHProfileControllerDelegate>)delegate;
-- (Profile *)fetchProfileFromDataStore;
++ (id)sharedInstance;
+
+- (Profile *)fetchProfile;
 - (void)sendRequestForProfileWithDelegate:(id<GHProfileControllerDelegate>)delegate;
 - (void)storeProfileWithJson:(NSDictionary *)dictionary;
 - (void)deleteProfile;

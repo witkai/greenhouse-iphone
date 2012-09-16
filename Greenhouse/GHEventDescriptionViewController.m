@@ -42,6 +42,7 @@
 - (void)viewDidLoad 
 {
     [super viewDidLoad];
+    DLog(@"");
 	
 	self.title = @"Description";
 	textView.editable = NO;
@@ -53,24 +54,22 @@
     DLog(@"");
     
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
-    if (event)
+    if (event == nil)
     {
-        textView.text = event.information;
+        DLog(@"selected event not available");
+        textView.text = nil;
+        [self.navigationController popToRootViewControllerAnimated:NO];
     }
     else
     {
-        textView.text = nil;
+        textView.text = event.information;
     }
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
 }
 
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
+    DLog(@"");
 	
 	self.event = nil;
 	self.textView = nil;
