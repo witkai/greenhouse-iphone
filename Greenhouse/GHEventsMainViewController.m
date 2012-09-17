@@ -126,6 +126,17 @@
 #pragma mark -
 #pragma mark PullRefreshTableViewController methods
 
+- (BOOL)lastRefreshExpired
+{
+	// if the last refresh was older than the configured time, then expire the data
+    NSDateComponents *components = [[NSDateComponents alloc] init];
+    [components setWeek:-1];
+    NSDate *expireDate = [[NSCalendar currentCalendar] dateByAddingComponents:components toDate:[NSDate date] options:0];    
+    DLog(@"expireDate: %@", expireDate);
+    DLog(@"lastRefresh: %@", self.lastRefreshDate);
+	return ([self.lastRefreshDate compare:expireDate] == NSOrderedAscending);
+}
+
 - (void)reloadTableViewDataSource
 {
     [[GHEventController sharedInstance] sendRequestForEventsWithDelegate:self];
@@ -156,7 +167,7 @@
     DLog(@"");
     
 	self.events = [[GHEventController sharedInstance] fetchEvents];
-    if (self.events == nil || self.lastRefreshExpired)
+    if (self.events == nil || self.events.count == 0 || self.lastRefreshExpired)
     {
         [[GHEventController sharedInstance] sendRequestForEventsWithDelegate:self];
     }

@@ -46,7 +46,7 @@
 - (void)storeSessionsWithEventId:(NSNumber *)eventId json:(NSArray *)sessions;
 - (void)deleteSessionsWithEventId:(NSNumber *)eventId date:(NSDate *)date;
 
-- (void)fetchFavoriteSessionsWithEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsFavoritesDelegate>)delegate;
+- (NSArray *)fetchFavoriteSessionsWithEventId:(NSNumber *)eventId;
 - (void)sendRequestForFavoriteSessionsByEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsFavoritesDelegate>)delegate;
 
 - (void)updateFavoriteSessionWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber delegate:(id<GHEventSessionUpdateFavoriteDelegate>)delegate;

@@ -21,10 +21,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "GHBaseViewController.h"
 #import "GHProfileControllerDelegate.h"
 
-@interface GHProfileMainViewController : GHBaseViewController <GHProfileControllerDelegate, UIAlertViewDelegate>
+@interface GHProfileMainViewController : UIViewController <GHProfileControllerDelegate, UIAlertViewDelegate>
 
 @property (nonatomic, strong) IBOutlet UILabel *labelDisplayName;
 

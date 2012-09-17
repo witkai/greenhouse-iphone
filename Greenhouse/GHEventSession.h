@@ -21,13 +21,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "GHInitializingModel.h"
 
 
 @class GHVenueRoom;
 
 
-@interface GHEventSession : NSObject <GHInitializingModel> { }
+@interface GHEventSession : NSObject 
 
 @property (nonatomic, copy) NSString *number;
 @property (nonatomic, copy) NSString *title;

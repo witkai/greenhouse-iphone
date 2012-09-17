@@ -29,7 +29,7 @@
 
 	#define OAUTH_CONSUMER_KEY						@"a08318eb478a1ee31f69a55276f3af64"
 	#define OAUTH_CONSUMER_SECRET					@"80e7f8f7ba724aae9103f297e5fb9bdf"
-	#define GREENHOUSE_URL							@"http://127.0.0.1:8080/greenhouse"
+	#define GREENHOUSE_URL							@"http://192.168.0.11:8080/greenhouse"
 
 #elif QA
 
@@ -49,11 +49,11 @@
 #pragma mark -
 #pragma mark OAuth
 
-#define OAUTH_REALM								@"Greenhouse"
-#define OAUTH_REQUEST_TOKEN_URL					[NSString stringWithFormat:@"%@%@", GREENHOUSE_URL, @"/oauth/request_token"]
-#define OAUTH_AUTHORIZE_URL						[NSString stringWithFormat:@"%@%@", GREENHOUSE_URL, @"/oauth/confirm_access"]
-#define OAUTH_ACCESS_TOKEN_URL					[NSString stringWithFormat:@"%@%@", GREENHOUSE_URL, @"/oauth/access_token"]
-#define OAUTH_CALLBACK_URL						@"x-com-springsource-greenhouse://oauth-response"
+//#define OAUTH_REALM								@"Greenhouse"
+//#define OAUTH_REQUEST_TOKEN_URL					[NSString stringWithFormat:@"%@%@", GREENHOUSE_URL, @"/oauth/request_token"]
+//#define OAUTH_AUTHORIZE_URL						[NSString stringWithFormat:@"%@%@", GREENHOUSE_URL, @"/oauth/confirm_access"]
+//#define OAUTH_ACCESS_TOKEN_URL					[NSString stringWithFormat:@"%@%@", GREENHOUSE_URL, @"/oauth/access_token"]
+//#define OAUTH_CALLBACK_URL						@"x-com-springsource-greenhouse://oauth-response"
 
 #pragma mark -
 #pragma mark OAuth 2

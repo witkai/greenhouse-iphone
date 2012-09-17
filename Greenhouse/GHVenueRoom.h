@@ -21,10 +21,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "GHInitializingModel.h"
 
-
-@interface GHVenueRoom : NSObject <GHInitializingModel>
+@interface GHVenueRoom : NSObject 
 
 @property (nonatomic, copy) NSString *roomId;
 @property (nonatomic, copy) NSString *label;

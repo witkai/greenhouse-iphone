@@ -132,10 +132,12 @@
 	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 	DLog(@"%@", request);
 	
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[NSOperationQueue mainQueue]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
+         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
          if (statusCode == 200 && data.length > 0 && error == nil)
          {
@@ -237,12 +239,10 @@
 #pragma mark -
 #pragma mark Favorite Sessions
 
-- (void)fetchFavoriteSessionsWithEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsFavoritesDelegate>)delegate
+- (NSArray *)fetchFavoriteSessionsWithEventId:(NSNumber *)eventId
 {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
-    NSArray *sessions = [self fetchSessionsWithPredicate:predicate];
-    [delegate fetchFavoriteSessionsDidFinishWithResults:sessions];
-    [self sendRequestForFavoriteSessionsByEventId:eventId delegate:delegate];
+    return [self fetchSessionsWithPredicate:predicate];
 }
 
 - (void)sendRequestForFavoriteSessionsByEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsFavoritesDelegate>)delegate
@@ -254,10 +254,12 @@
 	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 	DLog(@"%@", request);
 	
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[NSOperationQueue mainQueue]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
+         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
          if (statusCode == 200 && data.length > 0 && error == nil)
          {
@@ -373,10 +375,12 @@
 	
 	DLog(@"%@", request);
 	
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[NSOperationQueue mainQueue]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
+         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
          [self.activityAlertView stopAnimating];
          self.activityAlertView = nil;
          

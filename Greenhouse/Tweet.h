@@ -37,5 +37,6 @@
 @property (nonatomic, retain) NSString * userId;
 @property (nonatomic, retain) Event *event;
 @property (nonatomic, retain) EventSession *session;
+@property (nonatomic, strong) UIImage *profileImage;
 
 @end

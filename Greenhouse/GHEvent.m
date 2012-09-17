@@ -21,7 +21,6 @@
 //
 
 #import "GHEvent.h"
-#import "GHVenue.h"
 
 @implementation GHEvent
 
@@ -36,9 +35,6 @@
 @synthesize groupName = _groupName;
 @synthesize venues = _venues;
 
-
-#pragma mark -
-#pragma mark Private methods
 
 - (id)initWithEventId:(NSString *)eventId title:(NSString *)title startTime:(NSDate *)startTime entTime:(NSDate *)endTime location:(NSString *)location description:(NSString *)description name:(NSString *)name hashtag:(NSString *)hashtag groupName:(NSString *)groupName venues:(NSArray *)venues
 {

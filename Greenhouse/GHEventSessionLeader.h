@@ -21,10 +21,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "GHInitializingModel.h"
 
 
-@interface GHEventSessionLeader : NSObject <GHInitializingModel> { }
+@interface GHEventSessionLeader : NSObject 
 
 @property (nonatomic, copy) NSString *firstName;
 @property (nonatomic, copy) NSString *lastName;

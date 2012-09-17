@@ -103,6 +103,8 @@
 {
     [super viewDidLoad];
     DLog(@"");
+    
+    labelDisplayName.text = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated

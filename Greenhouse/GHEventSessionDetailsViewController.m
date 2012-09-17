@@ -22,6 +22,7 @@
 
 #import "Event.h"
 #import "EventSession.h"
+#import "EventSessionLeader.h"
 #import "VenueRoom.h"
 #import "GHEventController.h"
 #import "GHEventSessionController.h"
@@ -235,7 +236,12 @@
     else
 	{
 		labelTitle.text = session.title;
-		labelLeader.text = session.leaderDisplay;
+        
+        NSMutableArray *leaders = [[NSMutableArray alloc] initWithCapacity:session.leaders.count];
+        [session.leaders enumerateObjectsUsingBlock:^(EventSessionLeader *leader, BOOL *stop) {
+            [leaders addObject:[NSString stringWithFormat:@"%@ %@", leader.firstName, leader.lastName]];
+        }];
+		labelLeader.text = [leaders componentsJoinedByString:@", "];
 		
 		sessionRateViewController.sessionDetailsViewController = self;
         
@@ -247,7 +253,7 @@
 		labelTime.text = formattedTime;
 		labelLocation.text = session.room.label;
 		
-		self.menuItems = [[NSArray alloc] initWithObjects:@"Description", @"Tweets", @"Favorite", @"Rate", nil];        
+		self.menuItems = [[NSArray alloc] initWithObjects:@"Description", @"Tweets", @"Favorite", @"Rate", nil];
 		[tableViewMenu reloadData];
 		
 		[self updateRating:[session.rating doubleValue]];

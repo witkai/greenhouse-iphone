@@ -21,10 +21,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "GHInitializingModel.h"
 
 
-@interface GHTweet : NSObject <GHInitializingModel>
+@interface GHTweet : NSObject
 
 @property (nonatomic, copy) NSString *tweetId;
 @property (nonatomic, copy) NSString *text;

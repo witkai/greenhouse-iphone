@@ -24,12 +24,17 @@
 #import "GHEventSessionDetailsViewController.h"
 #import "Event.h"
 #import "EventSession.h"
+#import "EventSessionLeader.h"
 #import "GHEventController.h"
 #import "GHEventSessionController.h"
 
+@interface GHEventSessionsViewController ()
+
+@end
 
 @implementation GHEventSessionsViewController
 
+@synthesize visibleIndexPath;
 @synthesize sessions;
 @synthesize event;
 @synthesize sessionDetailsViewController;
@@ -64,6 +69,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    self.visibleIndexPath = indexPath;
     [[GHEventSessionController sharedInstance] setSelectedSession:[self eventSessionForIndexPath:indexPath]];
 	[self.navigationController pushViewController:self.sessionDetailsViewController animated:YES];
 }
@@ -125,7 +131,11 @@
 	if (session)
 	{
 		[cell.textLabel setText:session.title];
-		[cell.detailTextLabel setText:session.leaderDisplay];		
+        NSMutableArray *leaders = [[NSMutableArray alloc] initWithCapacity:session.leaders.count];
+        [session.leaders enumerateObjectsUsingBlock:^(EventSessionLeader *leader, BOOL *stop) {
+            [leaders addObject:[NSString stringWithFormat:@"%@ %@", leader.firstName, leader.lastName]];
+        }];
+		[cell.detailTextLabel setText:[leaders componentsJoinedByString:@", "]];
 	}
 	
 	return cell;
@@ -183,6 +193,7 @@
     [super viewDidUnload];
     DLog(@"");
 	
+    self.visibleIndexPath = nil;
 	self.sessions = nil;
 	self.event = nil;
 	self.sessionDetailsViewController = nil;

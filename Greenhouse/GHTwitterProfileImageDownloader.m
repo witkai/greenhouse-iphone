@@ -55,13 +55,9 @@
 	if (_urlConnection)
 	{
 		[_urlConnection cancel];
-		_urlConnection = nil;
 	}
-	
-	if (_receivedData)
-	{
-		_receivedData = nil;
-	}
+    _urlConnection = nil;
+    _receivedData = nil;
 }
 
 
@@ -103,12 +99,12 @@
 		UIGraphicsBeginImageContext(itemSize);
 		CGRect imageRect = CGRectMake(0.0, 0.0, itemSize.width, itemSize.height);
 		[image drawInRect:imageRect];
-//		self.tweet.profileImage = UIGraphicsGetImageFromCurrentImageContext();
+		self.tweet.profileImage = UIGraphicsGetImageFromCurrentImageContext();
 		UIGraphicsEndImageContext();
     }
     else
     {
-//        self.tweet.profileImage = image;
+        self.tweet.profileImage = image;
     }
 	
     [delegate profileImageDidLoad:self.indexPathInTableView];

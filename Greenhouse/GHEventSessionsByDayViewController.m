@@ -30,6 +30,8 @@
 @property (nonatomic, strong) NSDate *eventDate;
 @property (nonatomic, strong) NSArray *times;
 
+- (void)reloadTableDataWithSessions:(NSArray *)sessions;
+
 @end
 
 @implementation GHEventSessionsByDayViewController
@@ -68,6 +70,7 @@
 	self.sessions = timeBlocks;
 	self.times = times;
     [self.tableView reloadData];
+    [self.tableView scrollToRowAtIndexPath:self.visibleIndexPath atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
 }
 
 #pragma mark -

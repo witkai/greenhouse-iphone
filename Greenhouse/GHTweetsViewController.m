@@ -82,12 +82,12 @@
         {
 			if (indexPath.row < [_tweets count])
 			{
-//				Tweet *tweet = [self.arrayTweets objectAtIndex:indexPath.row];
+				Tweet *tweet = [self.tweets objectAtIndex:indexPath.row];
 				
-//				if (!tweet.profileImage) // avoid the profile image download if it already has an image
-//				{
-//					[self startImageDownload:tweet forIndexPath:indexPath];
-//				}
+				if (!tweet.profileImage) // avoid the profile image download if it already has an image
+				{
+					[self startImageDownload:tweet forIndexPath:indexPath];
+				}
 			}
 			else if (!_isLastPage)
 			{
@@ -145,10 +145,10 @@
 	
     if (profileImageDownloader != nil)
     {
-//        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:profileImageDownloader.indexPathInTableView];
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:profileImageDownloader.indexPathInTableView];
         
         // Display the newly loaded image
-//        cell.imageView.image = profileImageDownloader.tweet.profileImage;
+        cell.imageView.image = profileImageDownloader.tweet.profileImage;
 		
 		[imageDownloadsInProgress removeObjectForKey:indexPath];
     }
@@ -245,16 +245,16 @@
 	// Leave cells empty if there's no data yet
     if (tweetCount > 0)
 	{
-        Tweet *tweet = (Tweet *)[_tweets objectAtIndex:row];
+        Tweet *tweet = [_tweets objectAtIndex:row];
 		
         // Only load cached images; defer new downloads until scrolling ends
-//        if (!tweet.profileImage)
-//        {
-//            if (tableView.dragging == NO && tableView.decelerating == NO)
-//            {
-//                [self startImageDownload:tweet forIndexPath:indexPath];
-//            }
-//        }
+        if (!tweet.profileImage)
+        {
+            if (tableView.dragging == NO && tableView.decelerating == NO)
+            {
+                [self startImageDownload:tweet forIndexPath:indexPath];
+            }
+        }
 
 		cell.tweet = tweet;
     }	

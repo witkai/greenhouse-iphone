@@ -59,9 +59,10 @@
 	}
 	else 
 	{
-		// default of 4 hours
+		// 4 hours
 //		return 14400;
-        return 30;
+        // 30 minutes
+        return 1800;
 	}
 }
 

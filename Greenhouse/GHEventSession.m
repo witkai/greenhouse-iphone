@@ -83,8 +83,8 @@
 		
 		for (NSDictionary *d in leadersJson) 
 		{
-			GHEventSessionLeader *leader = [[GHEventSessionLeader alloc] initWithDictionary:d];
-			[tmpLeaders addObject:leader];
+//			GHEventSessionLeader *leader = [[GHEventSessionLeader alloc] initWithDictionary:d];
+//			[tmpLeaders addObject:leader];
 		}
 		
 		NSArray *leadersArray = [NSArray arrayWithArray:tmpLeaders];
@@ -114,8 +114,8 @@
 			self.isFavorite = [dictionary boolForKey:@"favorite"];
 			self.rating = [dictionary doubleForKey:@"rating"];
 			
-			GHVenueRoom *venueRoom = [[GHVenueRoom alloc] initWithDictionary:[dictionary objectForKey:@"room"]];
-			self.room = venueRoom;
+//			GHVenueRoom *venueRoom = [[GHVenueRoom alloc] initWithDictionary:[dictionary objectForKey:@"room"]];
+//			self.room = venueRoom;
 		}
 	}
 	

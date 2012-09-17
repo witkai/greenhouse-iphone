@@ -33,8 +33,6 @@
 @dynamic hashtag;
 @dynamic information;
 @dynamic isFavorite;
-@dynamic leaderCount;
-@dynamic leaderDisplay;
 @dynamic number;
 @dynamic rating;
 @dynamic sessionId;

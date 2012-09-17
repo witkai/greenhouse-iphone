@@ -116,6 +116,7 @@
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
     if (self.event == nil)
     {
+        DLog(@"selected event not available");
         [self.navigationController popToRootViewControllerAnimated:NO];
     }
     else

@@ -29,11 +29,45 @@
 
 @property (nonatomic, strong) NSArray *times;
 
+- (void)reloadTableDataWithSessions:(NSArray *)sessions;
+
 @end
 
 @implementation GHEventSessionsFavoritesViewController
 
 @synthesize times = _times;
+
+- (void)reloadTableDataWithSessions:(NSArray *)sessions
+{
+    NSMutableArray *timeBlocks = [[NSMutableArray alloc] init];
+	NSMutableArray *times = [[NSMutableArray alloc] init];
+    NSMutableArray *timeBlock = nil;
+    NSDate *sessionTime = [NSDate distantPast];
+    
+    for (EventSession *session in sessions)
+    {
+        // for each time block create an array to hold the sessions for that block
+        if ([sessionTime compare:session.startTime] == NSOrderedAscending)
+        {
+            timeBlock = [[NSMutableArray alloc] init];
+            [timeBlocks addObject:timeBlock];
+            [timeBlock addObject:session];
+            
+            NSDate *date = [session.startTime copy];
+            [times addObject:date];
+        }
+        else if ([sessionTime compare:session.startTime] == NSOrderedSame)
+        {
+            [timeBlock addObject:session];
+        }
+        
+        sessionTime = session.startTime;
+    }
+    
+	self.sessions = timeBlocks;
+	self.times = times;
+    [self.tableView reloadData];
+}
 
 
 #pragma mark -
@@ -64,34 +98,7 @@
 
 - (void)fetchFavoriteSessionsDidFinishWithResults:(NSArray *)sessions
 {
-    NSMutableArray *timeBlocks = [[NSMutableArray alloc] init];
-	NSMutableArray *times = [[NSMutableArray alloc] init];
-    NSMutableArray *timeBlock = nil;
-    NSDate *sessionTime = [NSDate distantPast];
-    
-    for (EventSession *session in sessions)
-    {
-        // for each time block create an array to hold the sessions for that block
-        if ([sessionTime compare:session.startTime] == NSOrderedAscending)
-        {
-            timeBlock = [[NSMutableArray alloc] init];
-            [timeBlocks addObject:timeBlock];
-            [timeBlock addObject:session];
-            
-            NSDate *date = [session.startTime copy];
-            [times addObject:date];
-        }
-        else if ([sessionTime compare:session.startTime] == NSOrderedSame)
-        {
-            [timeBlock addObject:session];
-        }
-        
-        sessionTime = session.startTime;
-    }
-    
-	self.sessions = timeBlocks;
-	self.times = times;
-	[self.tableView reloadData];
+    [self reloadTableDataWithSessions:sessions];
 	[self dataSourceDidFinishLoadingNewData];
 }
 
@@ -155,11 +162,6 @@
 #pragma mark -
 #pragma mark PullRefreshTableViewController methods
 
-//- (BOOL)shouldReloadData
-//{
-//	return (!self.arraySessions || self.lastRefreshExpired || [GHEventSessionController shouldRefreshFavorites]);
-//}
-
 - (void)reloadTableViewDataSource
 {
 	[[GHEventSessionController sharedInstance] sendRequestForFavoriteSessionsByEventId:self.event.eventId delegate:self];
@@ -183,10 +185,19 @@
     [super viewWillAppear:animated];
     DLog(@"");
     
-   	[[GHEventSessionController sharedInstance] fetchFavoriteSessionsWithEventId:self.event.eventId delegate:self];
+    // fetch the favorite sessions data
+   	self.sessions = [[GHEventSessionController sharedInstance] fetchFavoriteSessionsWithEventId:self.event.eventId];
+    if (self.sessions && self.sessions.count > 0)
+    {
+        [self reloadTableDataWithSessions:self.sessions];
+    }
+    if (self.sessions == nil || self.sessions.count == 0 || self.lastRefreshExpired)
+    {
+        [[GHEventSessionController sharedInstance] sendRequestForFavoriteSessionsByEventId:self.event.eventId delegate:self];
+    }
 }
 
-- (void)viewDidUnload 
+- (void)viewDidUnload
 {
     [super viewDidUnload];
     DLog(@"");

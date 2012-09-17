@@ -37,5 +37,6 @@
 @dynamic userId;
 @dynamic event;
 @dynamic session;
+@synthesize profileImage;
 
 @end

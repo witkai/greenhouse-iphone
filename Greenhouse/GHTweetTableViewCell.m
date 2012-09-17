@@ -57,14 +57,14 @@
 
 - (void)setTweet:(Tweet *)aTweet
 {
-//	if (aTweet.profileImage)
-//	{
-//		self.imageViewProfile.image = aTweet.profileImage;
-//	}
-//	else 
-//	{
-//		self.imageViewProfile.image = [UIImage imageNamed:@"t_logo-b.png"];
-//	}
+	if (aTweet.profileImage)
+	{
+		self.imageViewProfile.image = aTweet.profileImage;
+	}
+	else 
+	{
+		self.imageViewProfile.image = [UIImage imageNamed:@"twitter-logo.png"];
+	}
 
 	self.labelUser.text = aTweet.fromUser;
 	

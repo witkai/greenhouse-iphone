@@ -29,6 +29,7 @@
 
 @interface GHEventSessionsViewController : GHPullRefreshTableViewController
 
+@property (nonatomic, strong) NSIndexPath *visibleIndexPath;
 @property (nonatomic, strong) NSArray *sessions;
 @property (nonatomic, strong) Event *event;
 @property (nonatomic, strong) GHEventSessionDetailsViewController *sessionDetailsViewController;

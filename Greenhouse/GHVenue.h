@@ -22,10 +22,9 @@
 
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
-#import "GHInitializingModel.h"
 
 
-@interface GHVenue : NSObject <GHInitializingModel>
+@interface GHVenue : NSObject
 
 @property (nonatomic, copy) NSString *venueId;
 @property (nonatomic, strong) CLLocation *location;

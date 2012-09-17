@@ -40,7 +40,7 @@
 
 - (NSDate *)lastRefreshDate
 {
-	return (NSDate *)[[NSUserDefaults standardUserDefaults] objectForKey:self.lastRefreshKey];
+	return [[NSUserDefaults standardUserDefaults] objectForKey:self.lastRefreshKey];
 }
 
 - (void)setLastRefreshDate:(NSDate *)date
@@ -51,18 +51,8 @@
 
 - (BOOL)lastRefreshExpired
 {
-	// if the last refresh was older than 4 hours, then expire the data
+	// if the last refresh was older than the configured time, then expire the data
 	return ([self.lastRefreshDate compare:[NSDate dateWithTimeIntervalSinceNow:-[GHUserSettings dataExpiration]]] == NSOrderedAscending);
-}
-
-- (void)reloadData
-{
-	// implement in inherited class
-}
-
-- (BOOL)shouldReloadData
-{
-	return NO;
 }
 
 - (void)reloadTableViewDataSource
