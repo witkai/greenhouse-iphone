@@ -32,8 +32,6 @@
 - (Tweet *)fetchTweetWithId:(NSString *)tweetId;
 - (NSArray *)fetchTweetsWithEventId:(NSNumber *)eventId;
 - (NSArray *)fetchTweetsWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber;
-- (void)fetchTweetsWithEventId:(NSNumber *)eventId delegate:(id<GHTwitterControllerDelegate>)delegate;
-- (void)fetchTweetsWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber delegate:(id<GHTwitterControllerDelegate>)delegate;
 - (Tweet *)fetchSelectedTweet;
 - (void)setSelectedTweet:(Tweet *)tweet;
 

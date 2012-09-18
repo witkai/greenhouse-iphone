@@ -20,7 +20,7 @@
 //  Created by Roy Clarkson on 6/7/10.
 //
 
-#import <CoreLocation/CoreLocation.h>
+//#import <CoreLocation/CoreLocation.h>
 #import "GreenhouseAppDelegate.h"
 #import "GHAuthorizeNavigationViewController.h"
 #import "GHOAuth2Controller.h"
@@ -62,15 +62,15 @@
 
 - (void)verifyLocationServices
 {
-	if ([CLLocationManager locationServicesEnabled] == NO) 
-	{
-        UIAlertView *servicesDisabledAlert = [[UIAlertView alloc] initWithTitle:@"Location Services Disabled" 
-																		message:@"Greenhouse would like to use your current location but you currently have all location services disabled. If you proceed, you will be asked to confirm whether location services should be reenabled." 
-																	   delegate:nil 
-															  cancelButtonTitle:@"OK" 
-															  otherButtonTitles:nil];
-        [servicesDisabledAlert show];
-    }	
+//	if ([CLLocationManager locationServicesEnabled] == NO) 
+//	{
+//        UIAlertView *servicesDisabledAlert = [[UIAlertView alloc] initWithTitle:@"Location Services Disabled" 
+//																		message:@"Greenhouse would like to use your current location but you currently have all location services disabled. If you proceed, you will be asked to confirm whether location services should be reenabled." 
+//																	   delegate:nil 
+//															  cancelButtonTitle:@"OK" 
+//															  otherButtonTitles:nil];
+//        [servicesDisabledAlert show];
+//    }	
 }
 
 

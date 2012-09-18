@@ -35,15 +35,15 @@
 
 @property (nonatomic, strong) NSMutableDictionary *imageDownloadsInProgress;
 
-- (void)startImageDownload:(Tweet *)tweet forIndexPath:(NSIndexPath *)indexPath;
-- (void)completeFetchTweets:(NSArray *)tweets;
 - (BOOL)shouldShowLoadingCell:(NSUInteger)row;
+- (void)startImageDownload:(Tweet *)tweet forIndexPath:(NSIndexPath *)indexPath;
 
 @end
 
 @implementation GHTweetsViewController
 
 @synthesize tweets = _tweets;
+@synthesize visibleIndexPath;
 @synthesize imageDownloadsInProgress;
 @synthesize tweetViewController;
 @synthesize tweetDetailsViewController;
@@ -51,9 +51,39 @@
 @synthesize isLoading = _isLoading;
 @synthesize currentPage = _currentPage;
 
+
+#pragma mark -
+#pragma mark Public Instance methods
+
 - (void)showTwitterForm
 {
 	[self presentModalViewController:tweetViewController animated:YES];
+}
+
+- (void)fetchTweetsWithPage:(NSUInteger)page
+{
+    // in subclass
+}
+
+- (void)reloadTableDataWithTweets:(NSArray *)tweets
+{
+	self.isLoading = NO;
+	self.tweets = tweets;
+    self.currentPage = ceil(tweets.count / TWITTER_PAGE_SIZE)+1;
+    DLog(@"tweets count: %i", tweets.count);
+    DLog(@"currentPage: %i", self.currentPage);
+	[self.tableView reloadData];
+    [self.tableView scrollToRowAtIndexPath:self.visibleIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
+}
+
+
+#pragma mark -
+#pragma mark Private Instance methods
+
+- (BOOL)shouldShowLoadingCell:(NSUInteger)row
+{
+	NSUInteger count = [_tweets count];
+	return ((row == 0 && _isLoading) || (count > 0 && count == row && !_isLastPage));
 }
 
 - (void)startImageDownload:(Tweet *)tweet forIndexPath:(NSIndexPath *)indexPath
@@ -77,7 +107,6 @@
     if ([self.tweets count] > 0)
     {
         NSArray *visiblePaths = [self.tableView indexPathsForVisibleRows];
-		
         for (NSIndexPath *indexPath in visiblePaths)
         {
 			if (indexPath.row < [_tweets count])
@@ -93,46 +122,28 @@
 			{
 				// if this is the last cell in the table and we aren't on the last page, 
 				// initiate the request for more tweets
-				[self fetchTweetsWithPage:++_currentPage];
+				[self fetchTweetsWithPage:_currentPage+1];
 			}			
         }
     }
 }
 
-- (void)completeFetchTweets:(NSArray *)tweets
-{
-	self.isLoading = NO;
-	self.tweets = tweets;
-	[self.tableView reloadData];
-	[self dataSourceDidFinishLoadingNewData];
-}
-
-- (void)fetchTweetsWithPage:(NSUInteger)page
-{
-    // in subclass
-}
-
-- (BOOL)shouldShowLoadingCell:(NSUInteger)row
-{
-	NSUInteger count = [_tweets count];
-	return ((row == 0 && _isLoading) || (count > 0 && count == row && !_isLastPage));
-}
-
 
 #pragma mark -
-#pragma mark TwitterControllerDelegate methods
+#pragma mark GHTwitterControllerDelegate methods
 
-- (void)fetchTweetsDidFinishWithResults:(NSArray *)tweets
+- (void)fetchTweetsDidFinishWithResults:(NSArray *)tweets resultCount:(NSInteger)count
 {
-//	self.isLastPage = lastPage; // value not being set by web service
-    self.isLastPage = (tweets.count < TWITTER_PAGE_SIZE);
-	[self completeFetchTweets:tweets];
+    self.isLastPage = (count == 0);
+	[self reloadTableDataWithTweets:tweets];
+	[self dataSourceDidFinishLoadingNewData];
 }
 
 - (void)fetchTweetsDidFailWithError:(NSError *)error
 {
 	NSArray *array = [[NSArray alloc] init];
-	[self completeFetchTweets:array];
+	[self reloadTableDataWithTweets:array];
+	[self dataSourceDidFinishLoadingNewData];
 }
 
 
@@ -181,6 +192,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    self.visibleIndexPath = indexPath;
 	if (_tweets && [_tweets count] > indexPath.row)
 	{
 		Tweet *tweet = [_tweets objectAtIndex:indexPath.row];
@@ -283,19 +295,6 @@
 #pragma mark -
 #pragma mark PullRefreshTableViewController methods
 
-- (void)reloadData
-{
-	if (self.shouldReloadData)
-	{
-		[self reloadTableViewDataSource];
-	}
-}
-
-- (BOOL)shouldReloadData
-{
-	return (_isLoading || [_tweets count] == 0 || self.lastRefreshExpired);
-}
-
 - (void)reloadTableViewDataSource
 {
 	self.currentPage = 1;
@@ -312,6 +311,7 @@
 - (void)viewDidLoad 
 {
     [super viewDidLoad];
+    DLog(@"");
 	
 	self.title = @"Tweets";
 	self.imageDownloadsInProgress = [[NSMutableDictionary alloc] init];
@@ -324,14 +324,17 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    DLog(@"");
     
     self.isLoading = YES;
+    self.tweets = nil;
     [self.tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning 
 {
     [super didReceiveMemoryWarning];
+    DLog(@"");
 	
     // terminate all pending download connections
     NSArray *allDownloads = [self.imageDownloadsInProgress allValues];
@@ -339,14 +342,16 @@
 	[imageDownloadsInProgress removeAllObjects];
 	
 	// delete cached profile images
-	[_tweets makeObjectsPerformSelector:@selector(removeCachedProfileImage)];
+//	[_tweets makeObjectsPerformSelector:@selector(removeCachedProfileImage)];
 }
 
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
+    DLog(@"");
 	
 	self.tweets = nil;
+    self.visibleIndexPath = nil;
 	self.imageDownloadsInProgress = nil;
 	self.tweetViewController = nil;
 	self.tweetDetailsViewController = nil;

@@ -45,16 +45,6 @@
 
 #endif
 
-
-#pragma mark -
-#pragma mark OAuth
-
-//#define OAUTH_REALM								@"Greenhouse"
-//#define OAUTH_REQUEST_TOKEN_URL					[NSString stringWithFormat:@"%@%@", GREENHOUSE_URL, @"/oauth/request_token"]
-//#define OAUTH_AUTHORIZE_URL						[NSString stringWithFormat:@"%@%@", GREENHOUSE_URL, @"/oauth/confirm_access"]
-//#define OAUTH_ACCESS_TOKEN_URL					[NSString stringWithFormat:@"%@%@", GREENHOUSE_URL, @"/oauth/access_token"]
-//#define OAUTH_CALLBACK_URL						@"x-com-springsource-greenhouse://oauth-response"
-
 #pragma mark -
 #pragma mark OAuth 2
 

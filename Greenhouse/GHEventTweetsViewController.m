@@ -71,18 +71,36 @@
     DLog(@"");
     
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
-    [[GHTwitterController sharedInstance] fetchTweetsWithEventId:event.eventId delegate:self];
+    if (self.event == nil)
+    {
+        DLog(@"selected event not available");
+        [self.navigationController popToRootViewControllerAnimated:NO];
+    }
+    else
+    {
+        self.tweets = [[GHTwitterController sharedInstance] fetchTweetsWithEventId:event.eventId];
+        if (self.tweets && self.tweets.count > 0)
+        {
+            [self reloadTableDataWithTweets:self.tweets];
+        }
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     DLog(@"");
+    
+    if (self.tweets == nil || self.tweets.count == 0 || self.lastRefreshExpired)
+    {
+        [self fetchTweetsWithPage:1];
+    }
 }
 
 - (void)viewDidUnload
 {
 	[super viewDidUnload];
+    DLog(@"");
 	
 	self.event = nil;
 }

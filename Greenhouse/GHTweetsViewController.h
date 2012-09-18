@@ -30,6 +30,7 @@
 @interface GHTweetsViewController : GHPullRefreshTableViewController <UITableViewDelegate, UITableViewDataSource, GHTwitterControllerDelegate, GHTwitterProfileImageDownloaderDelegate>
 
 @property (nonatomic, strong) NSArray *tweets;
+@property (nonatomic, strong) NSIndexPath *visibleIndexPath;
 @property (nonatomic, strong) GHTweetViewController *tweetViewController;
 @property (nonatomic, strong) GHTweetDetailsViewController *tweetDetailsViewController;
 @property (nonatomic, assign) BOOL isLastPage;
@@ -38,6 +39,6 @@
 
 - (void)showTwitterForm;
 - (void)fetchTweetsWithPage:(NSUInteger)page;
-- (void)profileImageDidLoad:(NSIndexPath *)indexPath;
+- (void)reloadTableDataWithTweets:(NSArray *)tweets;
 
 @end

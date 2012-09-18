@@ -70,7 +70,7 @@
 	
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
+                                       queue:[[NSOperationQueue alloc] init]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
@@ -80,21 +80,30 @@
              DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
              NSError *error;
              NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-             
-             Profile *profile = nil;
              if (!error)
              {
                  DLog(@"%@", dictionary);
-                 [self deleteProfile];
-                 [self storeProfileWithJson:dictionary];
-                 profile = [self fetchProfile];
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     [self deleteProfile];
+                     [self storeProfileWithJson:dictionary];
+                     Profile *profile = [self fetchProfile];
+                     [delegate fetchProfileDidFinishWithResults:profile];
+                 });
              }
-             [delegate fetchProfileDidFinishWithResults:profile];
+             else
+             {
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     [delegate fetchProfileDidFailWithError:error];
+                 });
+             }
+             
          }
          else if (error)
          {
              [self requestDidFailWithError:error];
-             [delegate fetchProfileDidFailWithError:error];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate fetchProfileDidFailWithError:error];
+             });
          }
          else if (statusCode != 200)
          {

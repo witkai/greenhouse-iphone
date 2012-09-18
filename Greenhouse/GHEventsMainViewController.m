@@ -62,6 +62,7 @@
 		Event *event = [_events objectAtIndex:indexPath.row];
         [[GHEventController sharedInstance] setSelectedEvent:event];
 		[self.navigationController pushViewController:eventDetailsViewController animated:YES];
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
 	}
 }
 

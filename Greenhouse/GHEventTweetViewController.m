@@ -48,13 +48,28 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    DLog(@"");
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    DLog(@"");
     
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
+    if (self.event == nil)
+    {
+        DLog(@"selected event not available");
+        [self.navigationController popToRootViewControllerAnimated:NO];
+    }
+}
+
+- (void)viewWillUnload
+{
+    [super viewWillUnload];
+    DLog(@"");
+    
+    self.event = nil;
 }
 
 @end

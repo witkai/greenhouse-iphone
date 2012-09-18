@@ -24,8 +24,6 @@
 
 @implementation GHBaseController
 
-@synthesize activityAlertView = _activityAlertView;
-
 
 #pragma mark -
 #pragma mark Instance methods
@@ -69,12 +67,14 @@ void ProcessError(NSString* action, NSError* error)
             break;
     }
 
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
-                                                    message:msg
-                                                   delegate:delegate
-                                          cancelButtonTitle:@"OK"
-                                          otherButtonTitles:otherButtonTitle, nil];
-    [alert show];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                        message:msg
+                                                       delegate:delegate
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:otherButtonTitle, nil];
+        [alert show];
+    });
 }
 
 - (void)requestDidFailWithError:(NSError *)error
@@ -102,12 +102,14 @@ void ProcessError(NSString* action, NSError* error)
             break;
     }
     
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
-                                                    message:message
-                                                   delegate:delegate
-                                          cancelButtonTitle:@"OK"
-                                          otherButtonTitles:otherButtonTitle, nil];
-    [alert show];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                        message:message
+                                                       delegate:delegate
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:otherButtonTitle, nil];
+        [alert show];
+    });
 }
 
 @end

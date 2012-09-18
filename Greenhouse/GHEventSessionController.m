@@ -134,7 +134,7 @@
 	
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
+                                       queue:[[NSOperationQueue alloc] init]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
          [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
@@ -143,21 +143,30 @@
          {
              DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
              NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-             NSArray *sessions = nil;
              if (!error)
              {
                  DLog(@"%@", jsonArray);
-                 [self deleteSessionsWithEventId:eventId date:eventDate];
-                 [self storeSessionsWithEventId:eventId json:jsonArray];
-                 NSPredicate *predicate = [self predicateWithEventId:eventId date:eventDate];
-                 sessions = [self fetchSessionsWithPredicate:predicate];
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     [self deleteSessionsWithEventId:eventId date:eventDate];
+                     [self storeSessionsWithEventId:eventId json:jsonArray];
+                     NSPredicate *predicate = [self predicateWithEventId:eventId date:eventDate];
+                     NSArray *sessions = [self fetchSessionsWithPredicate:predicate];
+                     [delegate fetchSessionsByDateDidFinishWithResults:sessions];
+                 });
              }
-             [delegate fetchSessionsByDateDidFinishWithResults:sessions];
+             else
+             {
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     [delegate fetchSessionsByDateDidFailWithError:error];
+                 });
+             }
          }
          else if (error)
          {
              [self requestDidFailWithError:error];
-             [delegate fetchSessionsByDateDidFailWithError:error];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate fetchSessionsByDateDidFailWithError:error];
+             });
          }
          else if (statusCode != 200)
          {
@@ -256,7 +265,7 @@
 	
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
+                                       queue:[[NSOperationQueue alloc] init]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
          [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
@@ -276,26 +285,31 @@
                          session.isFavorite = [NSNumber numberWithBool:YES];
                      }
                  }];
-                 NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
-                 NSError *error;
-                 [context save:&error];
-                 if (error)
-                 {
-                     DLog(@"%@", [error localizedDescription]);
-                 }
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
+                     NSError *error;
+                     [context save:&error];
+                     if (error)
+                     {
+                         DLog(@"%@", [error localizedDescription]);
+                     }
+                     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
+                     NSArray *sessions = [self fetchSessionsWithPredicate:predicate];
+                     [delegate fetchFavoriteSessionsDidFinishWithResults:sessions];
+                 });
              }
-             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"isFavorite == YES"];
-             NSArray *sessions = [self fetchSessionsWithPredicate:predicate];
-             [delegate fetchFavoriteSessionsDidFinishWithResults:sessions];
+             else
+             {
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     [delegate fetchFavoriteSessionsDidFailWithError:error];
+                 });
+             }
          }
          else if (error)
          {
-//             [self requestDidFailWithError:error];
-             [delegate fetchFavoriteSessionsDidFailWithError:error];
-         }
-         else if (statusCode != 200)
-         {
-//             [self requestDidNotSucceedWithDefaultMessage:@"A problem occurred while retrieving the session data." response:response];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate fetchFavoriteSessionsDidFailWithError:error];
+             });
          }
      }];
 }
@@ -327,7 +341,7 @@
 	DLog(@"%@", request);
 
     [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
+                                       queue:[[NSOperationQueue alloc] init]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
@@ -335,12 +349,16 @@
          {
              NSString *responseBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
              DLog(@"%@", responseBody);
-             [delegate updateFavoriteSessionDidFinishWithResults:[responseBody boolValue]];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate updateFavoriteSessionDidFinishWithResults:[responseBody boolValue]];
+             });
          }
          else if (error)
          {
              [self requestDidFailWithError:error];
-             [delegate updateFavoriteSessionDidFailWithError:error];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate updateFavoriteSessionDidFailWithError:error];
+             });
          }
          else if (statusCode != 200)
          {
@@ -355,9 +373,6 @@
 
 - (void)rateSession:(NSString *)sessionNumber withEventId:(NSString *)eventId rating:(NSInteger)rating comment:(NSString *)comment delegate:(id<GHEventSessionRateDelegate>)delegate
 {
-	self.activityAlertView = [[GHActivityAlertView alloc] initWithActivityMessage:@"Submitting rating..."];
-	[self.activityAlertView startAnimating];
-	
 	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSION_RATING_URL, eventId, sessionNumber];
 	NSURL *url = [[NSURL alloc] initWithString:urlString];
     NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
@@ -377,36 +392,39 @@
 	
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
+                                       queue:[[NSOperationQueue alloc] init]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
-         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-         [self.activityAlertView stopAnimating];
-         self.activityAlertView = nil;
-         
+         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];         
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
          if (statusCode == 200 && data.length > 0 && error == nil)
          {
              NSString *responseBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
              DLog(@"%@", responseBody);
              double rating = [responseBody doubleValue];
-             [delegate rateSessionDidFinishWithResults:rating];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate rateSessionDidFinishWithResults:rating];
+             });
          }
          else if (error)
          {
              [self requestDidFailWithError:error];
-             [delegate rateSessionDidFailWithError:error];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate rateSessionDidFailWithError:error];
+             });
          }
          else if (statusCode != 200)
          {
              if (statusCode == 412)
              {
-                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
-                                                                     message:@"This session has not yet finished. Please wait until the session has completed before submitting your rating."
-                                                                    delegate:nil
-                                                           cancelButtonTitle:@"OK"
-                                                           otherButtonTitles:nil];
-                 [alertView show];
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
+                                                                         message:@"This session has not yet finished. Please wait until the session has completed before submitting your rating."
+                                                                        delegate:nil
+                                                               cancelButtonTitle:@"OK"
+                                                               otherButtonTitles:nil];
+                     [alertView show];
+                 });
              }
              else 
              {
@@ -450,7 +468,7 @@
 	DLog(@"%@", request);
 	
     [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
+                                       queue:[[NSOperationQueue alloc] init]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
@@ -458,13 +476,15 @@
          {
              DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
              NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-             NSArray *sessions = nil;
+             __block NSArray *sessions = nil;
              if (!error)
              {
-                 [self deleteSessionsWithEventId:eventId date:now];
-                 [self storeSessionsWithEventId:eventId json:jsonArray];
-                 NSPredicate *predicate = [self predicateWithEventId:eventId date:now];
-                 sessions = [self fetchSessionsWithPredicate:predicate];
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     [self deleteSessionsWithEventId:eventId date:now];
+                     [self storeSessionsWithEventId:eventId json:jsonArray];
+                     NSPredicate *predicate = [self predicateWithEventId:eventId date:now];
+                     sessions = [self fetchSessionsWithPredicate:predicate];
+                 });
              }
              [delegate fetchCurrentSessionsDidFinishWithResults:sessions];
          }
@@ -494,7 +514,7 @@
 	DLog(@"%@", request);
 	
     [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
+                                       queue:[[NSOperationQueue alloc] init]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
@@ -503,11 +523,11 @@
              DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
              
              NSError *error;
-             NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
+//             NSArray *array = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
              NSMutableArray *arraySessions = [[NSMutableArray alloc] init];
              if (!error)
              {
-                 DLog(@"%@", array);
+//                 DLog(@"%@", array);
                  // TODO: something
              }
              [delegate fetchConferenceFavoriteSessionsDidFinishWithResults:arraySessions];

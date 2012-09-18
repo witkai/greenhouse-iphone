@@ -67,6 +67,7 @@
 	self.sessions = timeBlocks;
 	self.times = times;
     [self.tableView reloadData];
+    [self.tableView scrollToRowAtIndexPath:self.visibleIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
 }
 
 
@@ -191,6 +192,13 @@
     {
         [self reloadTableDataWithSessions:self.sessions];
     }
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    DLog(@"");
+    
     if (self.sessions == nil || self.sessions.count == 0 || self.lastRefreshExpired)
     {
         [[GHEventSessionController sharedInstance] sendRequestForFavoriteSessionsByEventId:self.event.eventId delegate:self];

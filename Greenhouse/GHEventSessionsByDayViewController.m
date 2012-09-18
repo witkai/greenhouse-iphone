@@ -24,6 +24,7 @@
 #import "Event.h"
 #import "EventSession.h"
 #import "GHEventSessionController.h"
+#import "GHActivityAlertView.h"
 
 @interface GHEventSessionsByDayViewController ()
 
@@ -70,7 +71,7 @@
 	self.sessions = timeBlocks;
 	self.times = times;
     [self.tableView reloadData];
-    [self.tableView scrollToRowAtIndexPath:self.visibleIndexPath atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+    [self.tableView scrollToRowAtIndexPath:self.visibleIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
 }
 
 #pragma mark -
@@ -101,6 +102,7 @@
 
 - (void)fetchSessionsByDateDidFinishWithResults:(NSArray *)sessions
 {
+//    self.refreshing = YES;
     [self reloadTableDataWithSessions:sessions];
 	[self dataSourceDidFinishLoadingNewData];
 }
@@ -210,14 +212,21 @@
         {
             [self reloadTableDataWithSessions:self.sessions];
         }
-        if (self.sessions == nil || self.sessions.count == 0 || self.lastRefreshExpired)
-        {
-            [[GHEventSessionController sharedInstance] sendRequestForSessionsWithEventId:self.event.eventId date:eventDate delegate:self];
-        }
     }
 }
 
-- (void)viewDidUnload 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    DLog(@"");
+    
+    if (self.sessions == nil || self.sessions.count == 0 || self.lastRefreshExpired)
+    {
+        [[GHEventSessionController sharedInstance] sendRequestForSessionsWithEventId:self.event.eventId date:eventDate delegate:self];
+    }
+}
+
+- (void)viewDidUnload
 {
     [super viewDidUnload];
     DLog(@"");

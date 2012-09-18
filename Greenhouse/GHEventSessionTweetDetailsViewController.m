@@ -14,38 +14,34 @@
 //  limitations under the License.
 //
 //
-//  GHEventSessionTweetViewController.m
+//  GHEventSessionTweetDetailsViewController.m
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 9/14/12.
+//  Created by Roy Clarkson on 9/17/12.
 //
 
-#import "GHEventSessionTweetViewController.h"
+#import "GHEventSessionTweetDetailsViewController.h"
 #import "Event.h"
 #import "EventSession.h"
+#import "GHEventSessionTweetViewController.h"
 #import "GHEventController.h"
 #import "GHEventSessionController.h"
-#import "GHTwitterController.h"
 
-@interface GHEventSessionTweetViewController ()
+@interface GHEventSessionTweetDetailsViewController ()
 
 @property (nonatomic, strong) Event *event;
 @property (nonatomic, strong) EventSession *session;
 
 @end
 
-@implementation GHEventSessionTweetViewController
+@implementation GHEventSessionTweetDetailsViewController
 
-@synthesize event;
-@synthesize session;
+#pragma mark -
+#pragma mark GHEventTweetDetailsViewController methods
 
-- (IBAction)actionSend:(id)sender
+- (IBAction)actionRetweet:(id)sender
 {
-    NSString *update = self.textViewTweet.text;
-    [[GHTwitterController sharedInstance] postUpdate:update
-                                             eventId:event.eventId
-                                       sessionNumber:session.number
-                                            delegate:self];
+    //	[[GHTwitterController sharedInstance] postRetweet:tweet.tweetId withURL:retweetUrl delegate:self];
 }
 
 
@@ -55,28 +51,23 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    DLog(@"");
+    
+    self.tweetViewController = [[GHEventSessionTweetViewController alloc] initWithNibName:@"GHTweetViewController" bundle:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    DLog(@"");
     
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
     self.session = [[GHEventSessionController sharedInstance] fetchSelectedSession];
-    if (self.event == nil)
+    if (self.event == nil || self.session == nil)
     {
         DLog(@"selected event or session not available");
         [self.navigationController popToRootViewControllerAnimated:NO];
     }
-}
-
-- (void)viewWillUnload
-{
-    [super viewWillUnload];
-    DLog(@"");
-    
-    self.event = nil;
-    self.session = nil;
 }
 
 @end

@@ -21,23 +21,17 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "GHLocationManager.h"
-#import "GHTwitterController.h"
+#import "GHTwitterControllerDelegate.h"
 
-
-@interface GHTweetViewController : UIViewController <UITextViewDelegate, GHLocationManagerDelegate, GHTwitterControllerDelegate>
+@interface GHTweetViewController : UIViewController <UITextViewDelegate, GHTwitterControllerDelegate>
 
 @property (nonatomic, copy) NSString *tweetText;
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *barButtonCancel;
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *barButtonSend;
 @property (nonatomic, strong) IBOutlet UITextView *textViewTweet;
-@property (nonatomic, strong) IBOutlet UIBarButtonItem *barButtonGeotag;
-@property (nonatomic, strong) IBOutlet UISwitch *switchGeotag;
 @property (nonatomic, strong) IBOutlet UIBarButtonItem *barButtonCount;
-
 
 - (IBAction)actionCancel:(id)sender;
 - (IBAction)actionSend:(id)sender;
-- (IBAction)actionGeotag:(id)sender;
 
 @end

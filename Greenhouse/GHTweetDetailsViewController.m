@@ -91,11 +91,16 @@
     
     if (tweet)
 	{
-//		imageViewProfile.image = tweet.profileImage;
-		
+        if (tweet.profileImage)
+        {
+            imageViewProfile.image = tweet.profileImage;
+        }
+        else
+        {
+            imageViewProfile.image = [UIImage imageNamed:@"twitter-logo.png"];
+        }
 		labelUser.text = [[NSString alloc] initWithFormat:@"@%@", tweet.fromUser];
-		textViewText.text = tweet.text;
-        
+		textViewText.text = tweet.text;        
 		NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 		[dateFormatter setDateFormat:@"MMM d h:mm a"];
 		labelTime.text = [dateFormatter stringFromDate:tweet.createdAt];

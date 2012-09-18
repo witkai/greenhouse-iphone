@@ -27,21 +27,16 @@
 
 @interface GHTweetViewController ()
 
-@property (nonatomic, strong) GHLocationManager *locationManager;
-
 - (void)setCount:(NSUInteger)newCount;
 
 @end
 
 @implementation GHTweetViewController
 
-@synthesize locationManager;
 @synthesize tweetText;
 @synthesize barButtonCancel;
 @synthesize barButtonSend;
 @synthesize textViewTweet;
-@synthesize barButtonGeotag;
-@synthesize switchGeotag;
 @synthesize barButtonCount;
 
 - (void)setCount:(NSUInteger)textLength
@@ -65,28 +60,9 @@
 	[self dismissModalViewControllerAnimated:YES];
 }
 
-- (IBAction)actionGeotag:(id)sender
-{
-	[GHUserSettings setIncludeLocationInTweet:switchGeotag.on];
-}
-
 - (IBAction)actionSend:(id)sender
 {
     // in subclass
-}
-
-
-#pragma mark -
-#pragma mark LocationManagerDelegate methods
-
-- (void)locationManager:(GHLocationManager *)manager didUpdateLocation:(CLLocation *)newLocation
-{
-	self.locationManager = nil;
-}
-
-- (void)locationManager:(GHLocationManager *)manager didFailWithError:(NSError *)error
-{
-	self.locationManager = nil;
 }
 
 
@@ -126,8 +102,6 @@
 	[super viewWillAppear:animated];
     DLog(@"");
 	
-	self.switchGeotag.on = [GHUserSettings includeLocationInTweet];
-	
 	textViewTweet.text = tweetText;
 	[self setCount:[tweetText length]];
 	
@@ -139,13 +113,10 @@
 {
     [super viewDidUnload];
 	
-	self.locationManager = nil;
 	self.tweetText = nil;
 	self.barButtonCancel = nil;
 	self.barButtonSend = nil;
 	self.textViewTweet = nil;
-	self.barButtonGeotag = nil;
-	self.switchGeotag = nil;
 	self.barButtonCount = nil;
 }
 

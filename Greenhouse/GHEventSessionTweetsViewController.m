@@ -22,8 +22,10 @@
 
 #import "GHEventSessionTweetsViewController.h"
 #import "GHEventSessionTweetViewController.h"
+#import "GHEventSessionTweetDetailsViewController.h"
 #import "GHEventController.h"
 #import "GHEventSessionController.h"
+#import "GHTwitterController.h"
 
 @interface GHEventSessionTweetsViewController()
 
@@ -59,9 +61,10 @@
 	self.lastRefreshKey = @"EventSessionTweetsViewController_LastRefresh";
 	
 	[super viewDidLoad];
+    DLog(@"");
     
     self.tweetViewController = [[GHEventSessionTweetViewController alloc] initWithNibName:@"GHTweetViewController" bundle:nil];
-//	self.tweetDetailsViewController = [[GHEventSessionTweetDetailsViewController alloc] initWithNibName:@"GHTweetDetailsViewController" bundle:nil];
+	self.tweetDetailsViewController = [[GHEventSessionTweetDetailsViewController alloc] initWithNibName:@"GHTweetDetailsViewController" bundle:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -71,14 +74,36 @@
     
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
     self.session = [[GHEventSessionController sharedInstance] fetchSelectedSession];
-    [[GHTwitterController sharedInstance] fetchTweetsWithEventId:event.eventId
-                                                   sessionNumber:session.number
-                                                        delegate:self];
+    if (self.event == nil || self.session == nil)
+    {
+        DLog(@"selected event or session not available");
+        [self.navigationController popToRootViewControllerAnimated:NO];
+    }
+    else
+    {
+        self.tweets = [[GHTwitterController sharedInstance] fetchTweetsWithEventId:event.eventId sessionNumber:session.number];
+        if (self.tweets && self.tweets.count > 0)
+        {
+            [self reloadTableDataWithTweets:self.tweets];
+        }
+    }
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    DLog(@"");
+    
+    if (self.tweets == nil || self.tweets.count == 0 || self.lastRefreshExpired)
+    {
+        [self fetchTweetsWithPage:1];
+    }
 }
 
 - (void)viewDidUnload
 {
 	[super viewDidUnload];
+    DLog(@"");
 	
 	self.event = nil;
 	self.session = nil;

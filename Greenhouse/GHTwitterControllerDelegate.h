@@ -27,7 +27,7 @@
 
 @optional
 
-- (void)fetchTweetsDidFinishWithResults:(NSArray *)tweets;
+- (void)fetchTweetsDidFinishWithResults:(NSArray *)tweets resultCount:(NSInteger)count;
 - (void)fetchTweetsDidFailWithError:(NSError *)error;
 - (void)postUpdateDidFinish;
 - (void)postUpdateDidFailWithError:(NSError *)error;

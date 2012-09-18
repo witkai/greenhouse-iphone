@@ -61,6 +61,7 @@
 
 - (Event *)fetchEventWithId:(NSNumber *)eventId;
 {
+    DLog(@"eventId: %@", eventId);
     Event *event = nil;
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"eventId == %@", eventId];
     NSArray *fetchedObjects = [self fetchEventsWithPredicate:predicate];
@@ -73,6 +74,7 @@
 
 - (Event *)fetchSelectedEvent
 {
+    DLog(@"");
     NSNumber *eventId = [[NSUserDefaults standardUserDefaults] objectForKey:KEY_SELECTED_EVENT_ID];
     return [self fetchEventWithId:eventId];
 }
@@ -81,19 +83,6 @@
 {
 	[[NSUserDefaults standardUserDefaults] setObject:event.eventId forKey:KEY_SELECTED_EVENT_ID];
 	[[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-- (void)fetchEventsWithDelegate:(id<GHEventControllerDelegate>)delegate;
-{
-    NSArray *events = [self fetchEventsWithPredicate:nil];
-    if (events.count > 0)
-    {
-        [delegate fetchEventsDidFinishWithResults:events];
-    }
-    else
-    {
-        [self sendRequestForEventsWithDelegate:delegate];
-    }
 }
 
 - (void)sendRequestForEventsWithDelegate:(id<GHEventControllerDelegate>)delegate
@@ -105,7 +94,7 @@
 
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
+                                       queue:[[NSOperationQueue alloc] init]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
          [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
@@ -114,20 +103,30 @@
          {
              DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
              NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-             NSArray *events;
              if (!error)
              {
                  DLog(@"%@", jsonArray);
-                 [self deleteEvents];
-                 [self storeEventsWithJson:jsonArray];
-                 events = [self fetchEventsWithPredicate:nil];
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     [self deleteEvents];
+                     [self storeEventsWithJson:jsonArray];
+                     NSArray *events = [self fetchEventsWithPredicate:nil];
+                     [delegate fetchEventsDidFinishWithResults:events];
+                 });
              }
-             [delegate fetchEventsDidFinishWithResults:events];
+             else
+             {
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     [delegate fetchEventsDidFailWithError:error];
+                 });
+             }
+             
          }
          else if (error)
          {
              [self requestDidFailWithError:error];
-             [delegate fetchEventsDidFailWithError:error];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate fetchEventsDidFailWithError:error];
+             });
          }
          else if (statusCode != 200)
          {
@@ -160,6 +159,7 @@
                             insertNewObjectForEntityForName:@"Venue"
                             inManagedObjectContext:context];
             venue.venueId = [venueDict stringForKey:@"id"];
+            venue.name = [venueDict stringForKey:@"name"];
 			venue.locationHint = [venueDict stringForKey:@"locationHint"];
 			venue.postalAddress = [venueDict stringForKey:@"postalAddress"];
             venue.latitude = [[venueDict objectForKey:@"location"] objectForKey:@"latitude"];

@@ -172,6 +172,7 @@
 		if (cell == nil)
 		{
 			cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdent];
+            cell.selectionStyle = UITableViewCellSelectionStyleGray;
 		}
 	}
 

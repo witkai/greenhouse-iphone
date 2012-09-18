@@ -62,6 +62,7 @@
 
 - (Tweet *)fetchTweetWithId:(NSString *)tweetId
 {
+    DLog(@"tweetId: %@", tweetId);
     NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Tweet" inManagedObjectContext:context];
@@ -80,6 +81,7 @@
 
 - (NSArray *)fetchTweetsWithEventId:(NSNumber *)eventId
 {
+    DLog(@"eventId: %@", eventId);
     NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Tweet" inManagedObjectContext:context];
@@ -90,11 +92,13 @@
     [fetchRequest setSortDescriptors:[NSArray arrayWithObject:sortById]];
     NSError *error;
     NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    DLog(@"fetched: %u", fetchedObjects.count);
     return fetchedObjects;
 }
 
 - (NSArray *)fetchTweetsWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber
 {
+    DLog(@"eventId: %@, sessionNumber: %@", eventId, sessionNumber);
     NSManagedObjectContext *context = [[GHCoreDataManager sharedInstance] managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     NSEntityDescription *entity = [NSEntityDescription entityForName:@"Tweet" inManagedObjectContext:context];
@@ -105,43 +109,20 @@
     [fetchRequest setSortDescriptors:[NSArray arrayWithObject:sortById]];
     NSError *error;
     NSArray *fetchedObjects = [context executeFetchRequest:fetchRequest error:&error];
+    DLog(@"fetched: %u", fetchedObjects.count);
     return fetchedObjects;
-}
-
-- (void)fetchTweetsWithEventId:(NSNumber *)eventId delegate:(id<GHTwitterControllerDelegate>)delegate
-{
-    NSArray *tweets = [self fetchTweetsWithEventId:eventId];
-    if (tweets && tweets.count > 0)
-    {
-        [delegate fetchTweetsDidFinishWithResults:tweets];
-    }
-    else
-    {
-        [self sendRequestForTweetsWithEventId:eventId page:1 delegate:delegate];
-    }
-}
-
-- (void)fetchTweetsWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber delegate:(id<GHTwitterControllerDelegate>)delegate
-{
-    NSArray *tweets = [self fetchTweetsWithEventId:eventId sessionNumber:sessionNumber];
-    if (tweets && tweets.count > 0)
-    {
-        [delegate fetchTweetsDidFinishWithResults:tweets];
-    }
-    else
-    {
-        [self sendRequestForTweetsWithEventId:eventId sessionNumber:sessionNumber page:1 delegate:delegate];
-    }
 }
 
 - (Tweet *)fetchSelectedTweet
 {
+    DLog(@"");
     NSString *tweetId = [[NSUserDefaults standardUserDefaults] objectForKey:@"selectedTweetId"];
     return [self fetchTweetWithId:tweetId];
 }
 
 - (void)setSelectedTweet:(Tweet *)tweet
 {
+    DLog(@"");
     [[NSUserDefaults standardUserDefaults] setObject:tweet.tweetId forKey:@"selectedTweetId"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
@@ -154,38 +135,50 @@
 	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 	DLog(@"%@", request);
 	
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
+                                       queue:[[NSOperationQueue alloc] init]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
+         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
          if (statusCode == 200 && data.length > 0 && error == nil)
          {
              DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-             NSArray *tweets = nil;
-//             BOOL lastPage = NO;
-             
              NSError *error;
              NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
              if (!error)
              {
                  DLog(@"%@", dictionary);
-//                 lastPage = [dictionary boolForKey:@"lastPage"];
                  NSArray *jsonArray = [dictionary objectForKey:@"tweets"];
-                 [self storeTweetsWithEventId:eventId json:jsonArray];
-                 tweets = [self fetchTweetsWithEventId:eventId];
+                 NSInteger resultCount = [jsonArray count];
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     [self storeTweetsWithEventId:eventId json:jsonArray];
+                     NSArray *tweets = [self fetchTweetsWithEventId:eventId];
+                     [delegate fetchTweetsDidFinishWithResults:tweets resultCount:resultCount];
+                 });
              }
-             [delegate fetchTweetsDidFinishWithResults:tweets];
+             else
+             {
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     [delegate fetchTweetsDidFailWithError:error];
+                 });
+             }
+             
          }
          else if (error)
          {
              [self requestDidFailWithError:error];
-             [delegate fetchTweetsDidFailWithError:error];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate fetchTweetsDidFailWithError:error];
+             });
          }
          else if (statusCode != 200)
          {
              [self requestDidNotSucceedWithDefaultMessage:@"A problem occurred while retrieving the list of tweets." response:response];
-             [delegate fetchTweetsDidFailWithError:nil];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate fetchTweetsDidFailWithError:nil];
+             });
          }
      }];
 }
@@ -198,35 +191,49 @@
 	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 	DLog(@"%@", request);
 	
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
+                                       queue:[[NSOperationQueue alloc] init]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
+         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
          if (statusCode == 200 && data.length > 0 && error == nil)
          {
              DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-             NSArray *tweets = nil;
              NSError *error;
              NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
              if (!error)
              {
                  DLog(@"%@", dictionary);
                  NSArray *jsonArray = [dictionary objectForKey:@"tweets"];
-                 [self storeTweetsWithEventId:eventId sessionNumber:sessionNumber json:jsonArray];
-                 tweets = [self fetchTweetsWithEventId:eventId sessionNumber:sessionNumber];
+                 NSInteger resultCount = [jsonArray count];
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     [self storeTweetsWithEventId:eventId sessionNumber:sessionNumber json:jsonArray];
+                     NSArray *tweets = [self fetchTweetsWithEventId:eventId sessionNumber:sessionNumber];
+                     [delegate fetchTweetsDidFinishWithResults:tweets resultCount:resultCount];
+                 });
              }
-             [delegate fetchTweetsDidFinishWithResults:tweets];
+             else
+             {
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     [delegate fetchTweetsDidFailWithError:error];
+                 });
+             }
          }
          else if (error)
          {
              [self requestDidFailWithError:error];
-             [delegate fetchTweetsDidFailWithError:error];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate fetchTweetsDidFailWithError:error];
+             });
          }
          else if (statusCode != 200)
          {
              [self requestDidNotSucceedWithDefaultMessage:@"A problem occurred while retrieving the list of tweets." response:response];
-             [delegate fetchTweetsDidFailWithError:nil];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate fetchTweetsDidFailWithError:nil];
+             });
          }
      }];
 }
@@ -261,6 +268,7 @@
 - (void)storeTweetsWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber json:(NSArray *)tweets
 {
     DLog(@"");
+    Event *event = [[GHEventController sharedInstance] fetchEventWithId:eventId];
     EventSession *session = [[GHEventSessionController sharedInstance] fetchSessionWithNumber:sessionNumber];
     [tweets enumerateObjectsUsingBlock:^(NSDictionary *tweetDict, NSUInteger idx, BOOL *stop) {
         NSString *tweetId = [tweetDict stringForKey:@"id"];
@@ -270,6 +278,10 @@
         if (tweet == nil)
         {
             tweet = [self tweetWithJson:tweetDict];
+        }
+        if (tweet.event == nil)
+        {
+            [event addTweetsObject:tweet];
         }
         [session addTweetsObject:tweet];
     }];
@@ -300,47 +312,6 @@
     return tweet;
 }
 
-//- (void)fetchTweetsDidFinishWithData:(NSData *)data
-//{
-//	DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-//	
-//	NSMutableArray *tweets = [[NSMutableArray alloc] init];
-//	BOOL lastPage = NO;
-//    
-//    NSError *error;
-//    NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-//    if (!error)
-//    {
-//        DLog(@"%@", dictionary);
-//        lastPage = [dictionary boolForKey:@"lastPage"];
-//        NSArray *jsonArray = (NSArray *)[dictionary objectForKey:@"tweets"];        
-//        [jsonArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-//            [tweets addObject:[[GHTweet alloc] initWithDictionary:obj]];
-//        }];
-//    }
-//
-//	if ([delegate respondsToSelector:@selector(fetchTweetsDidFinishWithResults:lastPage:)])
-//	{
-//		[delegate fetchTweetsDidFinishWithResults:tweets lastPage:lastPage];
-//	}
-//}
-
-//- (void)fetchTweetsDidFailWithError:(NSError *)error
-//{
-//	[self requestDidFailWithError:error];
-//	
-//	if ([delegate respondsToSelector:@selector(fetchTweetsDidFailWithError:)])
-//	{
-//		[delegate fetchTweetsDidFailWithError:error];
-//	}
-//}
-
-//- (void)postUpdate:(NSString *)update withURL:(NSURL *)url
-//{
-//	CLLocation *location = [[CLLocation alloc] init];
-//	[self postUpdate:update withURL:url location:location];
-//}
-
 - (void)postUpdate:(NSString *)update eventId:(NSNumber *)eventId delegate:(id<GHTwitterControllerDelegate>)delegate
 {
     NSURL *url = [NSURL URLWithString:[[NSString alloc] initWithFormat:EVENT_TWEETS_URL, eventId]];
@@ -355,9 +326,6 @@
 
 - (void)postUpdate:(NSString *)update URL:(NSURL *)url delegate:(id<GHTwitterControllerDelegate>)delegate
 {
-	self.activityAlertView = [[GHActivityAlertView alloc] initWithActivityMessage:@"Posting tweet..."];
-	[self.activityAlertView startAnimating];
-
     NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
 	NSString *status = [update stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 	DLog(@"tweet length: %i", status.length);
@@ -385,23 +353,26 @@
 	
 	DLog(@"%@", request);
 	
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
+                                       queue:[[NSOperationQueue alloc] init]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
-         [self.activityAlertView stopAnimating];
-         self.activityAlertView = nil;
-         
+         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];         
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
          if (statusCode == 200 && data.length > 0 && error == nil)
          {
              DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-             [delegate postUpdateDidFinish];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate postUpdateDidFinish];
+             });
          }
          else if (error)
          {
              [self requestDidFailWithError:error];
-             [delegate postUpdateDidFailWithError:error];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate postUpdateDidFailWithError:error];
+             });
          }
          else if (statusCode != 200)
          {
@@ -416,13 +387,14 @@
                      msg = @"A problem occurred while posting to Twitter.";
                      break;
              }
-             
-             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
-                                                                 message:msg
-                                                                delegate:nil
-                                                       cancelButtonTitle:@"OK"
-                                                       otherButtonTitles:nil];
-             [alertView show];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
+                                                                     message:msg
+                                                                    delegate:nil
+                                                           cancelButtonTitle:@"OK"
+                                                           otherButtonTitles:nil];
+                 [alertView show];
+             });
          }
      }];
 }
@@ -441,9 +413,6 @@
 
 - (void)postRetweetWithTweetId:(NSString *)tweetId URL:(NSURL *)url delegate:(id<GHTwitterControllerDelegate>)delegate
 {
-	self.activityAlertView = [[GHActivityAlertView alloc] initWithActivityMessage:@"Posting tweet..."];
-	[self.activityAlertView startAnimating];
-	
     NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
 	NSString *postParams =[[NSString alloc] initWithFormat:@"tweetId=%@", tweetId];
 	NSString *escapedPostParams = [postParams stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -458,30 +427,32 @@
 	[request setHTTPBody:postData];
 	DLog(@"%@ %@", request, [request allHTTPHeaderFields]);
 
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
+                                       queue:[[NSOperationQueue alloc] init]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
-         [self.activityAlertView stopAnimating];
-         self.activityAlertView = nil;
-         
+         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];         
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
          if (statusCode == 200 && data.length > 0 && error == nil)
          {
              DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-             
-             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
-                                                                 message:@"Retweet successful!"
-                                                                delegate:nil
-                                                       cancelButtonTitle:@"OK"
-                                                       otherButtonTitles:nil];
-             [alertView show];
-             [delegate postRetweetDidFinish];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
+                                                                     message:@"Retweet successful!"
+                                                                    delegate:nil
+                                                           cancelButtonTitle:@"OK"
+                                                           otherButtonTitles:nil];
+                 [alertView show];
+                 [delegate postRetweetDidFinish];
+             });
          }
          else if (error)
          {
              [self requestDidFailWithError:error];
-             [delegate postRetweetDidFailWithError:error];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate postRetweetDidFailWithError:error];
+             });
          }
          else if (statusCode != 200)
          {
@@ -496,13 +467,14 @@
                      msg = @"A problem occurred while posting to Twitter. Please verify your account is connected to Twitter.";
                      break;
              }
-             
-             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
-                                                                 message:msg
-                                                                delegate:nil
-                                                       cancelButtonTitle:@"OK"
-                                                       otherButtonTitles:nil];
-             [alertView show];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
+                                                                     message:msg
+                                                                    delegate:nil
+                                                           cancelButtonTitle:@"OK"
+                                                           otherButtonTitles:nil];
+                 [alertView show];
+             });
          }
      }];
 }

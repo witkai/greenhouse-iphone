@@ -23,12 +23,8 @@
 #import <Foundation/Foundation.h>
 #import "GHAuthorizedRequest.h"
 #import "OA2AccessGrant.h"
-#import "GHActivityAlertView.h"
-
 
 @interface GHBaseController : NSObject
-
-@property (nonatomic, strong) GHActivityAlertView *activityAlertView;
 
 void ProcessError(NSString* action, NSError* error);
 - (void)requestDidNotSucceedWithDefaultMessage:(NSString *)message response:(NSURLResponse *)response;

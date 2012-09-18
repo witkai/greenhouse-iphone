@@ -74,10 +74,12 @@
     GHActivityAlertView *activityAlertView = [[GHActivityAlertView alloc] initWithActivityMessage:@"Signing in..."];
 	[activityAlertView startAnimating];
     NSURLRequest *request = [[GHOAuth2Controller sharedInstance] signInRequestWithUsername:usernameValue password:passwordValue];
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [NSURLConnection sendAsynchronousRequest:request
-                                       queue:[NSOperationQueue mainQueue]
+                                       queue:[[NSOperationQueue alloc] init]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
+         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
          [activityAlertView stopAnimating];
          
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];         
@@ -89,7 +91,9 @@
              if (!errorInternal)
              {
                  [GHOAuth2Controller storeAccessGrant:accessGrant];
-                 [appDelegate showTabBarController];
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     [appDelegate showTabBarController];
+                 });
              }
              else
              {
@@ -111,14 +115,14 @@
                      msg = @"A problem occurred with the network connection. Please try again in a few minutes.";
                      break;
              }
-             
-             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
-                                                             message:msg
-                                                            delegate:nil
-                                                   cancelButtonTitle:@"OK"
-                                                   otherButtonTitles:nil];
-             [alert show];
-
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                                 message:msg
+                                                                delegate:nil
+                                                       cancelButtonTitle:@"OK"
+                                                       otherButtonTitles:nil];
+                 [alert show];
+             });
          }
          else if (statusCode != 200)
          {
@@ -126,16 +130,17 @@
              NSString *msg;
              switch (statusCode) {
                  default:
-                     msg = @"You can not be signed in at this time.";
+                     msg = @"You cannot be signed in.";
                      break;
              }
-             
-             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
-                                                                 message:msg
-                                                                delegate:nil
-                                                       cancelButtonTitle:@"OK"
-                                                       otherButtonTitles:nil];
-             [alertView show];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
+                                                                     message:msg
+                                                                    delegate:nil
+                                                           cancelButtonTitle:@"OK"
+                                                           otherButtonTitles:nil];
+                 [alertView show];
+             });
          }
      }];
     
