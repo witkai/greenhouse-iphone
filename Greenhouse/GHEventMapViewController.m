@@ -142,36 +142,6 @@
 #pragma mark -
 #pragma mark MKMapViewDelegate methods
 
-- (void)mapViewWillStartLoadingMap:(MKMapView *)mapView
-{
-    DLog(@"");
-}
-
-- (void)mapViewDidFinishLoadingMap:(MKMapView *)mapView
-{
-    DLog(@"");
-}
-
-- (void)mapViewDidFailLoadingMap:(MKMapView *)mapView withError:(NSError *)error
-{
-    DLog(@"%@", [error localizedDescription]);
-}
-
-- (void)mapView:(MKMapView *)mapView didChangeUserTrackingMode:(MKUserTrackingMode)mode animated:(BOOL)animated
-{
-    DLog(@"");
-}
-
-- (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view
-{
-    DLog(@"");
-}
-
-- (void)mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)view
-{
-    DLog(@"");
-}
-
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation
 {
     DLog(@"");

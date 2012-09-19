@@ -20,6 +20,8 @@
 //  Created by Roy Clarkson on 8/27/10.
 //
 
+#define TWITTER_PAGE_SIZE   20
+
 #import <CoreLocation/CoreLocation.h>
 #import "GHTwitterController.h"
 #import "GHEventController.h"
@@ -54,6 +56,11 @@
         _sharedInstance = [[self alloc] init];
     });
     return _sharedInstance;
+}
+
++ (NSInteger)pageSize
+{
+    return TWITTER_PAGE_SIZE;
 }
 
 
@@ -129,9 +136,10 @@
 
 - (void)sendRequestForTweetsWithEventId:(NSNumber *)eventId page:(NSUInteger)page delegate:(id<GHTwitterControllerDelegate>)delegate
 {
-    NSString *urlBase = [[NSString alloc] initWithFormat:EVENT_TWEETS_URL, eventId];
-	NSString *urlString = [[NSString alloc] initWithFormat:@"%@?page=%d&pageSize=%d", urlBase, page, TWITTER_PAGE_SIZE];
-    NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
+    NSURL *url = [GHConnectionSettings urlWithFormat:@"/events/%@/tweets?page=%d&pageSize=%d", eventId, page, TWITTER_PAGE_SIZE];
+//    NSString *urlBase = [[NSString alloc] initWithFormat:EVENT_TWEETS_URL, eventId];
+//	NSString *urlString = [[NSString alloc] initWithFormat:@"%@?page=%d&pageSize=%d", urlBase, page, TWITTER_PAGE_SIZE];
+    NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
 	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 	DLog(@"%@", request);
 	
@@ -185,9 +193,10 @@
 
 - (void)sendRequestForTweetsWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber page:(NSUInteger)page delegate:(id<GHTwitterControllerDelegate>)delegate
 {
-    NSString *urlBase = [[NSString alloc] initWithFormat:EVENT_SESSION_TWEETS_URL, eventId, sessionNumber];
-	NSString *urlString = [[NSString alloc] initWithFormat:@"%@?page=%d&pageSize=%d", urlBase, page, TWITTER_PAGE_SIZE];
-    NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:[NSURL URLWithString:urlString]];
+    NSURL *url = [GHConnectionSettings urlWithFormat:@"/events/%@/sessions/%@/tweets?page=%d&pageSize=%d", eventId, sessionNumber, page, TWITTER_PAGE_SIZE];
+//    NSString *urlBase = [[NSString alloc] initWithFormat:EVENT_SESSION_TWEETS_URL, eventId, sessionNumber];
+//	NSString *urlString = [[NSString alloc] initWithFormat:@"%@?page=%d&pageSize=%d", urlBase, page, TWITTER_PAGE_SIZE];
+    NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
 	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 	DLog(@"%@", request);
 	
@@ -314,13 +323,13 @@
 
 - (void)postUpdate:(NSString *)update eventId:(NSNumber *)eventId delegate:(id<GHTwitterControllerDelegate>)delegate
 {
-    NSURL *url = [NSURL URLWithString:[[NSString alloc] initWithFormat:EVENT_TWEETS_URL, eventId]];
+    NSURL *url = [GHConnectionSettings urlWithFormat:@"/events/%@/tweets", eventId];
     [self postUpdate:update URL:url delegate:delegate];
 }
 
 - (void)postUpdate:(NSString *)update eventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber delegate:(id<GHTwitterControllerDelegate>)delegate
 {
-    NSURL *url = [NSURL URLWithString:[[NSString alloc] initWithFormat:EVENT_SESSION_TWEETS_URL, eventId, sessionNumber]];
+    NSURL *url = [GHConnectionSettings urlWithFormat:@"/events/%@/sessions/%@/tweets", eventId, sessionNumber];
     [self postUpdate:update URL:url delegate:delegate];
 }
 
@@ -360,9 +369,8 @@
      {
          [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];         
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
-         if (statusCode == 200 && data.length > 0 && error == nil)
+         if (statusCode == 200 && error == nil)
          {
-             DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
              dispatch_sync(dispatch_get_main_queue(), ^{
                  [delegate postUpdateDidFinish];
              });
@@ -376,24 +384,9 @@
          }
          else if (statusCode != 200)
          {
-             NSString *msg = nil;
-             switch (statusCode)
-             {
-                 case 412:
-                     msg = @"Your account is not connected to Twitter. Please sign in to Greenhouse to connect.";
-                     break;
-                 case 403:
-                 default:
-                     msg = @"A problem occurred while posting to Twitter.";
-                     break;
-             }
+             [self processStatusCode:statusCode];
              dispatch_sync(dispatch_get_main_queue(), ^{
-                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
-                                                                     message:msg
-                                                                    delegate:nil
-                                                           cancelButtonTitle:@"OK"
-                                                           otherButtonTitles:nil];
-                 [alertView show];
+                 [delegate postUpdateDidFailWithError:error];
              });
          }
      }];
@@ -401,13 +394,13 @@
 
 - (void)postRetweetWithTweetId:(NSString *)tweetId eventId:(NSNumber *)eventId delegate:(id<GHTwitterControllerDelegate>)delegate
 {
-    NSURL *url = [NSURL URLWithString:[[NSString alloc] initWithFormat:EVENT_RETWEET_URL, eventId]];
+    NSURL *url = [GHConnectionSettings urlWithFormat:@"/events/%@/retweet", eventId];
     [self postRetweetWithTweetId:tweetId URL:url delegate:delegate];
 }
 
 - (void)postRetweetWithTweetId:(NSString *)tweetId eventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber delegate:(id<GHTwitterControllerDelegate>)delegate
 {
-    NSURL *url = [NSURL URLWithString:[[NSString alloc] initWithFormat:EVENT_SESSION_RETWEET_URL, eventId, sessionNumber]];
+    NSURL *url = [GHConnectionSettings urlWithFormat:@"/events/%@/sessions/%@/retweet", eventId, sessionNumber];
     [self postRetweetWithTweetId:tweetId URL:url delegate:delegate];
 }
 
@@ -434,16 +427,9 @@
      {
          [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];         
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];
-         if (statusCode == 200 && data.length > 0 && error == nil)
+         if (statusCode == 200 && error == nil)
          {
-             DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
              dispatch_sync(dispatch_get_main_queue(), ^{
-                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
-                                                                     message:@"Retweet successful!"
-                                                                    delegate:nil
-                                                           cancelButtonTitle:@"OK"
-                                                           otherButtonTitles:nil];
-                 [alertView show];
                  [delegate postRetweetDidFinish];
              });
          }
@@ -456,27 +442,40 @@
          }
          else if (statusCode != 200)
          {
-             NSString *msg = nil;
-             switch (statusCode)
-             {
-                 case 412:
-                     msg = @"Your account is not connected to Twitter. Please sign in to Greenhouse to connect.";
-                     break;
-                 case 403:
-                 default:
-                     msg = @"A problem occurred while posting to Twitter. Please verify your account is connected to Twitter.";
-                     break;
-             }
+             [self processStatusCode:statusCode];
              dispatch_sync(dispatch_get_main_queue(), ^{
-                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
-                                                                     message:msg
-                                                                    delegate:nil
-                                                           cancelButtonTitle:@"OK"
-                                                           otherButtonTitles:nil];
-                 [alertView show];
+                 [delegate postRetweetDidFailWithError:nil];
              });
          }
      }];
 }
+
+
+#pragma mark -
+#pragma mark Private Instance methods
+
+- (void)processStatusCode:(NSInteger)statusCode
+{
+    NSString *msg = nil;
+    switch (statusCode)
+    {
+        case 412:
+            msg = @"Your account is not connected to Twitter. Please sign in to Greenhouse to connect.";
+            break;
+        case 403:
+        default:
+            msg = @"A problem occurred while posting to Twitter. Please verify your account is connected to Twitter.";
+            break;
+    }
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
+                                                            message:msg
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+        [alertView show];
+    });
+}
+
 
 @end

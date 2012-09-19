@@ -63,7 +63,8 @@
 
 - (void)sendRequestForProfileWithDelegate:(id<GHProfileControllerDelegate>)delegate
 {
-	NSURL *url = [[NSURL alloc] initWithString:MEMBER_PROFILE_URL];
+    NSURL *url = [GHConnectionSettings urlWithFormat:@"/members/@self"];
+//	NSURL *url = [[NSURL alloc] initWithString:MEMBER_PROFILE_URL];
     NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
 	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 	DLog(@"%@", request);

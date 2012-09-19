@@ -28,6 +28,7 @@
 @interface GHTwitterController : GHBaseController
 
 + (id)sharedInstance;
++ (NSInteger)pageSize;
 
 - (Tweet *)fetchTweetWithId:(NSString *)tweetId;
 - (NSArray *)fetchTweetsWithEventId:(NSNumber *)eventId;

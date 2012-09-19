@@ -23,10 +23,12 @@
 #import <UIKit/UIKit.h>
 #import "GHTwitterControllerDelegate.h"
 
+@class Tweet;
 @class GHTweetViewController;
 
 @interface GHTweetDetailsViewController : UIViewController <GHTwitterControllerDelegate>
 
+@property (nonatomic, strong) Tweet *tweet;
 @property (nonatomic, strong) IBOutlet UIImageView *imageViewProfile;
 @property (nonatomic, strong) IBOutlet UILabel *labelUser;
 @property (nonatomic, strong) IBOutlet UILabel *labelTime;
@@ -39,5 +41,6 @@
 - (IBAction)actionReply:(id)sender;
 - (IBAction)actionRetweet:(id)sender;
 - (IBAction)actionQuote:(id)sender;
+- (void)sendRetweet;
 
 @end

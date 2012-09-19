@@ -1,5 +1,5 @@
 //
-//  Copyright 2010-2012 the original author or authors.
+//  Copyright 2012 the original author or authors.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -14,17 +14,19 @@
 //  limitations under the License.
 //
 //
-//  GHAppSettings.h
+//  GHConnectionSettings.h
 //  Greenhouse
 //
-//  Created by Roy Clarkson on 6/11/10.
+//  Created by Roy Clarkson on 9/18/12.
 //
 
 #import <Foundation/Foundation.h>
 
-@interface GHAppSettings : NSObject
+@interface GHConnectionSettings : NSObject
 
-+ (NSURL *)documentsDirectory;
-+ (NSString *)appVersion;
++ (NSString *)clientId;
++ (NSString *)clientSecret;
++ (NSString *)url;
++ (NSURL *)urlWithFormat:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2);
 
 @end

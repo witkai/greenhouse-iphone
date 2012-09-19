@@ -71,8 +71,19 @@
 	self.sessions = timeBlocks;
 	self.times = times;
     [self.tableView reloadData];
-    [self.tableView scrollToRowAtIndexPath:self.visibleIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
+    
+    @try
+    {
+        [self.tableView scrollToRowAtIndexPath:self.visibleIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
+        self.visibleIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    }
+    @catch (NSException *exception)
+    {
+        // content changed and row is no longer available
+        DLog(@"%@", [exception reason]);
+    }
 }
+
 
 #pragma mark -
 #pragma mark GHEventSessionsViewController methods
@@ -102,7 +113,6 @@
 
 - (void)fetchSessionsByDateDidFinishWithResults:(NSArray *)sessions
 {
-//    self.refreshing = YES;
     [self reloadTableDataWithSessions:sessions];
 	[self dataSourceDidFinishLoadingNewData];
 }

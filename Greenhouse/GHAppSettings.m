@@ -34,10 +34,12 @@
 //    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
 }
 
+/**
+ Returns the application's version.
+ */
 + (NSString *)appVersion
 {
 	return [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
 }
-
 
 @end

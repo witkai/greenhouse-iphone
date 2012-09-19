@@ -23,7 +23,9 @@
 #import "GHEventTweetDetailsViewController.h"
 #import "GHEventTweetViewController.h"
 #import "Event.h"
+#import "Tweet.h"
 #import "GHEventController.h"
+#import "GHTwitterController.h"
 
 @interface GHEventTweetDetailsViewController ()
 
@@ -35,11 +37,13 @@
 
 
 #pragma mark -
-#pragma mark GHEventTweetDetailsViewController methods
+#pragma mark Public Instance methods
 
-- (IBAction)actionRetweet:(id)sender
+- (void)sendRetweet
 {
-//	[[GHTwitterController sharedInstance] postRetweet:tweet.tweetId withURL:retweetUrl delegate:self];
+    [[GHTwitterController sharedInstance] postRetweetWithTweetId:self.tweet.tweetId
+                                                         eventId:self.event.eventId
+                                                        delegate:self];
 }
 
 
@@ -65,6 +69,14 @@
         DLog(@"selected event not available");
         [self.navigationController popToRootViewControllerAnimated:NO];
     }
+}
+
+- (void)viewWillUnload
+{
+    [super viewWillUnload];
+    DLog(@"");
+    
+    self.event = nil;
 }
 
 @end

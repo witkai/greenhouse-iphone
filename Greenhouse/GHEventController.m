@@ -87,7 +87,8 @@
 
 - (void)sendRequestForEventsWithDelegate:(id<GHEventControllerDelegate>)delegate
 {
-	NSURL *url = [[NSURL alloc] initWithString:EVENTS_URL];
+    NSURL *url = [GHConnectionSettings urlWithFormat:@"/events/"];
+//	NSURL *url = [[NSURL alloc] initWithString:EVENTS_URL];
     NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
 	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 	DLog(@"%@", request);
@@ -143,7 +144,7 @@
         Event *event = [NSEntityDescription
                         insertNewObjectForEntityForName:@"Event"
                         inManagedObjectContext:context];
-        event.eventId = [eventDict objectForKey:@"id"];
+        event.eventId = [eventDict numberForKey:@"id"];
         event.title = [eventDict stringByReplacingPercentEscapesForKey:@"title" usingEncoding:NSUTF8StringEncoding];
         event.startTime = [eventDict dateWithMillisecondsSince1970ForKey:@"startTime"];
         event.endTime = [eventDict dateWithMillisecondsSince1970ForKey:@"endTime"];
@@ -162,8 +163,8 @@
             venue.name = [venueDict stringForKey:@"name"];
 			venue.locationHint = [venueDict stringForKey:@"locationHint"];
 			venue.postalAddress = [venueDict stringForKey:@"postalAddress"];
-            venue.latitude = [[venueDict objectForKey:@"location"] objectForKey:@"latitude"];
-            venue.longitude = [[venueDict objectForKey:@"location"] objectForKey:@"longitude"];
+            venue.latitude = [[venueDict objectForKey:@"location"] numberForKey:@"latitude"];
+            venue.longitude = [[venueDict objectForKey:@"location"] numberForKey:@"longitude"];
             [event addVenuesObject:venue];
         }];
     }];

@@ -126,8 +126,9 @@
 	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 	[dateFormatter setDateFormat:@"YYYY-MM-d"];
 	NSString *dateString = [dateFormatter stringFromDate:eventDate];
-	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSIONS_BY_DAY_URL, eventId, dateString];
-	NSURL *url = [[NSURL alloc] initWithString:urlString];
+    NSURL *url = [GHConnectionSettings urlWithFormat:@"/events/%@/sessions/%@", eventId, dateString];
+//	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSIONS_BY_DAY_URL, eventId, dateString];
+//	NSURL *url = [[NSURL alloc] initWithString:urlString];
     NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
 	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 	DLog(@"%@", request);
@@ -184,8 +185,8 @@
         EventSession *session = [NSEntityDescription
                         insertNewObjectForEntityForName:@"EventSession"
                         inManagedObjectContext:context];
-        session.sessionId = [sessionDict objectForKey:@"id"];
-        session.number = [sessionDict objectForKey:@"number"];
+        session.sessionId = [sessionDict numberForKey:@"id"];
+        session.number = [sessionDict numberForKey:@"number"];
         session.title = [sessionDict stringByReplacingPercentEscapesForKey:@"title" usingEncoding:NSUTF8StringEncoding];
         session.startTime = [sessionDict dateWithMillisecondsSince1970ForKey:@"startTime"];
         session.endTime = [sessionDict dateWithMillisecondsSince1970ForKey:@"endTime"];
@@ -199,8 +200,8 @@
             EventSessionLeader *leader = [NSEntityDescription
                                           insertNewObjectForEntityForName:@"EventSessionLeader"
                                           inManagedObjectContext:context];
-            leader.firstName = [leaderDict objectForKey:@"firstName"];
-            leader.lastName = [leaderDict objectForKey:@"lastName"];
+            leader.firstName = [leaderDict stringForKey:@"firstName"];
+            leader.lastName = [leaderDict stringForKey:@"lastName"];
             [session addLeadersObject:leader];
         }];
         
@@ -208,8 +209,8 @@
         VenueRoom *room = [NSEntityDescription
                            insertNewObjectForEntityForName:@"VenueRoom"
                            inManagedObjectContext:context];
-        room.roomId = [roomDict objectForKey:@"id"];
-        room.label = [roomDict objectForKey:@"label"];
+        room.roomId = [roomDict numberForKey:@"id"];
+        room.label = [roomDict stringForKey:@"label"];
         session.room = room;
         
         [event addSessionsObject:session];
@@ -256,9 +257,9 @@
 
 - (void)sendRequestForFavoriteSessionsByEventId:(NSNumber *)eventId delegate:(id<GHEventSessionsFavoritesDelegate>)delegate
 {
-	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSIONS_FAVORITES_URL, eventId];
-	NSURL *url = [[NSURL alloc] initWithString:urlString];
-	
+    NSURL *url = [GHConnectionSettings urlWithFormat:@"/events/%@/sessions/favorites", eventId];
+//	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSIONS_FAVORITES_URL, eventId];
+//	NSURL *url = [[NSURL alloc] initWithString:urlString];	
     NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
 	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 	DLog(@"%@", request);
@@ -333,9 +334,10 @@
 }
 
 - (void)sendRequestToUpdateFavoriteSessionWithEventId:(NSNumber *)eventId sessionNumber:(NSNumber *)sessionNumber delegate:(id<GHEventSessionUpdateFavoriteDelegate>)delegate
-{	
-	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSIONS_FAVORITE_URL, eventId, sessionNumber];
-	NSURL *url = [[NSURL alloc] initWithString:urlString];
+{
+    NSURL *url = [GHConnectionSettings urlWithFormat:@"/events/%@/sessions/%@/favorite", eventId, sessionNumber];
+//	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSIONS_FAVORITE_URL, eventId, sessionNumber];
+//	NSURL *url = [[NSURL alloc] initWithString:urlString];
     NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
 	[request setHTTPMethod:@"PUT"];	
 	DLog(@"%@", request);
@@ -373,8 +375,9 @@
 
 - (void)rateSession:(NSString *)sessionNumber withEventId:(NSString *)eventId rating:(NSInteger)rating comment:(NSString *)comment delegate:(id<GHEventSessionRateDelegate>)delegate
 {
-	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSION_RATING_URL, eventId, sessionNumber];
-	NSURL *url = [[NSURL alloc] initWithString:urlString];
+    NSURL *url = [GHConnectionSettings urlWithFormat:@"/events/%@/sessions/%@/rating", eventId, sessionNumber];
+//	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSION_RATING_URL, eventId, sessionNumber];
+//	NSURL *url = [[NSURL alloc] initWithString:urlString];
     NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
 	
 	NSString *trimmedComment = [comment stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -459,12 +462,11 @@
 	[dateFormatter setDateFormat:@"YYYY-MM-d"];
     NSDate *now = [NSDate date];
 	NSString *dateString = [dateFormatter stringFromDate:now];
-	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSIONS_BY_DAY_URL, eventId, dateString];
-	NSURL *url = [[NSURL alloc] initWithString:urlString];
-	
+    NSURL *url = [GHConnectionSettings urlWithFormat:@"/events/%@/sessions/%@", eventId, dateString];
+//	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSIONS_BY_DAY_URL, eventId, dateString];
+//	NSURL *url = [[NSURL alloc] initWithString:urlString];
     NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
-	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-	
+	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];	
 	DLog(@"%@", request);
 	
     [NSURLConnection sendAsynchronousRequest:request
@@ -476,22 +478,26 @@
          {
              DLog(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
              NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-             __block NSArray *sessions = nil;
              if (!error)
              {
                  dispatch_sync(dispatch_get_main_queue(), ^{
                      [self deleteSessionsWithEventId:eventId date:now];
                      [self storeSessionsWithEventId:eventId json:jsonArray];
                      NSPredicate *predicate = [self predicateWithEventId:eventId date:now];
-                     sessions = [self fetchSessionsWithPredicate:predicate];
+                     NSArray *sessions = [self fetchSessionsWithPredicate:predicate];
+                     [delegate fetchCurrentSessionsDidFinishWithResults:sessions];
                  });
              }
-             [delegate fetchCurrentSessionsDidFinishWithResults:sessions];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate fetchCurrentSessionsDidFailWithError:error];
+             });
          }
          else if (error)
          {
              [self requestDidFailWithError:error];
-             [delegate fetchCurrentSessionsDidFailWithError:error];
+             dispatch_sync(dispatch_get_main_queue(), ^{
+                 [delegate fetchCurrentSessionsDidFailWithError:error];
+             });
          }
          else if (statusCode != 200)
          {
@@ -506,9 +512,9 @@
 
 - (void)fetchConferenceFavoriteSessionsByEventId:(NSString *)eventId delegate:(id<GHEventSessionsConferenceFavoritesDelegate>)delegate
 {
-	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSIONS_CONFERENCE_FAVORITES_URL, eventId];
-	NSURL *url = [[NSURL alloc] initWithString:urlString];
-	
+    NSURL *url = [GHConnectionSettings urlWithFormat:@"/events/%@/favorites", eventId];
+//	NSString *urlString = [[NSString alloc] initWithFormat:EVENT_SESSIONS_CONFERENCE_FAVORITES_URL, eventId];
+//	NSURL *url = [[NSURL alloc] initWithString:urlString];
     NSMutableURLRequest *request = [[GHAuthorizedRequest alloc] initWithURL:url];
 	[request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 	DLog(@"%@", request);

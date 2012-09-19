@@ -18,7 +18,6 @@
 	#import "DLog.h"
 
 	// Application Settings
-	#import "Constants.h"
 	#import "GHAppSettings.h"
 	#import "GHUserSettings.h"
 

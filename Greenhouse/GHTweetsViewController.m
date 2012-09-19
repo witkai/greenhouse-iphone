@@ -69,11 +69,21 @@
 {
 	self.isLoading = NO;
 	self.tweets = tweets;
-    self.currentPage = ceil(tweets.count / TWITTER_PAGE_SIZE)+1;
+    self.currentPage = ceil(tweets.count / [GHTwitterController pageSize])+1;
     DLog(@"tweets count: %i", tweets.count);
     DLog(@"currentPage: %i", self.currentPage);
 	[self.tableView reloadData];
-    [self.tableView scrollToRowAtIndexPath:self.visibleIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
+    
+    @try
+    {
+        [self.tableView scrollToRowAtIndexPath:self.visibleIndexPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
+        self.visibleIndexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    }
+    @catch (NSException *exception)
+    {
+        // content changed and row is no longer available
+        DLog(@"%@", [exception reason]);
+    }
 }
 
 
@@ -83,7 +93,7 @@
 - (BOOL)shouldShowLoadingCell:(NSUInteger)row
 {
 	NSUInteger count = [_tweets count];
-	return ((row == 0 && _isLoading) || (count > 0 && count == row && !_isLastPage));
+	return ((row == 0 && _isLoading) || (count >= [GHTwitterController pageSize] && count == row && !_isLastPage));
 }
 
 - (void)startImageDownload:(Tweet *)tweet forIndexPath:(NSIndexPath *)indexPath
@@ -134,6 +144,7 @@
 
 - (void)fetchTweetsDidFinishWithResults:(NSArray *)tweets resultCount:(NSInteger)count
 {
+    DLog(@"resultCount: %d", count);
     self.isLastPage = (count == 0);
 	[self reloadTableDataWithTweets:tweets];
 	[self dataSourceDidFinishLoadingNewData];
@@ -228,7 +239,6 @@
 	NSUInteger tweetCount = [_tweets count];
 	NSUInteger row = indexPath.row;
 
-    // add a placeholder cell while waiting on table data
 	if ([self shouldShowLoadingCell:row])
 	{
         GHActivityIndicatorTableViewCell *cell = (GHActivityIndicatorTableViewCell *)[tableView dequeueReusableCellWithIdentifier:loadingCellIdent];
@@ -283,7 +293,7 @@
 	
 	NSUInteger count = [_tweets count];
 	
-	if (count > 0 && !_isLastPage)
+	if (count >= [GHTwitterController pageSize] && !_isLastPage)
 	{
 		count++;
 	}

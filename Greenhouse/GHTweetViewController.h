@@ -33,5 +33,6 @@
 
 - (IBAction)actionCancel:(id)sender;
 - (IBAction)actionSend:(id)sender;
+- (void)sendTweet:(NSString *)text;
 
 @end

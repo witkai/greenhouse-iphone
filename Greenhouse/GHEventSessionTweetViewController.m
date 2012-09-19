@@ -39,10 +39,13 @@
 @synthesize event;
 @synthesize session;
 
-- (IBAction)actionSend:(id)sender
+
+#pragma mark -
+#pragma mark Public Instance methods
+
+- (void)sendTweet:(NSString *)text
 {
-    NSString *update = self.textViewTweet.text;
-    [[GHTwitterController sharedInstance] postUpdate:update
+    [[GHTwitterController sharedInstance] postUpdate:text
                                              eventId:event.eventId
                                        sessionNumber:session.number
                                             delegate:self];
@@ -55,11 +58,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    DLog(@"");
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    DLog(@"");
     
     self.event = [[GHEventController sharedInstance] fetchSelectedEvent];
     self.session = [[GHEventSessionController sharedInstance] fetchSelectedSession];

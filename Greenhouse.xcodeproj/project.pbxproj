@@ -172,6 +172,7 @@
 		81F8DEC01227801000C3E8FD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81F8DEBF1227801000C3E8FD /* QuartzCore.framework */; };
 		81FF4E6F1607C2CA001B0ABC /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81FF4E6E1607C2CA001B0ABC /* CoreLocation.framework */; };
 		81FF4E771607F0D7001B0ABC /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 81FF4E761607F0D7001B0ABC /* Settings.bundle */; };
+		81FF4E7C1608D05F001B0ABC /* GHConnectionSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 81FF4E7B1608D05F001B0ABC /* GHConnectionSettings.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -291,7 +292,6 @@
 		81E42D6815ADE82F001FA72D /* GHAuthorizeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHAuthorizeViewController.m; sourceTree = "<group>"; };
 		81E42D6915ADE82F001FA72D /* btn-signin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn-signin.png"; sourceTree = "<group>"; };
 		81E42D6A15ADE82F001FA72D /* btn-signin@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn-signin@2x.png"; sourceTree = "<group>"; };
-		81E42D6B15ADE82F001FA72D /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		81E42D6C15ADE82F001FA72D /* GHCustomNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHCustomNavigationBar.h; sourceTree = "<group>"; };
 		81E42D6D15ADE82F001FA72D /* GHCustomNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHCustomNavigationBar.m; sourceTree = "<group>"; };
 		81E42D6E15ADE82F001FA72D /* GHCustomTabBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHCustomTabBar.h; sourceTree = "<group>"; };
@@ -430,6 +430,8 @@
 		81F8DEBF1227801000C3E8FD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		81FF4E6E1607C2CA001B0ABC /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		81FF4E761607F0D7001B0ABC /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		81FF4E7A1608D05F001B0ABC /* GHConnectionSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHConnectionSettings.h; sourceTree = "<group>"; };
+		81FF4E7B1608D05F001B0ABC /* GHConnectionSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHConnectionSettings.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -528,7 +530,7 @@
 			name = Authorization;
 			sourceTree = "<group>";
 		};
-		815D0A3E1604F1F1002786A4 /* CoreData */ = {
+		815D0A3E1604F1F1002786A4 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				815D0A3F1604F306002786A4 /* Event.h */,
@@ -546,7 +548,7 @@
 				815D0A4B1604F4AB002786A4 /* VenueRoom.h */,
 				815D0A4C1604F4AB002786A4 /* VenueRoom.m */,
 			);
-			name = CoreData;
+			name = Models;
 			sourceTree = "<group>";
 		};
 		815D0A541606570A002786A4 /* Unused */ = {
@@ -727,12 +729,13 @@
 		81E42D5D15ADE82F001FA72D /* Greenhouse */ = {
 			isa = PBXGroup;
 			children = (
+				81FF4E7D1608D137001B0ABC /* Settings */,
 				81E42ED515AF4160001FA72D /* Controllers */,
 				81E42ED615AF43C4001FA72D /* Categories */,
 				81E42ED415AF3E96001FA72D /* Helpers */,
-				815D0A3E1604F1F1002786A4 /* CoreData */,
-				81E42ED215AF377D001FA72D /* ViewControllers */,
+				815D0A3E1604F1F1002786A4 /* Models */,
 				81E42ED315AF3D89001FA72D /* Views */,
+				81E42ED215AF377D001FA72D /* ViewControllers */,
 				81E42DCD15ADE82F001FA72D /* GreenhouseAppDelegate.h */,
 				81E42DCE15ADE82F001FA72D /* GreenhouseAppDelegate.m */,
 				81E2BDE815EFB78000BFBDE0 /* Greenhouse.xcdatamodeld */,
@@ -746,7 +749,6 @@
 			isa = PBXGroup;
 			children = (
 				81E42EBC15ADF556001FA72D /* Images */,
-				81E42D6B15ADE82F001FA72D /* Constants.h */,
 				81E42D7615ADE82F001FA72D /* DLog.h */,
 				81E42DCB15ADE82F001FA72D /* Greenhouse-Info.plist */,
 				81E42DCC15ADE82F001FA72D /* Greenhouse-Prefix.pch */,
@@ -836,8 +838,6 @@
 		81E42ED415AF3E96001FA72D /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				81E42D6215ADE82F001FA72D /* GHAppSettings.h */,
-				81E42D6315ADE82F001FA72D /* GHAppSettings.m */,
 				815004DF15EEFF5100972ACE /* GHAuthorizedRequest.h */,
 				815004E015EEFF5100972ACE /* GHAuthorizedRequest.m */,
 				81CFAA4615F1615D00661D68 /* GHCoreDataManager.h */,
@@ -856,8 +856,6 @@
 				81C3139F15E9DC12004ADD53 /* GHURLRequest.m */,
 				818BD9D215DCBF0C00BD7842 /* GHURLRequestParameters.h */,
 				818BD9D315DCBF0C00BD7842 /* GHURLRequestParameters.m */,
-				81E42E0E15ADE82F001FA72D /* GHUserSettings.h */,
-				81E42E0F15ADE82F001FA72D /* GHUserSettings.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -872,13 +870,15 @@
 				81E42DA315ADE82F001FA72D /* GHEventControllerDelegate.h */,
 				81E42DAC15ADE82F001FA72D /* GHEventSessionController.h */,
 				81E42DAD15ADE82F001FA72D /* GHEventSessionController.m */,
-				81CFAA6D15FD783000661D68 /* GHEventSessionsByDateDelegate.h */,
-				81CFAA6E15FD884400661D68 /* GHEventSessionsCurrentDelegate.h */,
-				818F216D15FD960A0003B72C /* GHEventSessionUpdateFavoriteDelegate.h */,
 				818F216F15FD98F90003B72C /* GHEventSessionRateDelegate.h */,
-				818F217015FD9A8F0003B72C /* GHEventSessionsFavoritesDelegate.h */,
+				81CFAA6D15FD783000661D68 /* GHEventSessionsByDateDelegate.h */,
 				818F217115FD9ADA0003B72C /* GHEventSessionsConferenceFavoritesDelegate.h */,
+				81CFAA6E15FD884400661D68 /* GHEventSessionsCurrentDelegate.h */,
+				818F217015FD9A8F0003B72C /* GHEventSessionsFavoritesDelegate.h */,
+				818F216D15FD960A0003B72C /* GHEventSessionUpdateFavoriteDelegate.h */,
 				81E42DDB15ADE82F001FA72D /* GHLocationManagerDelegate.h */,
+				81A2492615DA948600C84332 /* GHOAuth2Controller.h */,
+				81A2492715DA948600C84332 /* GHOAuth2Controller.m */,
 				81E42DE915ADE82F001FA72D /* GHProfileController.h */,
 				81E42DEA15ADE82F001FA72D /* GHProfileController.m */,
 				81E42DEB15ADE82F001FA72D /* GHProfileControllerDelegate.h */,
@@ -910,8 +910,6 @@
 		81F2EA0A15DC446200733D82 /* OAuth2 */ = {
 			isa = PBXGroup;
 			children = (
-				81A2492615DA948600C84332 /* GHOAuth2Controller.h */,
-				81A2492715DA948600C84332 /* GHOAuth2Controller.m */,
 				8196752415DD7B820056A806 /* OA2AccessGrant.h */,
 				8196752515DD7B820056A806 /* OA2AccessGrant.m */,
 				81C313A115EBE1AD004ADD53 /* OA2AuthorizedRequest.h */,
@@ -948,6 +946,19 @@
 				815D0A261604248B002786A4 /* GHEventSessionTweetViewController.m */,
 			);
 			name = Session;
+			sourceTree = "<group>";
+		};
+		81FF4E7D1608D137001B0ABC /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				81E42D6215ADE82F001FA72D /* GHAppSettings.h */,
+				81E42D6315ADE82F001FA72D /* GHAppSettings.m */,
+				81FF4E7A1608D05F001B0ABC /* GHConnectionSettings.h */,
+				81FF4E7B1608D05F001B0ABC /* GHConnectionSettings.m */,
+				81E42E0E15ADE82F001FA72D /* GHUserSettings.h */,
+				81E42E0F15ADE82F001FA72D /* GHUserSettings.m */,
+			);
+			name = Settings;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1226,6 +1237,7 @@
 				815D0A4D1604F4AC002786A4 /* VenueRoom.m in Sources */,
 				815D0A501604F4C7002786A4 /* Venue.m in Sources */,
 				81A2B6781607B1F800F0840A /* GHEventSessionTweetDetailsViewController.m in Sources */,
+				81FF4E7C1608D05F001B0ABC /* GHConnectionSettings.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

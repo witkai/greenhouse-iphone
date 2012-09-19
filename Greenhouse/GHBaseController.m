@@ -61,7 +61,7 @@ void ProcessError(NSString* action, NSError* error)
     switch (statusCode) {
         case 401:
             msg = @"Your access token is not valid. Please reauthorize the app.";
-            delegate = appDelegate;
+            delegate = [[UIApplication sharedApplication] delegate];
             break;
         default:
             break;
@@ -86,7 +86,7 @@ void ProcessError(NSString* action, NSError* error)
     switch ([error code]) {
         case NSURLErrorUserCancelledAuthentication:
             message = @"Your access token is not valid. Please reauthorize the app.";
-            delegate = appDelegate;
+            delegate = [[UIApplication sharedApplication] delegate];
             break;
         case NSURLErrorTimedOut:
             message = @"The network request timed out. Please try again in a few minutes.";

@@ -23,9 +23,11 @@
 #import "GHEventSessionTweetDetailsViewController.h"
 #import "Event.h"
 #import "EventSession.h"
+#import "Tweet.h"
 #import "GHEventSessionTweetViewController.h"
 #import "GHEventController.h"
 #import "GHEventSessionController.h"
+#import "GHTwitterController.h"
 
 @interface GHEventSessionTweetDetailsViewController ()
 
@@ -36,12 +38,16 @@
 
 @implementation GHEventSessionTweetDetailsViewController
 
-#pragma mark -
-#pragma mark GHEventTweetDetailsViewController methods
 
-- (IBAction)actionRetweet:(id)sender
+#pragma mark -
+#pragma mark Public Instance methods
+
+- (void)sendRetweet
 {
-    //	[[GHTwitterController sharedInstance] postRetweet:tweet.tweetId withURL:retweetUrl delegate:self];
+    [[GHTwitterController sharedInstance] postRetweetWithTweetId:self.tweet.tweetId
+                                                         eventId:self.event.eventId
+                                                   sessionNumber:self.session.number
+                                                        delegate:self];
 }
 
 
@@ -68,6 +74,15 @@
         DLog(@"selected event or session not available");
         [self.navigationController popToRootViewControllerAnimated:NO];
     }
+}
+
+- (void)viewWillUnload
+{
+    [super viewWillUnload];
+    DLog(@"");
+    
+    self.event = nil;
+    self.session = nil;
 }
 
 @end

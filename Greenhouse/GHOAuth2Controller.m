@@ -27,6 +27,7 @@
 #import "OA2SignInRequestParameters.h"
 #import "GHURLPostRequest.h"
 #import "GHKeychainManager.h"
+#import "GHConnectionSettings.h"
 
 @implementation GHOAuth2Controller
 
@@ -58,7 +59,8 @@
 - (NSURLRequest *)signInRequestWithUsername:(NSString *)username password:(NSString *)password
 {
     OA2SignInRequestParameters *parameters = [[OA2SignInRequestParameters alloc] initWithUsername:username password:password];
-    NSURL *url = [NSURL URLWithString:OAUTH_TOKEN_URL];
+    NSURL *url = [GHConnectionSettings urlWithFormat:@"/oauth/token"];
+//    NSURL *url = [NSURL URLWithString:OAUTH_TOKEN_URL];
     return [[GHURLPostRequest alloc] initWithURL:url parameters:parameters];
 }
 

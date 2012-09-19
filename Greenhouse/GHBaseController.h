@@ -23,6 +23,7 @@
 #import <Foundation/Foundation.h>
 #import "GHAuthorizedRequest.h"
 #import "OA2AccessGrant.h"
+#import "GHConnectionSettings.h"
 
 @interface GHBaseController : NSObject
 

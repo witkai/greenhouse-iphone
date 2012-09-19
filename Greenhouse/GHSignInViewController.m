@@ -74,13 +74,16 @@
     GHActivityAlertView *activityAlertView = [[GHActivityAlertView alloc] initWithActivityMessage:@"Signing in..."];
 	[activityAlertView startAnimating];
     NSURLRequest *request = [[GHOAuth2Controller sharedInstance] signInRequestWithUsername:usernameValue password:passwordValue];
+    DLog(@"%@", request);
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:[[NSOperationQueue alloc] init]
                            completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
      {
          [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-         [activityAlertView stopAnimating];
+         dispatch_sync(dispatch_get_main_queue(), ^{
+             [activityAlertView stopAnimating];
+         });
          
          NSInteger statusCode = [(NSHTTPURLResponse *)response statusCode];         
          if (statusCode == 200 && data.length > 0 && error == nil)
@@ -92,7 +95,7 @@
              {
                  [GHOAuth2Controller storeAccessGrant:accessGrant];
                  dispatch_sync(dispatch_get_main_queue(), ^{
-                     [appDelegate showTabBarController];
+                     [(GreenhouseAppDelegate *)[[UIApplication sharedApplication] delegate] showTabBarController];
                  });
              }
              else

@@ -35,10 +35,9 @@
 
 @synthesize event;
 
-- (IBAction)actionSend:(id)sender
+- (void)sendTweet:(NSString *)text
 {
-    NSString *update = self.textViewTweet.text;
-    [[GHTwitterController sharedInstance] postUpdate:update eventId:event.eventId delegate:self];
+    [[GHTwitterController sharedInstance] postUpdate:text eventId:event.eventId delegate:self];
 }
 
 

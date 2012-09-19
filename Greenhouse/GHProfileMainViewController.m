@@ -65,7 +65,7 @@
 {
     [GHOAuth2Controller deleteAccessGrant];
     [[GHCoreDataManager sharedInstance] deletePersistentStore];
-	[appDelegate showAuthorizeNavigationViewController];
+	[(GreenhouseAppDelegate *)[[UIApplication sharedApplication] delegate] showAuthorizeNavigationViewController];
 }
 
 

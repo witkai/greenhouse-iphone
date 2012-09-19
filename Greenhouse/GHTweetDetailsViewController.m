@@ -24,15 +24,17 @@
 #import "GHTweetViewController.h"
 #import "Tweet.h"
 #import "GHTwitterController.h"
+#import "GHActivityAlertView.h"
 
 @interface GHTweetDetailsViewController ()
 
-@property (nonatomic, strong) Tweet *tweet;
+@property (nonatomic, strong) GHActivityAlertView *activityView;
 
 @end
 
 @implementation GHTweetDetailsViewController
 
+@synthesize activityView;
 @synthesize tweet;
 @synthesize imageViewProfile;
 @synthesize labelUser;
@@ -42,6 +44,10 @@
 @synthesize buttonRetweet;
 @synthesize buttonQuote;
 @synthesize tweetViewController;
+
+
+#pragma mark -
+#pragma mark Public Instance methods
 
 - (IBAction)actionReply:(id)sender
 {
@@ -57,6 +63,13 @@
 
 - (IBAction)actionRetweet:(id)sender
 {
+    self.activityView = [[GHActivityAlertView alloc] initWithActivityMessage:@"Retweeting status..."];
+    [activityView startAnimating];
+    [self sendRetweet];
+}
+
+- (void)sendRetweet
+{
     // implemented in subclass
 }
 
@@ -66,12 +79,20 @@
 
 - (void)postRetweetDidFinish
 {
-
+    [activityView stopAnimating];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil
+                                                        message:@"Retweet successful!"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+    [alertView show];
+    self.activityView = nil;
 }
 
 - (void)postRetweetDidFailWithError:(NSError *)error
 {
-
+    [activityView stopAnimating];
+    self.activityView = nil;
 }
 
 
@@ -81,11 +102,13 @@
 - (void)viewDidLoad 
 {
     [super viewDidLoad];
+    DLog(@"");
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    DLog(@"");
     
     self.tweet = [[GHTwitterController sharedInstance] fetchSelectedTweet];
     
@@ -110,7 +133,9 @@
 - (void)viewDidUnload 
 {
     [super viewDidUnload];
-	
+    DLog(@"");
+
+	self.activityView = nil;
 	self.tweet = nil;
     self.imageViewProfile = nil;
 	self.labelUser = nil;
