@@ -21,14 +21,23 @@
 //
 
 #import "GHAuthorizeViewController.h"
+#import "GHSignInViewController.h"
+#import "GHJoinNowViewController.h"
 
 @implementation GHAuthorizeViewController
 
 @synthesize signInViewController;
+@synthesize joinNowViewController;
+
 
 - (IBAction)actionSignIn:(id)sender
 {
     [self.navigationController pushViewController:signInViewController animated:YES];
+}
+
+- (IBAction)actionJoinNow:(id)sender
+{
+    [self.navigationController pushViewController:joinNowViewController animated:YES];
 }
 
 
@@ -39,12 +48,15 @@
 {
     [super viewDidLoad];
     
-    [self.navigationController setNavigationBarHidden:YES];
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:@"Home" style:UIBarButtonItemStyleBordered target:nil action:nil];
+    [self.navigationItem setBackBarButtonItem:backButton];
 }
 
-- (void)didReceiveMemoryWarning 
+- (void)viewWillAppear:(BOOL)animated
 {
-    [super didReceiveMemoryWarning];
+    [super viewWillAppear:animated];
+
+    [self.navigationController setNavigationBarHidden:YES];
 }
 
 - (void)viewDidUnload 
@@ -52,6 +64,7 @@
     [super viewDidUnload];
     
     self.signInViewController = nil;
+    self.joinNowViewController = nil;
 }
 
 @end
