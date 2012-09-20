@@ -41,7 +41,7 @@
 				<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 			</object>
 			<object class="IBUITableViewCell" id="832136925">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">292</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="IBUIView" id="1033505779">
@@ -53,6 +53,7 @@
 								<int key="NSvFlags">292</int>
 								<string key="NSFrame">{{10, 11}, {92, 21}}</string>
 								<reference key="NSSuperview" ref="1033505779"/>
+								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="597495809"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIOpaque">NO</bool>
@@ -87,6 +88,7 @@
 								<int key="NSvFlags">292</int>
 								<string key="NSFrame">{{110, 6}, {190, 31}}</string>
 								<reference key="NSSuperview" ref="1033505779"/>
+								<reference key="NSWindow"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
@@ -121,6 +123,7 @@
 						</array>
 						<string key="NSFrameSize">{320, 43}</string>
 						<reference key="NSSuperview" ref="832136925"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="207729972"/>
 						<string key="NSReuseIdentifierKey">_NS:11</string>
 						<object class="NSColor" key="IBUIBackgroundColor" id="406373840">
@@ -135,6 +138,8 @@
 					</object>
 				</array>
 				<string key="NSFrameSize">{320, 44}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="1033505779"/>
 				<string key="NSReuseIdentifierKey">_NS:9</string>
 				<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -1502,6 +1507,145 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA</b
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/GHFormTextFieldCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">GHJoinNowViewController</string>
+					<string key="superclassName">UIViewController</string>
+					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="actionBirthdayValueChanged:">id</string>
+						<string key="actionCancel:">id</string>
+						<string key="actionDone:">id</string>
+						<string key="actionNext:">id</string>
+						<string key="actionPrevious:">id</string>
+						<string key="actionSubmit:">id</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="actionBirthdayValueChanged:">
+							<string key="name">actionBirthdayValueChanged:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="actionCancel:">
+							<string key="name">actionCancel:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="actionDone:">
+							<string key="name">actionDone:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="actionNext:">
+							<string key="name">actionNext:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="actionPrevious:">
+							<string key="name">actionPrevious:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="actionSubmit:">
+							<string key="name">actionSubmit:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="birthdayCell">GHFormTextFieldCell</string>
+						<string key="birthdayPickerView">UIDatePicker</string>
+						<string key="birthdayTextField">UITextField</string>
+						<string key="emailCell">GHFormTextFieldCell</string>
+						<string key="emailTextField">UITextField</string>
+						<string key="firstNameCell">GHFormTextFieldCell</string>
+						<string key="firstNameTextField">UITextField</string>
+						<string key="formToolbar">UIToolbar</string>
+						<string key="formView">UIView</string>
+						<string key="genderCell">GHFormTextFieldCell</string>
+						<string key="genderPickerView">UIPickerView</string>
+						<string key="genderTextField">UITextField</string>
+						<string key="lastNameCell">GHFormTextFieldCell</string>
+						<string key="lastNameTextField">UITextField</string>
+						<string key="passwordCell">GHFormTextFieldCell</string>
+						<string key="passwordTextField">UITextField</string>
+						<string key="signUpForm">UITableView</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="birthdayCell">
+							<string key="name">birthdayCell</string>
+							<string key="candidateClassName">GHFormTextFieldCell</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="birthdayPickerView">
+							<string key="name">birthdayPickerView</string>
+							<string key="candidateClassName">UIDatePicker</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="birthdayTextField">
+							<string key="name">birthdayTextField</string>
+							<string key="candidateClassName">UITextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="emailCell">
+							<string key="name">emailCell</string>
+							<string key="candidateClassName">GHFormTextFieldCell</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="emailTextField">
+							<string key="name">emailTextField</string>
+							<string key="candidateClassName">UITextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="firstNameCell">
+							<string key="name">firstNameCell</string>
+							<string key="candidateClassName">GHFormTextFieldCell</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="firstNameTextField">
+							<string key="name">firstNameTextField</string>
+							<string key="candidateClassName">UITextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="formToolbar">
+							<string key="name">formToolbar</string>
+							<string key="candidateClassName">UIToolbar</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="formView">
+							<string key="name">formView</string>
+							<string key="candidateClassName">UIView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="genderCell">
+							<string key="name">genderCell</string>
+							<string key="candidateClassName">GHFormTextFieldCell</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="genderPickerView">
+							<string key="name">genderPickerView</string>
+							<string key="candidateClassName">UIPickerView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="genderTextField">
+							<string key="name">genderTextField</string>
+							<string key="candidateClassName">UITextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="lastNameCell">
+							<string key="name">lastNameCell</string>
+							<string key="candidateClassName">GHFormTextFieldCell</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="lastNameTextField">
+							<string key="name">lastNameTextField</string>
+							<string key="candidateClassName">UITextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="passwordCell">
+							<string key="name">passwordCell</string>
+							<string key="candidateClassName">GHFormTextFieldCell</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="passwordTextField">
+							<string key="name">passwordTextField</string>
+							<string key="candidateClassName">UITextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="signUpForm">
+							<string key="name">signUpForm</string>
+							<string key="candidateClassName">UITableView</string>
+						</object>
+					</dictionary>
+					<object class="NSMutableDictionary" key="toManyOutletInfosByName">
+						<string key="NS.key.0">formTextFields</string>
+						<object class="IBToManyOutletInfo" key="NS.object.0">
+							<string key="name">formTextFields</string>
+							<string key="candidateClassName">UITextField</string>
+							<string key="collectionClassName">NSArray</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/GHJoinNowViewController.h</string>
 					</object>
 				</object>
 			</array>
