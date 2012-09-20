@@ -48,6 +48,9 @@
 		8196752E15DE7C850056A806 /* OA2AccessGrantTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8196752D15DE7C850056A806 /* OA2AccessGrantTests.m */; };
 		819DBEBE160AD574002A6081 /* GHEventSessionDetailsContent.html in Resources */ = {isa = PBXBuildFile; fileRef = 819DBEBD160AD574002A6081 /* GHEventSessionDetailsContent.html */; };
 		819DBEC1160AE378002A6081 /* GHVenueDetailsContent.html in Resources */ = {isa = PBXBuildFile; fileRef = 819DBEC0160AE378002A6081 /* GHVenueDetailsContent.html */; };
+		819DBED4160AF065002A6081 /* GHFormTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 819DBED3160AF065002A6081 /* GHFormTextFieldCell.m */; };
+		819DBED8160AF094002A6081 /* GHJoinNowViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 819DBED7160AF094002A6081 /* GHJoinNowViewController.m */; };
+		819DBEDB160AF0A6002A6081 /* GHJoinNowViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 819DBED9160AF0A6002A6081 /* GHJoinNowViewController.xib */; };
 		819E443C11FF1FA600DBC0BB /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 819E443B11FF1FA600DBC0BB /* MapKit.framework */; };
 		81A1BD1915D5AF9D0028A2D3 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81A1BD1815D5AF9D0028A2D3 /* SenTestingKit.framework */; };
 		81A1BD1A15D5AF9D0028A2D3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
@@ -248,6 +251,11 @@
 		8196752D15DE7C850056A806 /* OA2AccessGrantTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OA2AccessGrantTests.m; sourceTree = "<group>"; };
 		819DBEBD160AD574002A6081 /* GHEventSessionDetailsContent.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = GHEventSessionDetailsContent.html; sourceTree = "<group>"; };
 		819DBEC0160AE378002A6081 /* GHVenueDetailsContent.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = GHVenueDetailsContent.html; sourceTree = "<group>"; };
+		819DBED2160AF065002A6081 /* GHFormTextFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHFormTextFieldCell.h; sourceTree = "<group>"; };
+		819DBED3160AF065002A6081 /* GHFormTextFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHFormTextFieldCell.m; sourceTree = "<group>"; };
+		819DBED6160AF094002A6081 /* GHJoinNowViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GHJoinNowViewController.h; sourceTree = "<group>"; };
+		819DBED7160AF094002A6081 /* GHJoinNowViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GHJoinNowViewController.m; sourceTree = "<group>"; };
+		819DBEDA160AF0A6002A6081 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GHJoinNowViewController.xib; sourceTree = "<group>"; };
 		819E443B11FF1FA600DBC0BB /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		81A1BD1715D5AF9D0028A2D3 /* GreenhouseLogicTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GreenhouseLogicTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		81A1BD1815D5AF9D0028A2D3 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -527,12 +535,15 @@
 		8124CE6C16078C55000D3D6E /* Authorization */ = {
 			isa = PBXGroup;
 			children = (
+				819DBED9160AF0A6002A6081 /* GHJoinNowViewController.xib */,
 				810FD30415D99E9200A9B3B3 /* GHAuthorizeNavigationViewController.h */,
 				810FD30515D99E9200A9B3B3 /* GHAuthorizeNavigationViewController.m */,
 				81A2492115D9A6B400C84332 /* GHAuthorizeNavigationViewController.xib */,
 				81E42D6715ADE82F001FA72D /* GHAuthorizeViewController.h */,
 				81E42D6815ADE82F001FA72D /* GHAuthorizeViewController.m */,
 				81E42D7915ADE82F001FA72D /* GHAuthorizeViewController.xib */,
+				819DBED6160AF094002A6081 /* GHJoinNowViewController.h */,
+				819DBED7160AF094002A6081 /* GHJoinNowViewController.m */,
 				810FD30A15D9A0AE00A9B3B3 /* GHSignInViewController.h */,
 				810FD30B15D9A0AE00A9B3B3 /* GHSignInViewController.m */,
 				81A2492515D9A6BF00C84332 /* GHSignInViewController.xib */,
@@ -840,6 +851,8 @@
 				81E42D6F15ADE82F001FA72D /* GHCustomTabBar.m */,
 				81E42D7015ADE82F001FA72D /* GHCustomToolbar.h */,
 				81E42D7115ADE82F001FA72D /* GHCustomToolbar.m */,
+				819DBED2160AF065002A6081 /* GHFormTextFieldCell.h */,
+				819DBED3160AF065002A6081 /* GHFormTextFieldCell.m */,
 				81E42E0215ADE82F001FA72D /* GHTweetTableViewCell.h */,
 				81E42E0315ADE82F001FA72D /* GHTweetTableViewCell.m */,
 				81E42E1215ADE82F001FA72D /* GHVenueAnnotation.h */,
@@ -1126,6 +1139,7 @@
 				811D71A8160A69EB007C806C /* Default-568h@2x.png in Resources */,
 				819DBEBE160AD574002A6081 /* GHEventSessionDetailsContent.html in Resources */,
 				819DBEC1160AE378002A6081 /* GHVenueDetailsContent.html in Resources */,
+				819DBEDB160AF0A6002A6081 /* GHJoinNowViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1258,6 +1272,8 @@
 				815D0A501604F4C7002786A4 /* Venue.m in Sources */,
 				81A2B6781607B1F800F0840A /* GHEventSessionTweetDetailsViewController.m in Sources */,
 				81FF4E7C1608D05F001B0ABC /* GHConnectionSettings.m in Sources */,
+				819DBED4160AF065002A6081 /* GHFormTextFieldCell.m in Sources */,
+				819DBED8160AF094002A6081 /* GHJoinNowViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1312,6 +1328,14 @@
 				817D817115FE831900C7A351 /* en */,
 			);
 			name = GHEventSessionsScheduleViewController.xib;
+			sourceTree = "<group>";
+		};
+		819DBED9160AF0A6002A6081 /* GHJoinNowViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				819DBEDA160AF0A6002A6081 /* en */,
+			);
+			name = GHJoinNowViewController.xib;
 			sourceTree = "<group>";
 		};
 		81A1BD1F15D5AF9D0028A2D3 /* InfoPlist.strings */ = {
